@@ -1,0 +1,23 @@
+# Common ignores
+node_modules/
+.next/
+.env*.local
+.DS_Store
+*.tsbuildinfo
+
+# Agents
+GEMINI.md
+CLAUDE.md
+
+# prettier
+.prettierrc
+.prettierignore
+_/
+
+# R2 upload config
+scripts/.env
+
+# Videos live on Cloudflare R2, not git (see scripts/README.md)
+public/**/*.mp4
+public/**/*.mov
+public/**/*.webm

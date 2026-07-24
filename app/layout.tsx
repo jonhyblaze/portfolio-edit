@@ -1,0 +1,50 @@
+import React from "react"
+import type { Metadata } from "next"
+import { Inter, Geist_Mono, Space_Mono } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
+import { CommandPalette } from "@/components/command-palette"
+import "./globals.css"
+import HomePageGradient from "@/components/gradients/full-page-grad"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans"
+})
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono" // Defines the CSS variable
+})
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-space-mono"
+})
+
+export const metadata: Metadata = {
+  title: "Video Editor Portfolio",
+  description: "Modern video editor portfolio with keyboard-first navigation"
+}
+
+export default function RootLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${geistMono.variable} relative font-sans antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <HomePageGradient />
+          <Header />
+          <CommandPalette />
+          <main className="grid place-items-center min-h-[calc(100vh-4rem)]">{children}</main>
+          <Footer />
+        </ThemeProvider>
+      </body>
+    </html>
+  )
+}

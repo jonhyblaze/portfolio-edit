@@ -1,0 +1,30 @@
+.bg-grid {
+  position: absolute; /* or fixed */
+  inset: 0; /* full screen */
+  background-image: radial-gradient(
+    circle,
+    gray 0.2px,
+    transparent 0.88px
+  );
+  background-size: 40px 40px;
+  opacity:0.7;
+
+
+   /* Increased opacity for testing */
+  /*animation: gridDrift 30s linear infinite;*/
+}
+@keyframes gridDrift {
+  from {
+    /*background-position: 0 0;*/
+    opacity:0.3;
+    background-size: 12px 12px;
+
+  }
+  to {
+    /*background-position: 24px 24px;*/
+    background-size: 6px 6px;
+
+    opacity:0.3
+
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "portfolio-edit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "tsc": "tsc --noEmit --pretty && printf '\\033[0;32m✔\\033[0m Typescript check passed\\n'"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
+    "@remixicon/react": "^4.9.0",
+    "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "1.1.1",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^12.34.0",
+    "next": "16.1.6",
+    "next-themes": "^0.4.6",
+    "nodemailer": "^8.0.2",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-hook-form": "^7.54.1",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^10.2.1",
+    "eslint-config-next": "^16.2.4",
+    "postcss": "^8.5",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.7.3"
+  }
+}
