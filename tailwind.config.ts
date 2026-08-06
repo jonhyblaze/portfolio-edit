@@ -134,6 +134,26 @@ const config: Config = {
         "fade-in": {
           "0%": { opacity: "0.1" },
           "100%": { opacity: "1" }
+        },
+        // Film grain: shift the noise tile around so it never sits still.
+        grain: {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "10%": { transform: "translate(-4%, -4%)" },
+          "20%": { transform: "translate(-8%, 3%)" },
+          "30%": { transform: "translate(5%, -6%)" },
+          "40%": { transform: "translate(-3%, 7%)" },
+          "50%": { transform: "translate(-8%, 2%)" },
+          "60%": { transform: "translate(6%, 0)" },
+          "70%": { transform: "translate(0, 8%)" },
+          "80%": { transform: "translate(3%, 5%)" },
+          "90%": { transform: "translate(-4%, 3%)" }
+        },
+        // Projectionist's cue mark: two beats, then gone.
+        "cue-flash": {
+          "0%, 74%, 100%": { opacity: "0" },
+          "76%, 82%": { opacity: "0.75" },
+          "84%, 90%": { opacity: "0" },
+          "92%, 96%": { opacity: "0.75" }
         }
       },
       animation: {
@@ -141,7 +161,9 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-to-right": "slide-to-right 1s ease-out infinite",
         "letter-fade": "letterFade 6s ease forwards infinite",
-        "fade-in-letter": "fade-in 3s linear forwards infinite"
+        "fade-in-letter": "fade-in 3s linear forwards infinite",
+        grain: "grain 0.7s steps(1) infinite",
+        "cue-flash": "cue-flash 4s linear infinite"
       }
     }
   },

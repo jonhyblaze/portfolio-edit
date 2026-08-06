@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { routes } from "@/data/routes"
 import profile from "@/data/profile"
+import { useSound } from "@/components/sound/sound-provider"
 import {
   CommandDialog,
   CommandEmpty,
@@ -11,7 +12,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator
+  CommandSeparator,
+  CommandShortcut
 } from "@/components/ui/command"
 import {
   RiBookLine,
@@ -21,13 +23,15 @@ import {
   RiHomeLine,
   RiLinkedinBoxLine,
   RiMailLine,
-  RiUserLine
+  RiUserLine,
+  RiVolumeMuteLine,
+  RiVolumeUpLine
 } from "@remixicon/react"
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-
+  const { enabled: soundEnabled, toggle: toggleSound } = useSound()
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -148,6 +152,20 @@ export function CommandPalette() {
           <CommandItem onSelect={() => runCommand(() => window.open(profile.linkedIn, "_blank"))} className="cursor-pointer">
             <RiLinkedinBoxLine />
             <span>LinkedIn</span>
+          </CommandItem>
+        </CommandGroup>
+
+        <CommandSeparator />
+
+        <CommandGroup heading="Settings">
+          {/* Stays open on select so the state change is visible. */}
+          <CommandItem
+            keywords={["sound", "audio", "mute", "unmute", "silence", "volume", "sfx", "showcase"]}
+            onSelect={toggleSound}
+            className="cursor-pointer">
+            {soundEnabled ? <RiVolumeUpLine /> : <RiVolumeMuteLine />}
+            <span>{soundEnabled ? "Disable sound" : "Enable sound"}</span>
+            <CommandShortcut>{soundEnabled ? "On" : "Off"}</CommandShortcut>
           </CommandItem>
         </CommandGroup>
       </CommandList>

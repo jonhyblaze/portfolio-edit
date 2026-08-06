@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { CommandPalette } from "@/components/command-palette"
+import { SoundProvider } from "@/components/sound/sound-provider"
 import "./globals.css"
 import HomePageGradient from "@/components/gradients/full-page-grad"
 
@@ -38,12 +39,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${geistMono.variable} relative font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <HomePageGradient />
-          <Header />
-          <CommandPalette />
-          {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16 */}
-          <main className="grid place-items-center min-h-screen pt-16">{children}</main>
-          <Footer />
+          <SoundProvider>
+            <HomePageGradient />
+            <Header />
+            <CommandPalette />
+            {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16 */}
+            <main className="grid place-items-center min-h-screen pt-16">{children}</main>
+            <Footer />
+          </SoundProvider>
         </ThemeProvider>
       </body>
     </html>

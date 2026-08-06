@@ -1,10 +1,16 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { SoundToggle } from "@/components/sound/sound-toggle"
+import { useSound } from "@/components/sound/sound-provider"
 import { cn } from "@/lib/utils"
 
-export type VideoReel = {
+type SlideBase = {
   id: string
+}
+
+export type VideoReel = SlideBase & {
+  kind?: "video"
   /** Path to the video file, e.g. "/showcase/lucky.mp4" */
   src: string
   /** Still shown before the video is ready / while paused */
@@ -23,15 +29,40 @@ export type VideoReel = {
   fit?: "cover" | "contain"
 }
 
+/** A held beat of black between two reels. Nothing to look at — that is the point. */
+export type PauseSlide = SlideBase & {
+  kind: "pause"
+}
+
+/** One small line of type, set like a screenplay slug. */
+export type CaptionSlide = SlideBase & {
+  kind: "caption"
+  text: string
+  sub?: string
+}
+
+/** A full-bleed typographic statement, sized like a title card. */
+export type QuoteSlide = SlideBase & {
+  kind: "quote"
+  text: string
+  attribution?: string
+}
+
+/** The showcase is a cut sequence: reels interrupted by pauses, captions and title cards. */
+export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide
+
+const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "video") === "video"
+
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 
-export function VideoShowcase({ reels, className }: { reels: VideoReel[]; className?: string }) {
+export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; className?: string }) {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
   const [active, setActive] = useState(0)
-  const count = reels.length
+  const { play } = useSound()
+  const count = slides.length
 
-  // Map scroll position within the section to the active reel index.
+  // Map scroll position within the section to the active slide index.
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -58,6 +89,15 @@ export function VideoShowcase({ reels, className }: { reels: VideoReel[]; classN
     }
   }, [count])
 
+  // Each cut gets its own transition sound. Silent until the visitor turns sound on.
+  const previous = useRef(active)
+  useEffect(() => {
+    if (previous.current === active) return
+    previous.current = active
+    const slide = slides[active]
+    if (slide) play(slide.kind ?? "video")
+  }, [active, slides, play])
+
   // Only the active reel plays; the rest stay paused to keep things light.
   useEffect(() => {
     videoRefs.current.forEach((video, i) => {
@@ -80,7 +120,8 @@ export function VideoShowcase({ reels, className }: { reels: VideoReel[]; classN
 
   if (count === 0) return null
 
-  const current = reels[active]
+  const current = slides[active]
+  const currentReel = current && isVideo(current) ? current : null
 
   return (
     <section
@@ -90,34 +131,43 @@ export function VideoShowcase({ reels, className }: { reels: VideoReel[]; classN
       style={{ height: `${count * 100}vh` }}>
       {/* Sticky full-screen stage */}
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
-        {/* Stacked videos — crossfade between reels */}
-        {reels.map((reel, i) => {
-          const w = reel.width ?? 100
-          const h = reel.height ?? 100
+        {/* Stacked slides — crossfade between them */}
+        {slides.map((slide, i) => {
+          const isActive = i === active
+
           return (
             <div
-              key={reel.id}
-              aria-hidden={i !== active}
+              key={slide.id}
+              aria-hidden={!isActive}
               className={cn(
                 "absolute inset-0 grid place-items-center transition-opacity duration-700 ease-out",
-                i === active ? "opacity-100" : "pointer-events-none opacity-0"
+                isActive ? "opacity-100" : "pointer-events-none opacity-0"
               )}>
-              <div
-                className="relative overflow-hidden bg-black"
-                style={{ width: `${w}%`, height: `${h}%`, borderRadius: reel.radius ?? 0 }}>
-                <video
-                  ref={(el) => {
-                    videoRefs.current[i] = el
-                  }}
-                  src={reel.src}
-                  poster={reel.poster}
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className={cn("h-full w-full", reel.fit === "contain" ? "object-contain" : "object-cover")}
-                />
-              </div>
+              {isVideo(slide) ? (
+                <div
+                  className="relative overflow-hidden bg-black"
+                  style={{
+                    width: `${slide.width ?? 100}%`,
+                    height: `${slide.height ?? 100}%`,
+                    borderRadius: slide.radius ?? 0
+                  }}>
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[i] = el
+                    }}
+                    src={slide.src}
+                    poster={slide.poster}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className={cn("h-full w-full", slide.fit === "contain" ? "object-contain" : "object-cover")}
+                  />
+                </div>
+              ) : isActive ? (
+                // Anomalies mount only while active, so their type animates in on every arrival.
+                <Anomaly slide={slide} />
+              ) : null}
             </div>
           )
         })}
@@ -125,40 +175,138 @@ export function VideoShowcase({ reels, className }: { reels: VideoReel[]; classN
         {/* Legibility scrim for the caption */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
 
-        {/* Caption */}
+        {/* Caption — reels only; the anomalies carry their own type */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-1.5 px-6 pb-14 text-center md:pb-20">
-          {current && (current.label || current.meta) && (
+          {currentReel && (currentReel.label || currentReel.meta) && (
             <div
-              key={current.id}
+              key={currentReel.id}
               className="flex flex-col items-center gap-1.5 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
-              {current.label && <p className="h4 text-white">{current.label}</p>}
-              {current.meta && <p className="label-s uppercase tracking-widest text-white/60">{current.meta}</p>}
+              {currentReel.label && <p className="h4 text-white">{currentReel.label}</p>}
+              {currentReel.meta && <p className="label-s uppercase tracking-widest text-white/60">{currentReel.meta}</p>}
             </div>
           )}
         </div>
 
-        {/* Radio navigation */}
+        {/* Radio navigation — reels read as dots, anomalies as thin ticks */}
         <nav
           aria-label="Showcase navigation"
           className="absolute right-4 top-1/2 z-10 flex -translate-y-1/2 flex-col items-center gap-3 md:right-8">
-          {reels.map((reel, i) => (
+          {slides.map((slide, i) => (
             <button
-              key={reel.id}
+              key={slide.id}
               type="button"
               onClick={() => goTo(i)}
-              aria-label={reel.label ? `Go to ${reel.label}` : `Go to reel ${i + 1}`}
+              aria-label={slideLabel(slide, i)}
               aria-current={i === active}
               className="group grid place-items-center p-1.5">
               <span
                 className={cn(
-                  "block w-[6px] rounded-full transition-all duration-300 ease-out",
-                  i === active ? "h-6 bg-white" : "h-[6px] bg-white/40 group-hover:bg-white/70"
+                  "block rounded-full transition-all duration-300 ease-out",
+                  i === active
+                    ? "h-6 w-[6px] bg-white"
+                    : isVideo(slide)
+                      ? "h-[6px] w-[6px] bg-white/40 group-hover:bg-white/70"
+                      : "h-[2px] w-[6px] bg-white/25 group-hover:bg-white/60"
                 )}
               />
             </button>
           ))}
         </nav>
+
+        <SoundToggle className="absolute bottom-6 right-4 z-10 md:bottom-10 md:right-8" />
       </div>
     </section>
+  )
+}
+
+function slideLabel(slide: ShowcaseSlide, i: number) {
+  if (isVideo(slide)) return slide.label ? `Go to ${slide.label}` : `Go to reel ${i + 1}`
+  if (slide.kind === "pause") return "Go to the pause"
+  if (slide.kind === "caption") return `Go to ${slide.text}`
+  return "Go to the title card"
+}
+
+function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide }) {
+  return (
+    <>
+      {/* Grain first, then the type — both are positioned, so tree order puts the words on top. */}
+      <FilmGrain className={slide.kind === "pause" ? undefined : "opacity-[0.07]"} />
+      {slide.kind === "pause" ? (
+        <CueMark />
+      ) : slide.kind === "caption" ? (
+        <CaptionCard slide={slide} />
+      ) : (
+        <QuoteCard slide={slide} />
+      )}
+    </>
+  )
+}
+
+/** Black, grain, and the projectionist's cue mark warning of a reel change. */
+function CueMark() {
+  return (
+    <span
+      aria-hidden
+      className="absolute right-[6vw] top-[10vh] block h-12 w-12 animate-cue-flash rounded-full border border-white md:h-16 md:w-16"
+    />
+  )
+}
+
+function CaptionCard({ slide }: { slide: CaptionSlide }) {
+  return (
+    <div className="relative px-8 text-center">
+      <p className="label-s uppercase tracking-[0.4em] text-white/80 duration-700 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both">
+        {slide.text}
+      </p>
+      {slide.sub && (
+        <p className="label-s mt-4 text-white/35 delay-200 duration-700 animate-in fade-in-0 fill-mode-both">{slide.sub}</p>
+      )}
+      <span
+        aria-hidden
+        className="mx-auto mt-8 block h-px w-10 bg-white/20 delay-300 duration-1000 animate-in fade-in-0 fill-mode-both"
+      />
+    </div>
+  )
+}
+
+/** A title card: the line arrives a word at a time, the way a cut lands. */
+function QuoteCard({ slide }: { slide: QuoteSlide }) {
+  const words = slide.text.split(" ")
+
+  return (
+    <div className="relative max-w-5xl px-8 text-center md:px-16">
+      <p className="h1 text-balance leading-[1.05] text-white">
+        {words.map((word, i) => (
+          <span
+            key={`${word}-${i}`}
+            className="inline-block duration-700 animate-in fade-in-0 slide-in-from-bottom-4 fill-mode-both"
+            style={{ animationDelay: `${i * 70}ms` }}>
+            {word}
+            {i < words.length - 1 && " "}
+          </span>
+        ))}
+      </p>
+      {slide.attribution && (
+        <p
+          className="label-s mt-10 uppercase tracking-[0.35em] text-white/40 duration-1000 animate-in fade-in-0 fill-mode-both"
+          style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
+          {slide.attribution}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/** Drifting fractal noise — the texture stock has and digital doesn't. */
+const GRAIN_SVG =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"
+
+function FilmGrain({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn("pointer-events-none absolute -inset-1/4 animate-grain opacity-[0.14] mix-blend-screen", className)}
+      style={{ backgroundImage: `url("${GRAIN_SVG}")` }}
+    />
   )
 }

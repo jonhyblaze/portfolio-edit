@@ -4,7 +4,7 @@ import { Arrow } from "@/components/svg/arrow"
 import { IconGlow } from "@/components/gradients/icon-glow"
 import { Button } from "@/components/ui/button"
 import { VideoShowcase } from "@/components/showcase/video-showcase"
-import { showcaseReels } from "@/data/showcase"
+import { showcaseSlides } from "@/data/showcase"
 import { cn } from "@/lib/utils"
 import { addGradientHover } from "@/lib/helpers"
 import { RiBracesLine, RiExpandDiagonalLine, RiLoopRightLine, RiShapeLine } from "@remixicon/react"
@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <div className="relative z-10 -mt-16 max-w-screen-xl pb-24">
       {/*<Hero className="min-h-screen" />*/}
-      <VideoShowcase reels={showcaseReels} />
+      <VideoShowcase slides={showcaseSlides} />
       <Approach className="max-w-[1240px] mx-auto px-5 sm:px-16 laptop:px-0 mt-24" />
     </div>
   )
