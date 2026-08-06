@@ -11,7 +11,7 @@ import { RiBracesLine, RiExpandDiagonalLine, RiLoopRightLine, RiShapeLine } from
 
 export default function HomePage() {
   return (
-    <div className="relative z-10 max-w-screen-xl pb-24">
+    <div className="relative z-10 -mt-16 max-w-screen-xl pb-24">
       {/*<Hero className="min-h-screen" />*/}
       <VideoShowcase reels={showcaseReels} />
       <Approach className="max-w-[1240px] mx-auto px-5 sm:px-16 laptop:px-0 mt-24" />

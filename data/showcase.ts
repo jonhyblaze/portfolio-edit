@@ -18,7 +18,7 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  * Each object drives one full-screen reel. Tune the frame per entry:
  *   radius → rounded corners (default 0, sharp)
  *   width  → pillarbox (black bars left/right) when below 100
- *   height → letterbox (black bars top/bottom) when below 100
+*   height → letterbox (black bars top/bottom) when below 100
  *
  *   height: 62, // 2.39:1 letterbox — bars top & bottom
  *
@@ -31,7 +31,7 @@ export const showcaseReels: VideoReel[] = [
     poster: "/showcase/hum-cover.jpg",
     label: "HUM",
     meta: "dir/dop. Oleksandr Korotun | Video Poetry",
-    radius: 16 // gently rounded, cinematic
+    radius: 0 // gently rounded, cinematic
   },
   {
     id: "212-CH",
@@ -39,7 +39,7 @@ export const showcaseReels: VideoReel[] = [
     poster: "/showcase/212-cover.jpg",
     label: "212 Heroes | Carolina Herrera",
     meta: "dir/dop. Oleksandr Korotun | Commercial",
-    radius: 16 // gently rounded, cinematic
+    radius: 0 // gently rounded, cinematic
   },
   {
     id: "icohole",
@@ -78,7 +78,7 @@ export const showcaseReels: VideoReel[] = [
     poster: "/showcase/leopolis-cover.jpg",
     label: "Leopolis Night",
     meta: "dir. Nikon Romanchenko, dop. Oleksandr Korotun | Short Film",
-    radius: 32,
+    radius: 0,
     width: 88
 
   },

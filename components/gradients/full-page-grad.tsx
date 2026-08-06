@@ -41,9 +41,9 @@ const HeroTopGradient = () => (
     {/* Top Gradient - High blur */}
     <div className="absolute w-full h-screen hidden dark:block transform-gpu">
       <div
-        className="absolute inset-0 bg-sky-500/90 w-full -translate-y-1/3 lg:-translate-y-1/2 mx-auto blur-[180px] rounded-full will-change-transform
+        className="absolute inset-0 bg-red-600/90 w-full -translate-y-1/3 lg:-translate-y-1/2 mx-auto blur-[280px] rounded-full will-change-transform
         [@supports(-moz-appearance:none)]:w-[97%]
-         [@supports(-moz-appearance:none)]:bg-sky-500/40
+         [@supports(-moz-appearance:none)]:bg-red-600/40
          [@supports(-moz-appearance:none)]:-translate-y-1/4"
         style={{ WebkitBackfaceVisibility: "hidden" }}
       />

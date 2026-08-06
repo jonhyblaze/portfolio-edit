@@ -41,7 +41,8 @@ export default function RootLayout({
           <HomePageGradient />
           <Header />
           <CommandPalette />
-          <main className="grid place-items-center min-h-[calc(100vh-4rem)]">{children}</main>
+          {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16 */}
+          <main className="grid place-items-center min-h-screen pt-16">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>
