@@ -26,19 +26,19 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  */
 export const showcaseReels: VideoReel[] = [
   {
-    id: "212-CH",
-    src: video("loops/212.mp4"),
-    poster: "/showcase/212-cover.jpg",
-    label: "212 Heroes | Carolina Herrera",
-    meta: "dir/dop. Oleksandr Korotun | Commercial",
-    radius: 16 // gently rounded, cinematic
-  },
-  {
     id: "hum",
     src: video("loops/hum.mp4"),
     poster: "/showcase/hum-cover.jpg",
     label: "HUM",
     meta: "dir/dop. Oleksandr Korotun | Video Poetry",
+    radius: 16 // gently rounded, cinematic
+  },
+  {
+    id: "212-CH",
+    src: video("loops/212.mp4"),
+    poster: "/showcase/212-cover.jpg",
+    label: "212 Heroes | Carolina Herrera",
+    meta: "dir/dop. Oleksandr Korotun | Commercial",
     radius: 16 // gently rounded, cinematic
   },
   {

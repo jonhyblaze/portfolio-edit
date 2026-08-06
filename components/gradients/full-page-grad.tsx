@@ -1,5 +1,4 @@
 "use client"
-import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 
 const HomePageGradient = () => {
@@ -8,9 +7,8 @@ const HomePageGradient = () => {
   if (pathname === "/") {
     return (
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-        <HeroTopGradient />
+        {/*<HeroTopGradient />*/}
         <HeroBottomGradient />
-        <NoisePattern className="dark:hidden" />
       </div>
     )
   }
@@ -19,7 +17,6 @@ const HomePageGradient = () => {
     return (
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
         <HeroTopGradient />
-        <NoisePattern className="dark:hidden" />
       </div>
     )
   }
@@ -28,7 +25,6 @@ const HomePageGradient = () => {
     <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
       <TopGradient />
       <BottomGradient />
-      <NoisePattern className="dark:hidden" />
     </div>
   )
 }
@@ -107,12 +103,6 @@ const BottomGradient = () => (
 const HeroBottomGradient = () => (
   <>
     {/* Bottom Gradients */}
-    <div className="absolute -bottom-[7%] w-full h-[60dvh] opacity-100 hidden dark:block transform-gpu">
-      <div
-        className="absolute inset-0 bg-sky-500/80 blur-[180px] lg:blur-[200px] rounded will-change-transform"
-        style={{ WebkitBackfaceVisibility: "hidden" }}
-      />
-    </div>
 
     <div className="absolute -bottom-[15%] w-full h-screen opacity-100 hidden dark:block transform-gpu">
       <div
@@ -136,38 +126,5 @@ const HeroBottomGradient = () => (
     <div className="absolute inset-full -translate-y-16 w-[60%] left-[20%] h-[200px] rounded-full opacity-100 hidden dark:block transform-gpu">
       <div className="absolute inset-0 bg-orange-600/60 rounded-full blur-[144px] will-change-transform" />
     </div>
-
-    <div className="absolute inset-full -translate-y-0 w-[25%] left-[40%] h-[100px] rounded-full opacity-100 hidden dark:block transform-gpu">
-      <div className="absolute inset-0 bg-teal-50 rounded-full blur-[64px] will-change-transform" />
-    </div>
   </>
 )
-
-const NoisePattern = ({ className }: { className?: string }) => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2000">
-    <filter id="noise" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.3"/>
-      </feComponentTransfer>
-    </filter>
-    <rect width="100%" height="100%" filter="url(#noise)"/>
-  </svg>`
-
-  const noise = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
-
-  return (
-    <div
-      className={cn(
-        "absolute inset-0 mix-blend-soft-light pointer-events-none transform-gpu dark:hidden",
-        className,
-      )}
-      style={{
-        backgroundImage: noise,
-        backgroundRepeat: "repeat",
-        WebkitBackfaceVisibility: "hidden", // Forces Safari to render as a hardware layer
-      }}
-    />
-  )
-}

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
 import { routes } from "@/data/routes"
 import profile from "@/data/profile"
 import {
@@ -22,15 +21,13 @@ import {
   RiHomeLine,
   RiLinkedinBoxLine,
   RiMailLine,
-  RiMoonLine,
-  RiSunLine,
   RiUserLine
 } from "@remixicon/react"
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  const { setTheme, theme } = useTheme()
+
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -72,7 +69,7 @@ export function CommandPalette() {
 
         <CommandSeparator />
 
-        <CommandGroup heading="Case Studies">
+        <CommandGroup heading="Projects">
           <CommandItem
             keywords={[
               "graphql",
@@ -138,20 +135,8 @@ export function CommandPalette() {
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Theme">
-          <CommandItem onSelect={() => runCommand(() => setTheme("light"))} className="cursor-pointer">
-            <RiSunLine />
-            <span>Light Mode</span>
-            {theme === "light" && <span className="ml-auto text-xs text-muted-foreground">✓</span>}
-          </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => setTheme("dark"))} className="cursor-pointer">
-            <RiMoonLine />
-            <span>Dark Mode</span>
-            {theme === "dark" && <span className="ml-auto text-xs text-muted-foreground">✓</span>}
-          </CommandItem>
-        </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Other">
+        <CommandGroup heading="Links">
           <CommandItem onSelect={() => runCommand(() => window.open(profile.cv, "_blank"))} className="cursor-pointer">
             <RiFileUserLine />
             <span>CV Open</span>
