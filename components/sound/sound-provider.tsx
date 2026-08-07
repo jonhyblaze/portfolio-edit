@@ -7,7 +7,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
  * a handful of oscillators weighs nothing and never has to be downloaded.
  * Each name maps to the kind of showcase slide being scrolled into.
  */
-export type SoundCue = "video" | "pause" | "caption" | "quote"
+export type SoundCue = "title" | "video" | "pause" | "caption" | "quote"
 
 const STORAGE_KEY = "sound-enabled"
 
@@ -98,6 +98,9 @@ function click(
   knock.stop(at + decay + 0.02)
 }
 
+/** A deliberate switch throw: lower and slower than the rest, but still just a click. */
+const switchThrow = (engine: Engine, at: number) => click(engine, { at, level: 0.45, snap: 1200, body: 90, decay: 0.18 })
+
 const CUES: Record<SoundCue, (engine: Engine, at: number) => void> = {
   /** Play: the two-stage clunk of a transport button — press, then the latch catching. */
   video: (engine, at) => {
@@ -112,10 +115,9 @@ const CUES: Record<SoundCue, (engine: Engine, at: number) => void> = {
   caption: (engine, at) => {
     click(engine, { at, level: 0.28, snap: 3200, body: 320, decay: 0.03 })
   },
-  /** A deliberate switch throw: lower and slower, but still just a click. */
-  quote: (engine, at) => {
-    click(engine, { at, level: 0.45, snap: 1200, body: 90, decay: 0.18 })
-  }
+  /** The opening card and the statement cards share the same throw. */
+  quote: switchThrow,
+  title: switchThrow
 }
 
 export function SoundProvider({ children }: { children: ReactNode }) {

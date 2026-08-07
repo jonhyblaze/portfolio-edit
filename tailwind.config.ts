@@ -148,6 +148,12 @@ const config: Config = {
           "80%": { transform: "translate(3%, 5%)" },
           "90%": { transform: "translate(-4%, 3%)" }
         },
+        // Scroll hint: a line drawn downward, over and over.
+        "scroll-hint": {
+          "0%": { transform: "scaleY(0)", opacity: "0" },
+          "30%": { opacity: "1" },
+          "100%": { transform: "scaleY(1)", opacity: "0" }
+        },
         // Projectionist's cue mark: two beats, then gone.
         "cue-flash": {
           "0%, 74%, 100%": { opacity: "0" },
@@ -163,7 +169,8 @@ const config: Config = {
         "letter-fade": "letterFade 6s ease forwards infinite",
         "fade-in-letter": "fade-in 3s linear forwards infinite",
         grain: "grain 0.7s steps(1) infinite",
-        "cue-flash": "cue-flash 4s linear infinite"
+        "cue-flash": "cue-flash 4s linear infinite",
+        "scroll-hint": "scroll-hint 2.2s ease-in-out infinite"
       }
     }
   },

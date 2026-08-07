@@ -29,29 +29,54 @@ export type VideoReel = SlideBase & {
   fit?: "cover" | "contain"
 }
 
+/**
+ * The beats between reels are timed: they hold, then the showcase moves itself
+ * on. Reels are never timed — they loop for as long as you stay with them.
+ */
+type BeatBase = SlideBase & {
+  /** How long this beat holds before pushing on, in ms. Default 7000. */
+  hold?: number
+}
+
 /** A held beat of black between two reels. Nothing to look at — that is the point. */
-export type PauseSlide = SlideBase & {
+export type PauseSlide = BeatBase & {
   kind: "pause"
 }
 
 /** One small line of type, set like a screenplay slug. */
-export type CaptionSlide = SlideBase & {
+export type CaptionSlide = BeatBase & {
   kind: "caption"
   text: string
   sub?: string
 }
 
 /** A full-bleed typographic statement, sized like a title card. */
-export type QuoteSlide = SlideBase & {
+export type QuoteSlide = BeatBase & {
   kind: "quote"
   text: string
   attribution?: string
 }
 
+/** The opening card. Untimed — it waits for the visitor rather than pushing them. */
+export type TitleSlide = SlideBase & {
+  kind: "title"
+  text: string
+  sub?: string
+}
+
 /** The showcase is a cut sequence: reels interrupted by pauses, captions and title cards. */
-export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide
+export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide | TitleSlide
 
 const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "video") === "video"
+
+/** Beats that hold for a moment and then push on. The title card and reels do not. */
+const isTimed = (slide: ShowcaseSlide): slide is PauseSlide | CaptionSlide | QuoteSlide =>
+  slide.kind === "pause" || slide.kind === "caption" || slide.kind === "quote"
+
+/** How long an intermediary beat holds before the showcase cuts to the next slide. */
+const HOLD_MS = 7000
+
+const splitWords = (text: string) => text.trim().split(/\s+/)
 
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 
@@ -117,6 +142,20 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     },
     [count]
   )
+
+  // An intermediary beat holds, then pushes on to the next slide by itself. Reels
+  // are left alone — they loop until the visitor decides to move. The timer resets
+  // whenever the active slide changes, so scrolling past a beat cancels its push.
+  useEffect(() => {
+    const slide = slides[active]
+    if (!slide || !isTimed(slide)) return
+    if (active + 1 >= count) return
+    // Moving someone's viewport for them is exactly what reduced motion asks us not to do.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    const timer = window.setTimeout(() => goTo(active + 1), slide.hold ?? HOLD_MS)
+    return () => window.clearTimeout(timer)
+  }, [active, slides, count, goTo])
 
   if (count === 0) return null
 
@@ -223,10 +262,11 @@ function slideLabel(slide: ShowcaseSlide, i: number) {
   if (isVideo(slide)) return slide.label ? `Go to ${slide.label}` : `Go to reel ${i + 1}`
   if (slide.kind === "pause") return "Go to the pause"
   if (slide.kind === "caption") return `Go to ${slide.text}`
+  if (slide.kind === "title") return "Back to the opening"
   return "Go to the title card"
 }
 
-function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide }) {
+function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide | TitleSlide }) {
   return (
     <>
       {/* Grain first, then the type — both are positioned, so tree order puts the words on top. */}
@@ -235,6 +275,8 @@ function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide }) {
         <CueMark />
       ) : slide.kind === "caption" ? (
         <CaptionCard slide={slide} />
+      ) : slide.kind === "title" ? (
+        <TitleCard slide={slide} />
       ) : (
         <QuoteCard slide={slide} />
       )}
@@ -269,13 +311,12 @@ function CaptionCard({ slide }: { slide: CaptionSlide }) {
   )
 }
 
-/** A title card: the line arrives a word at a time, the way a cut lands. */
-function QuoteCard({ slide }: { slide: QuoteSlide }) {
-  const words = slide.text.split(" ")
+/** Display type that arrives a word at a time, the way a cut lands. */
+function StaggeredLine({ text, className }: { text: string; className?: string }) {
+  const words = splitWords(text)
 
   return (
-    <div className="relative max-w-5xl px-8 text-center md:px-16">
-      <p className="h1 text-balance leading-[1.05] text-white">
+    <p className={className}>
         {words.map((word, i) => (
           <span
             key={`${word}-${i}`}
@@ -285,7 +326,43 @@ function QuoteCard({ slide }: { slide: QuoteSlide }) {
             {i < words.length - 1 && " "}
           </span>
         ))}
-      </p>
+    </p>
+  )
+}
+
+/** The opening card: grain, the headline, and a nudge that there is more below. */
+function TitleCard({ slide }: { slide: TitleSlide }) {
+  const words = splitWords(slide.text)
+
+  return (
+    <>
+      <div className="relative max-w-5xl px-8 text-center md:px-16">
+        <StaggeredLine text={slide.text} className="h1 text-balance leading-[1.05] text-white" />
+        {slide.sub && (
+          <p
+            className="label-s mt-10 uppercase tracking-[0.35em] text-white/40 duration-1000 animate-in fade-in-0 fill-mode-both"
+            style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
+            {slide.sub}
+          </p>
+        )}
+      </div>
+      <span
+        aria-hidden
+        className="absolute inset-x-0 bottom-16 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
+        <span className="label-s uppercase tracking-[0.4em] text-white/30">Scroll</span>
+        <span className="block h-10 w-px origin-top animate-scroll-hint bg-white/40" />
+      </span>
+    </>
+  )
+}
+
+/** A statement card, set at title scale with a small line of credit beneath. */
+function QuoteCard({ slide }: { slide: QuoteSlide }) {
+  const words = splitWords(slide.text)
+
+  return (
+    <div className="relative max-w-5xl px-8 text-center md:px-16">
+      <StaggeredLine text={slide.text} className="h1 text-balance leading-[1.05] text-white" />
       {slide.attribution && (
         <p
           className="label-s mt-10 uppercase tracking-[0.35em] text-white/40 duration-1000 animate-in fade-in-0 fill-mode-both"
@@ -305,7 +382,7 @@ function FilmGrain({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={cn("pointer-events-none absolute -inset-1/4 animate-grain opacity-[0.14] mix-blend-screen", className)}
+      className={cn("pointer-events-none absolute -inset-1/4 animate-grain opacity-[0.2] mix-blend-screen", className)}
       style={{ backgroundImage: `url("${GRAIN_SVG}")` }}
     />
   )

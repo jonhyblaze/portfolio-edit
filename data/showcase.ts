@@ -28,13 +28,24 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  *   height: 62, // 2.39:1 letterbox — bars top & bottom
  *
  * Anomaly slides:
+ *   { kind: "title", text, sub? }            → the opening card, grain under display type
  *   { kind: "pause" }                        → black, grain, a cue mark
  *   { kind: "caption", text, sub? }          → one small line, screenplay-slug style
- *   { kind: "quote", text, attribution? }    → a title card, word by word
+ *   { kind: "quote", text, attribution? }    → a statement card, word by word
+ *
+ * The three intermediary beats (pause, caption, quote) hold for 7s and then push
+ * on to the next slide by themselves; add `hold: 4000` to shorten one. Reels are
+ * never timed — they loop until the visitor moves. The opening title card is not
+ * timed either: it waits rather than scrolling someone who just arrived.
  *
  * Poster JPGs live in /public/showcase; videos are served from R2 (see above).
  */
 export const showcaseSlides: ShowcaseSlide[] = [
+  {
+    id: "intro",
+    kind: "title",
+    text: "Crafting stories that moves"
+  },
   {
     id: "hum",
     src: video("loops/hum.mp4"),
@@ -83,6 +94,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     height: 62
   },
   {
+    id: "pause-02",
+    kind: "pause"
+  },
+  {
     id: "blb",
     src: video("loops/blb.mp4"),
     poster: "/showcase/blb-cover.jpg",
@@ -105,7 +120,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
     height: 74
   },
   {
-    id: "pause-02",
+    id: "pause-03",
     kind: "pause"
   },
   {
@@ -116,6 +131,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     meta: "dir. Nikon Romanchenko, dop. Oleksandr Korotun | Short Film",
     radius: 0,
     width: 88
+  },
+  {
+    id: "pause-04",
+    kind: "pause"
   },
   {
     id: "vertical",
