@@ -23,8 +23,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Video Editor Portfolio",
-  description: "Modern video editor portfolio with keyboard-first navigation"
+  description: "Modern video editor portfolio with keyboard-first navigation",
+  manifest: "/site.webmanifest",
+  appleWebApp: {
+    title: "Oleksandr Korotun",
+  },
+  icons: {
+     icon: [
+       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+       { url: "/favicon.svg", type: "image/svg+xml" },
+     ],
+     shortcut: "/favicon.ico",
+     apple: [
+       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+     ],
+   },
 }
+
 
 export default function RootLayout({
   children

@@ -166,10 +166,10 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     <section
       ref={sectionRef}
       aria-label="Selected work"
-      className={cn("relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen", className)}
+      className={cn("relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen", className)}
       style={{ height: `${count * 100}vh` }}>
       {/* Sticky full-screen stage */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
+      <div className={cn("sticky top-0 h-screen w-full overflow-hidden bg-black", count === 0 && "bg-teal-950")}>
         {/* Stacked slides — crossfade between them */}
         {slides.map((slide, i) => {
           const isActive = i === active
@@ -242,10 +242,10 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
                 className={cn(
                   "block rounded-full transition-all duration-300 ease-out",
                   i === active
-                    ? "h-6 w-[6px] bg-white"
+                    ? "h-6 w-1.5 bg-white"
                     : isVideo(slide)
-                      ? "h-[6px] w-[6px] bg-white/40 group-hover:bg-white/70"
-                      : "h-[2px] w-[6px] bg-white/25 group-hover:bg-white/60"
+                      ? "h-1.5 w-1.5 bg-white/40 group-hover:bg-white/70"
+                      : "h-0.5 w-1.5 bg-white/25 group-hover:bg-white/60"
                 )}
               />
             </button>
@@ -270,7 +270,7 @@ function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide | Ti
   return (
     <>
       {/* Grain first, then the type — both are positioned, so tree order puts the words on top. */}
-      <FilmGrain className={slide.kind === "pause" ? undefined : "opacity-[0.07]"} />
+      <FilmGrain className={slide.kind === "pause" ? undefined : "opacity-[0.2]"} />
       {slide.kind === "pause" ? (
         <CueMark />
       ) : slide.kind === "caption" ? (
@@ -337,10 +337,10 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
   return (
     <>
       <div className="relative max-w-5xl px-8 text-center md:px-16">
-        <StaggeredLine text={slide.text} className="h1 text-balance  text-white" />
+        <StaggeredLine text={slide.text} className="h1 z-50 text-balance  text-white" />
         {slide.sub && (
           <p
-            className="label-s mt-10 uppercase tracking-[0.35em] text-white/10 duration-1000 animate-in fade-in-0 fill-mode-both"
+            className="label-s mt-10 uppercase tracking-[0.35em] text-white/50 duration-1000 animate-in fade-in-0 fill-mode-both"
             style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
             {slide.sub}
           </p>
@@ -349,7 +349,7 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
       <span
         aria-hidden
         className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
-        <span className="label-s uppercase tracking-[0.5em] text-white/50">Scroll</span>
+        <span className="label-s uppercase tracking-[0.5em] text-white/80">Scroll</span>
         <span className="block h-16 w-px origin-top animate-scroll-hint bg-white/50" />
       </span>
     </>

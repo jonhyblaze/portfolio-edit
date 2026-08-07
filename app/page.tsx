@@ -1,4 +1,5 @@
 import Link from "next/link"
+import LightRays from "@/components/LightRays"
 import CommandPaletteHint from "@/components/animations/command-palette-hint"
 import { Arrow } from "@/components/svg/arrow"
 import { IconGlow } from "@/components/gradients/icon-glow"
@@ -11,10 +12,43 @@ import { RiBracesLine, RiExpandDiagonalLine, RiLoopRightLine, RiShapeLine } from
 
 export default function HomePage() {
   return (
-    <div className="relative z-10 -mt-16 max-w-screen-xl pb-24">
+    <div className="relative z-10 -mt-16 max-w-7xl pb-24">
       {/*<Hero className="min-h-screen" />*/}
+      {/* Full-bleed hero layer: the wrapper is centred and max-w-7xl, so break out of it
+                 with left-1/2 + -translate-x-1/2 before spanning the viewport. */}
+      {/*<div className="pointer-events-none absolute top-0 left-1/2 h-dvh w-screen -translate-x-1/2 z-10">
+        <LightRays
+          raysOrigin="top-left"
+          raysColor="#FCAD70"
+          raysSpeed={0.3}
+          lightSpread={1.5}
+          rayLength={1.1}
+          pulsating={false}
+          fadeDistance={3}
+          saturation={5}
+          followMouse
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.0}
+        />
+      </div>
+      <div className="pointer-events-none absolute top-0 left-1/2 h-dvh w-screen -translate-x-1/2 z-10">
+        <LightRays
+          raysOrigin="bottom-right"
+          raysColor="#81C995"
+          raysSpeed={0.5}
+          lightSpread={3.5}
+          rayLength={1.1}
+          pulsating={false}
+          fadeDistance={3}
+          saturation={1}
+          followMouse
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.0}
+        />
+      </div>*/}
       <VideoShowcase slides={showcaseSlides} />
-      <Approach className="max-w-[1240px] mx-auto px-5 sm:px-16 laptop:px-0 mt-24" />
     </div>
   )
 }
@@ -118,8 +152,8 @@ const Approach = ({ className }: { className: string }) => {
               <h5 className="label-l">Pragmatic Iteration</h5>
             </div>
             <p className="text-muted-foreground body-m max-w-2xl hidden lg:block">
-              I’m comfortable refactoring existing codebases — improving them when necessary while avoiding over-engineering. My path
-              is usually:
+              I’m comfortable refactoring existing codebases — improving them when necessary while avoiding over-engineering. My
+              path is usually:
               <span className="text-primary"> Ship the simplest viable path today, and improve later as requirements clarify.</span>
             </p>
             <p className="label-m text-muted-foreground justify-self-end">04</p>
