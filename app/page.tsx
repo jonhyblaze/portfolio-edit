@@ -69,8 +69,8 @@ const Approach = ({ className }: { className: string }) => {
         </article>
       </div>
 
-      <div className="flex flex-col gap-0 -space-y-[1px]">
-        <ul className="grid lg:grid-cols-3 -space-x-[1px]">
+      <div className="flex flex-col gap-0 [&>*+*]:-mt-px">
+        <ul className="grid lg:grid-cols-3 [&>*+*]:-ml-px">
           {[
             {
               icon: RiShapeLine,

@@ -212,7 +212,7 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
         })}
 
         {/* Legibility scrim for the caption */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/10" />
 
         {/* Caption — reels only; the anomalies carry their own type */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-1.5 px-6 pb-14 text-center md:pb-20">
@@ -337,10 +337,10 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
   return (
     <>
       <div className="relative max-w-5xl px-8 text-center md:px-16">
-        <StaggeredLine text={slide.text} className="h1 text-balance leading-[1.05] text-white" />
+        <StaggeredLine text={slide.text} className="h1 text-balance  text-white" />
         {slide.sub && (
           <p
-            className="label-s mt-10 uppercase tracking-[0.35em] text-white/40 duration-1000 animate-in fade-in-0 fill-mode-both"
+            className="label-s mt-10 uppercase tracking-[0.35em] text-white/10 duration-1000 animate-in fade-in-0 fill-mode-both"
             style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
             {slide.sub}
           </p>
@@ -348,9 +348,9 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
       </div>
       <span
         aria-hidden
-        className="absolute inset-x-0 bottom-16 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
-        <span className="label-s uppercase tracking-[0.4em] text-white/30">Scroll</span>
-        <span className="block h-10 w-px origin-top animate-scroll-hint bg-white/40" />
+        className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
+        <span className="label-s uppercase tracking-[0.5em] text-white/50">Scroll</span>
+        <span className="block h-16 w-px origin-top animate-scroll-hint bg-white/50" />
       </span>
     </>
   )
