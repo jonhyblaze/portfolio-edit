@@ -221,56 +221,64 @@
   }
 }
 
-@layer components {
-  .h1 {
-    @apply font-bold leading-none text-[44px] sm:text-6xl md:text-[5rem];
-  }
+/* The type scale. `@utility` rather than a plain class in `@layer components`, so that
+   these take variants — `md:h1`, `lg:body-m` — the way any other utility does. As
+   component-layer classes they were invisible to Tailwind's variant machinery, and a
+   prefixed one silently compiled to nothing.
 
-  .h2 {
-    @apply font-bold leading-normal text-3xl sm:text-4xl md:text-[2.625rem];
-  }
+   The trade: these now live in the utilities layer alongside `text-xl`, `font-normal`
+   and friends, so a scale class no longer loses to every utility sitting next to it by
+   layer order. Where both set the same property the winner is Tailwind's sort order, not
+   source order — worth an eye on elements that pair a scale class with a bare
+   `leading-*` or `text-*`. */
+@utility h1 {
+  @apply font-bold leading-none text-[44px] sm:text-6xl md:text-[5rem];
+}
 
-  .h3 {
-    @apply font-bold leading-normal text-3xl md:text-[2rem];
-  }
+@utility h2 {
+  @apply font-bold leading-normal text-3xl sm:text-4xl md:text-[2.625rem];
+}
 
-  .h4 {
-    @apply font-bold leading-normal text-xl lg:text-2xl;
-  }
+@utility h3 {
+  @apply font-bold leading-normal text-3xl md:text-[2rem];
+}
 
-  .h5 {
-    @apply font-bold leading-normal text-[18px] lg:text-xl;
-  }
+@utility h4 {
+  @apply font-bold leading-normal text-xl lg:text-2xl;
+}
 
-  .subtitle {
-    @apply text-xl md:text-2xl font-light leading-normal;
-  }
+@utility h5 {
+  @apply font-bold leading-normal text-[18px] lg:text-xl;
+}
 
-  .body-l {
-    @apply text-lg font-light leading-normal;
-  }
+@utility subtitle {
+  @apply text-xl md:text-2xl font-light leading-normal;
+}
 
-  .body-m {
-    @apply text-[1rem] font-light leading-normal;
-  }
+@utility body-l {
+  @apply text-lg font-light leading-normal;
+}
 
-  .body-s {
-    @apply text-sm font-light leading-normal;
-  }
+@utility body-m {
+  @apply text-md font-light leading-normal;
+}
 
-  .button {
-    @apply text-sm font-mono leading-normal tracking-wider uppercase;
-  }
+@utility body-s {
+  @apply text-sm font-light leading-normal;
+}
 
-  .label-l {
-    @apply text-lg font-mono leading-normal;
-  }
+@utility button {
+  @apply text-sm font-mono leading-normal tracking-wider uppercase;
+}
 
-  .label-m {
-    @apply text-sm font-mono leading-normal;
-  }
+@utility label-l {
+  @apply text-lg font-mono leading-normal;
+}
 
-  .label-s {
-    @apply text-xs font-mono leading-normal;
-  }
+@utility label-m {
+  @apply text-sm font-mono leading-normal;
+}
+
+@utility label-s {
+  @apply text-xs font-mono leading-normal;
 }

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { SoundToggle } from "@/components/sound/sound-toggle"
 import { useSound } from "@/components/sound/sound-provider"
+import { FilmGrain } from "@/components/film-grain"
 import { cn } from "@/lib/utils"
 
 type SlideBase = {
@@ -371,19 +372,5 @@ function QuoteCard({ slide }: { slide: QuoteSlide }) {
         </p>
       )}
     </div>
-  )
-}
-
-/** Drifting fractal noise — the texture stock has and digital doesn't. */
-const GRAIN_SVG =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"
-
-function FilmGrain({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn("pointer-events-none absolute -inset-1/4 animate-grain opacity-[0.2] mix-blend-screen", className)}
-      style={{ backgroundImage: `url("${GRAIN_SVG}")` }}
-    />
   )
 }

@@ -130,7 +130,6 @@ export const showcaseSlides: ShowcaseSlide[] = [
     poster: "/showcase/leopolis-cover.jpg",
     label: "Leopolis Night",
     meta: "dir. Nikon Romanchenko, dop. Oleksandr Korotun | Short Film",
-    radius: 0,
     width: 88
   },
   {

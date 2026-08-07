@@ -1,8 +1,9 @@
 export const routes = {
   homepage: "/",
   about: "/about",
+  projects: "/projects",
   contact: "/contact",
-  academy: "/case-studies/noism-academy",
-  hairculture: "/case-studies/noism-hairculture",
-  forecastStorm: "/case-studies/forecast-storm"
+  papr: "/projects/papr",
+  icehole: "/projects/icehole",
+  leopolis: "/projects/leopolis"
 }
