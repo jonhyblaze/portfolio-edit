@@ -8,32 +8,35 @@ import { Button } from "@/components/ui/button"
 import { IconGlow } from "@/components/gradients/icon-glow"
 import { Imdb } from "@/components/svg/imdb"
 import {
-  RiLinkedinBoxFill,
-  RiGithubFill,
   RiMailCheckLine,
   RiMailCloseLine,
-  RiInstagramFill
+  RiInstagramFill,
+  RiTelegram2Fill
 } from "@remixicon/react"
 import { useForm } from "@/components/form/useForm"
 import profile from "@/data/profile"
 import { FilmGrain } from "@/components/film-grain"
+import { cn } from "@/lib/utils"
 
 const socialLinks = [
   {
     name: "Instagram",
     icon: RiInstagramFill,
-    url: profile.instagram
+    url: profile.instagram,
+    glow: "bg-orange-500",
   },
   {
     name: "Imdb",
     icon: Imdb,
-    url: profile.imdb
+    url: profile.imdb,
+    glow: "bg-yellow-400",
   },
   {
-    name: "LinkedIn",
-    icon: RiLinkedinBoxFill,
-    url: profile.linkedIn
-  }
+    name: "Telegram",
+    icon: RiTelegram2Fill,
+    url: profile.telegram,
+    glow: "bg-sky-500",
+  },
 ]
 
 export default function ContactPage() {
@@ -139,7 +142,7 @@ export default function ContactPage() {
 
   return (
     <section className="py-8 md:py-20">
-      <div className="mx-auto max-w-[1240px] px-6 sm:px-16 lg:px-24">{formViews[status]}</div>
+      <div className="mx-auto max-w-7xl px-6 sm:px-16 lg:px-24">{formViews[status]}</div>
     </section>
   )
 }
@@ -171,7 +174,7 @@ const FormBaseView = ({
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
                     <link.icon />
                   </a>
-                  <IconGlow glowColor="bg-sky-500/100" className="blur-[8px] size-4 left-1 top-1" />
+                  <IconGlow glowColor={link.glow} className={cn("blur-xs size-4 left-1 top-1", link.name === "Telegram" && "size-2 blur-[2px] left-2 top-2")} />
                 </figure>
               </li>
             ))}

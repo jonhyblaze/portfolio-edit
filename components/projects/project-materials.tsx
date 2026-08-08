@@ -6,13 +6,14 @@ import { cn } from "@/lib/utils"
 import { GUTTER, LABEL } from "./shared"
 import { ProjectCredits } from "./project-credits"
 import { ProjectFilm } from "./project-film"
+import { ProjectGrades } from "./project-grades"
 import { ProjectNotes } from "./project-notes"
 import { ProjectStills } from "./project-stills"
 import { ProjectStoryboard } from "./project-storyboard"
 import { ProjectTechnical } from "./project-technical"
 import { ProjectVersions } from "./project-versions"
 
-type MaterialKey = "film" | "stills" | "storyboard" | "versions" | "technical" | "credits" | "notes"
+type MaterialKey = "film" | "stills" | "storyboard" | "grade" | "versions" | "technical" | "credits" | "notes"
 
 type Material = {
   key: MaterialKey
@@ -37,12 +38,13 @@ type ProjectMaterialsProps = {
  * paused, because it is the thing all of this is about.
  */
 export function ProjectMaterials({ project, activeVersionId, onSelectVersion, onSeek }: ProjectMaterialsProps) {
-  const { stills, storyboard, versions, notes } = project.materials ?? {}
+  const { stills, storyboard, grades, versions, notes } = project.materials ?? {}
 
   const available: (Material | null)[] = [
     { key: "film", label: "Film" },
     stills?.length ? { key: "stills", label: "Stills", count: stills.length } : null,
     storyboard?.length ? { key: "storyboard", label: "Storyboard", count: storyboard.length } : null,
+    grades?.length ? { key: "grade", label: "Grade", count: grades.length } : null,
     versions?.length ? { key: "versions", label: "Versions", count: versions.length } : null,
     project.technical?.length ? { key: "technical", label: "Technical" } : null,
     project.credits ? { key: "credits", label: "Credits" } : null,
@@ -134,6 +136,7 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
         {active === "film" && <ProjectFilm project={project} />}
         {active === "stills" && stills && <ProjectStills stills={stills} onSeek={onSeek} />}
         {active === "storyboard" && storyboard && <ProjectStoryboard boards={storyboard} onSeek={onSeek} />}
+        {active === "grade" && grades && <ProjectGrades grades={grades} onSeek={onSeek} />}
         {active === "versions" && versions && (
           <ProjectVersions versions={versions} activeId={activeVersionId} onSelect={onSelectVersion} />
         )}

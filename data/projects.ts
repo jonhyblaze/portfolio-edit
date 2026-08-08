@@ -75,6 +75,26 @@ export type ProjectVersion = {
   treatment?: "monochrome"
 }
 
+/**
+ * One shot in two states, for the grade comparison.
+ *
+ * `before` is the ungraded plate and `after` the delivered grade — both plain
+ * image paths, identically framed, so dropping the real pair in is a path swap
+ * and nothing else. `simulated` marks a shot whose ungraded plate we don't hold
+ * yet: the panel stands one in by desaturating the graded frame, and says so.
+ * Delete the flag when the real plate lands.
+ */
+export type ProjectGrade = {
+  /** Shot notation, e.g. "SH 07". */
+  shot: string
+  before: string
+  after: string
+  alt: string
+  note?: string
+  time?: number
+  simulated?: boolean
+}
+
 /** A line from the edit log. With a `time` it doubles as a cue. */
 export type ProjectNote = {
   time?: number
@@ -106,6 +126,7 @@ export type ProjectCredits = {
 export type ProjectMaterials = {
   stills?: ProjectStill[]
   storyboard?: ProjectBoard[]
+  grades?: ProjectGrade[]
   versions?: ProjectVersion[]
   notes?: ProjectNote[]
 }
@@ -512,6 +533,116 @@ export const projects: Project[] = [
         { role: "Sound", name: "Taras Hnatiuk" },
         { role: "Colour", name: "Ihor Bondarenko" },
         { role: "Producer", name: "CUC" }
+      ]
+    }
+  },
+  {
+    slug: "212-heroes",
+    title: "212 HEROES",
+    year: 2023,
+    type: "Commercial",
+    runtime: "1 min",
+    director: "Oleksandr Korotun",
+    frames: frames("212", "212 Heroes"),
+    logline: "Kyiv from the last light to the first streetlamp, at skateboard height.",
+    synopsis:
+      "Shot across one city over several evenings and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four locations, which is why the plates are kept here shot by shot.",
+    video: {
+      src: master("loops/212.mp4"),
+      poster: "/showcase/212-cover.jpg",
+      duration: 45,
+      aspectRatio: "4:3"
+    },
+    markers: [
+      { time: 3, label: "Cold open" },
+      { time: 15, label: "Descent" },
+      { time: 27, label: "Speed" },
+      { time: 38, label: "Night" }
+    ],
+    materials: {
+      stills: stills("212", "212 Heroes", [3, 15, 27, 42]),
+      // Six shots, one per lighting state the film passes through. `before` and
+      // `after` point at the same frame for now and carry `simulated`; when the
+      // ungraded plates are pulled, replace `before` and delete the flag.
+      grades: [
+        {
+          shot: "SH 02",
+          before: "/projects/grades/212-01.jpg",
+          after: "/projects/grades/212-01.jpg",
+          alt: "212 Heroes — shot 02, street in daylight",
+          note: "Open-shade daylight. The grade warms the road and leaves the shirt where it is.",
+          time: 6,
+          simulated: true
+        },
+        {
+          shot: "SH 07",
+          before: "/projects/grades/212-02.jpg",
+          after: "/projects/grades/212-02.jpg",
+          alt: "212 Heroes — shot 07, low angle against a concrete facade",
+          note: "Concrete wants to go green. Held neutral so the jacket stays the only blue in frame.",
+          time: 12,
+          simulated: true
+        },
+        {
+          shot: "SH 11",
+          before: "/projects/grades/212-03.jpg",
+          after: "/projects/grades/212-03.jpg",
+          alt: "212 Heroes — shot 11, aerial of the road",
+          note: "Pushed cyan. The one shot in the film allowed to be cold.",
+          time: 15,
+          simulated: true
+        },
+        {
+          shot: "SH 14",
+          before: "/projects/grades/212-04.jpg",
+          after: "/projects/grades/212-04.jpg",
+          alt: "212 Heroes — shot 14, traffic light",
+          note: "The green is a practical, not a grade. Everything around it came down to let it read.",
+          time: 21,
+          simulated: true
+        },
+        {
+          shot: "SH 19",
+          before: "/projects/grades/212-05.jpg",
+          after: "/projects/grades/212-05.jpg",
+          alt: "212 Heroes — shot 19, motion blur at dusk",
+          note: "Magenta dusk, carried into the blur rather than corrected out of it.",
+          time: 27,
+          simulated: true
+        },
+        {
+          shot: "SH 26",
+          before: "/projects/grades/212-06.jpg",
+          after: "/projects/grades/212-06.jpg",
+          alt: "212 Heroes — shot 26, sodium-lit street at night",
+          note: "Sodium left as sodium. Every attempt at white balance made it look like an office.",
+          time: 36,
+          simulated: true
+        }
+      ],
+      notes: [
+        { time: 15, text: "The descent is the hinge. Before it the film is a place; after it, it is a route." },
+        { text: "Cut to the light, not to the music. The track was laid in last." }
+      ]
+    },
+    technical: [
+      { label: "Camera", value: "ARRI Alexa Mini LF" },
+      { label: "Lenses", value: "Cooke Anamorphic/i" },
+      { label: "Format", value: "ARRIRAW 4.5K" },
+      { label: "Aspect Ratio", value: "1.33:1" },
+      { label: "Colour", value: "ACEScct" },
+      { label: "Grade", value: "DaVinci Resolve Studio" },
+      { label: "Editing System", value: "Adobe Premiere Pro" },
+      { label: "Delivery", value: "ProRes 4444 · H.264 social cuts" }
+    ],
+    credits: {
+      crew: [
+        { role: "Director", name: "Oleksandr Korotun" },
+        { role: "Director of Photography", name: "Oleksandr Korotun" },
+        { role: "Editor", name: "Oleksandr Korotun" },
+        { role: "Colourist", name: "Ihor Bondarenko" },
+        { role: "Sound", name: "Yuliia Mazur" },
+        { role: "Client", name: "Carolina Herrera" }
       ]
     }
   }

@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation"
 const HomePageGradient = () => {
   const pathname = usePathname()
 
-  const deactivatedRoutes =  (["/projects", "/", "/about"])
+  const deactivatedRoutes =  (["/projects", "/about"])
 
   if (deactivatedRoutes.some(route => pathname.startsWith(route))) {
       return null
   }
+
+  if (pathname === "/") return null
 
 
   if (pathname === "/contact") {
