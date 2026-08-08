@@ -55,8 +55,11 @@ export default function RootLayout({
             <HomePageGradient />
             <Header />
             <CommandPalette />
-            {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16 */}
-            <main className="grid place-items-center min-h-screen pt-16">{children}</main>
+            {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16.
+                The column is pinned to minmax(0,1fr) because a bare `auto` track sizes itself to
+                the widest thing inside it — one horizontally scrollable child and the whole page
+                grows past the viewport. Centring is unaffected. */}
+            <main className="grid grid-cols-[minmax(0,1fr)] place-items-center min-h-screen pt-16">{children}</main>
             <Footer />
           </SoundProvider>
         </ThemeProvider>

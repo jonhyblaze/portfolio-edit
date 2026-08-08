@@ -16,6 +16,7 @@ import {
 } from "@remixicon/react"
 import { useForm } from "@/components/form/useForm"
 import profile from "@/data/profile"
+import { FilmGrain } from "@/components/film-grain"
 
 const socialLinks = [
   {
@@ -105,7 +106,7 @@ export default function ContactPage() {
           <div>
             <RiMailCloseLine size={64} className="mb-4" />
             <h3 className="h4 text mb-2">Something went wrong</h3>
-            <p className="body-m text-foreground/70">I wasn't able to receive your inquiry just yet. Please try sending it again—I’d love to hear from you.</p>
+            <p className="body-m text-foreground/70">I wasnt able to receive your inquiry just yet. Please try sending it again—I’d love to hear from you.</p>
           </div>
 
           <Button
@@ -152,6 +153,7 @@ const FormBaseView = ({
 }) => {
   return (
     <div className="flex flex-col gap-8 md:flex-row lg:gap-20 xl:gap-32">
+      <FilmGrain />
       <aside className="md:w-1/2 lg:w-1/3 flex flex-col justify-between gap-6 lg:gap-10">
         <div>
           <h2 className="h2 pb-4 lg:pb-10">Get in touch</h2>
