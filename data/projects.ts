@@ -46,7 +46,7 @@ export const projects: Project[] = [
     type: "Short Music Film",
     runtime: "4 min",
     director: "Oleksandr Korotun",
-    frames: frames("a-quiet-morning", "A Quiet Morning")
+    frames: frames("hum", "Hum")
   },
   {
     slug: "blind-as-a-bat",
@@ -55,16 +55,16 @@ export const projects: Project[] = [
     type: "Music Video",
     runtime: "5 min",
     director: "Oleksandr Korotun",
-    frames: frames("northern-interior", "Northern Interior")
+    frames: frames("blind-as-a-bat", "Blind As A Bat")
   },
   {
     slug: "icehole",
     title: "ICEHOLE",
-    year: 2025,
+    year: 2026,
     type: "Short Film",
     runtime: "14 min",
     director: "Anastasia Grüba",
-    frames: frames("salt-line", "Salt Line")
+    frames: frames("icehole", "Icehole")
   },
   {
     slug: "leopolis-night",
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     type: "Short Film",
     runtime: "20 min",
     director: "Nikon Rōmanchenko",
-    frames: frames("the-long-field", "The Long Field")
+    frames: frames("leopolis", "Leopolis Night")
   },
   {
     slug: "papr",
@@ -82,6 +82,6 @@ export const projects: Project[] = [
     type: "Short Film",
     runtime: "21 min",
     director: "Lilia Ostapovyčh",
-    frames: frames("rooms-facing-north", "Rooms Facing North")
+    frames: frames("papr", "Paperushka")
   }
 ]

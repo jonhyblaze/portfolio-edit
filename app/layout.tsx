@@ -28,6 +28,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Oleksandr Korotun",
   },
+
   icons: {
      icon: [
        { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },

@@ -36,7 +36,7 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
         aria-label={`${title}, ${year}, ${type}, ${runtime}, directed by ${director}`}
         className={cn(
           "block",
-          "focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-foreground/40"
+          "focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-foreground/10"
         )}>
         <div className="relative">
           {/* The light under the table, switched on beneath the strip being pointed at. */}
@@ -51,7 +51,7 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
             )}
           />
 
-          <ProjectMetadata project={project} isActive={isActive} />
+          <ProjectMetadata project={project} isActive={isActive} isDimmed={isDimmed} />
 
           {/* Small screens keep the strip and scroll it sideways rather than collapsing into
               cards — a frame and a bit stays in view, which is what says "there is more film
@@ -73,7 +73,7 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
                   "aspect-video w-[72%] shrink-0 snap-start object-cover sm:w-full",
                   "transition duration-700 ease-out motion-reduce:transition-none",
                   isActive && "brightness-100",
-                  isDimmed && "brightness-50",
+                  isDimmed && "brightness-30",
                   !isActive && !isDimmed && "brightness-[0.8]"
                 )}
               />

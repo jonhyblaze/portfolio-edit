@@ -4,15 +4,12 @@ import { usePathname } from "next/navigation"
 const HomePageGradient = () => {
   const pathname = usePathname()
 
-  if (pathname === "/") {
+  const deactivatedRoutes = new Set (["/projects", "/", "/about"])
+
+  if (deactivatedRoutes.has(pathname)) {
     return null
   }
 
-  // The light table supplies its own light. Anything washing over it from the
-  // page background works against the dark-archive reading.
-  if (pathname.startsWith("/projects")) {
-    return null
-  }
 
   if (pathname === "/contact") {
     return (

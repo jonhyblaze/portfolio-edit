@@ -1,6 +1,6 @@
-import { createRequire } from 'node:module'
-import next from 'eslint-config-next/core-web-vitals'
-import nextTypescript from 'eslint-config-next/typescript'
+import { createRequire } from "node:module"
+import next from "eslint-config-next/core-web-vitals"
+import nextTypescript from "eslint-config-next/typescript"
 
 const require = createRequire(import.meta.url)
 
@@ -14,12 +14,18 @@ const config = [
     // it throws before linting a single file. Passing the version explicitly
     // skips detection entirely. Read from the installed package so a React
     // upgrade can't silently leave this stale.
-    settings: { react: { version: require('react/package.json').version } },
+    settings: { react: { version: require("react/package.json").version } }
   },
   {
     // Vendored from the react-bits registry — not ours to lint.
-    ignores: ['components/SplashCursor.jsx'],
+    ignores: ["components/SplashCursor.jsx"]
   },
+  {
+    // Your custom overrides go here
+    rules: {
+      "@next/next/no-img-element": "off"
+    }
+  }
 ]
 
 export default config

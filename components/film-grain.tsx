@@ -7,14 +7,16 @@ const GRAIN_SVG =
 /**
  * Sits over whatever it is placed on. The tile is oversized (-inset-1/4) because
  * `animate-grain` shifts it a few percent in every direction — at inset-0 the
- * edges would swim into view.
+ * edges would swim into view. The overhang is clipped by the inset-0 wrapper so
+ * it never spills out and stretches the page's scroll area.
  */
 export function FilmGrain({ className }: { className?: string }) {
   return (
-    <div
-      aria-hidden
-      className={cn("pointer-events-none absolute -inset-1/4 animate-grain opacity-[0.2] mix-blend-screen", className)}
-      style={{ backgroundImage: `url("${GRAIN_SVG}")` }}
-    />
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className={cn("absolute -inset-1/4 animate-grain opacity-[0.2] mix-blend-screen", className)}
+        style={{ backgroundImage: `url("${GRAIN_SVG}")` }}
+      />
+    </div>
   )
 }
