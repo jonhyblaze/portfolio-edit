@@ -68,7 +68,7 @@ export default function ContactPage() {
         />
         <Button
           type="submit"
-          className="my-10 w-full button rounded hover:bg-foreground/80 transition-colors duration-300">
+          className="mt-10 w-full button rounded hover:bg-foreground/80 transition-colors duration-300">
           Send Message
         </Button>
       </FormBaseView>
@@ -94,7 +94,7 @@ export default function ContactPage() {
         <Button
           type="button"
           disabled
-          className="my-10 w-full button rounded animate-pulse dark:disabled:bg-foreground/20 dark:disabled:text-foreground">
+          className="mt-10 w-full button rounded animate-pulse dark:disabled:bg-foreground/20 dark:disabled:text-foreground">
           Processing...
         </Button>
       </FormBaseView>

@@ -4,14 +4,12 @@ import { usePathname } from "next/navigation"
 const HomePageGradient = () => {
   const pathname = usePathname()
 
-  if (pathname === "/") {
-    return (
-      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-        {/*<HeroTopGradient />*/}
-        <HeroBottomGradient />
-      </div>
-    )
+  const deactivatedRoutes = new Set (["/projects", "/", "/about"])
+
+  if (deactivatedRoutes.has(pathname)) {
+    return null
   }
+
 
   if (pathname === "/contact") {
     return (
@@ -55,8 +53,8 @@ const HeroTopGradient = () => (
     <div className="absolute w-full h-[95dvh] opacity-10 lg:opacity-5 transform-gpu">
       <div
         className="absolute inset-0 bg-sky-950 blur-[200px] dark:bg-sky-500 will-change-transform
-          saturate-[90%]
-           [@supports(-moz-appearance:none)]:dark:bg-sky-50/100
+          saturate-90
+           [@supports(-moz-appearance:none)]:dark:bg-sky-50
           "
         style={{ WebkitBackfaceVisibility: "hidden" }}
       />

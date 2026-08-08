@@ -44,7 +44,8 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "intro",
     kind: "title",
-    text: "Crafting stories that moves"
+    text: "Crafting moving stories",
+    sub: ""
   },
   {
     id: "hum",
@@ -129,7 +130,6 @@ export const showcaseSlides: ShowcaseSlide[] = [
     poster: "/showcase/leopolis-cover.jpg",
     label: "Leopolis Night",
     meta: "dir. Nikon Romanchenko, dop. Oleksandr Korotun | Short Film",
-    radius: 0,
     width: 88
   },
   {
@@ -139,7 +139,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "vertical",
     src: video("loops/pushing.mp4"),
-    poster: "/showcase/vertical.jpg",
+    poster: "/showcase/pushing-cover.jpg",
     label: "Pushing Saves",
     meta: "Commercials & Social Media | Vertical Cut",
     width: 34 // pillarbox — bars left & right

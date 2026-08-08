@@ -19,8 +19,8 @@ import {
   RiBookLine,
   RiBookMarkedLine,
   RiFileUserLine,
-  RiGithubLine,
   RiHomeLine,
+  RiInstagramLine,
   RiLinkedinBoxLine,
   RiMailLine,
   RiUserLine,
@@ -76,47 +76,25 @@ export function CommandPalette() {
         <CommandGroup heading="Projects">
           <CommandItem
             keywords={[
-              "graphql",
-              "video",
-              "courses",
-              "platform",
-              "lms",
-              "dashboard",
-              "next",
-              "next.js",
-              "api",
               "project",
               "projects",
-              "stripe",
-              "hygraph",
-              "clerk",
-              "auth",
-              "typography",
-              "design",
-              "tailwind css",
-              ...profile.projects.academy.stack
+              ...profile.projects.papr.keywords
             ]}
-            onSelect={() => runCommand(() => router.push(routes.academy))}
+            onSelect={() => runCommand(() => router.push(routes.papr))}
             className="cursor-pointer">
             <RiBookMarkedLine />
-            <span>NOISM Academy</span>
+            <span>Paperushka</span>
           </CommandItem>
           <CommandItem
             keywords={[
-              "next.js",
-              "next",
-              "firebase",
-              "tailwind css",
               "project",
               "projects",
-              "typography",
-              "design",
-              ...profile.projects.hairculture.stack
+              ...profile.projects.icehole.keywords
             ]}
-            onSelect={() => runCommand(() => router.push(routes.hairculture))}
+            onSelect={() => runCommand(() => router.push(routes.icehole))}
             className="cursor-pointer">
             <RiBookMarkedLine />
-            <span>NOISM Hairculture</span>
+            <span>My Icehole</span>
           </CommandItem>
           <CommandItem
             keywords={[
@@ -130,12 +108,12 @@ export function CommandPalette() {
               "projects",
               "tailwind css",
               "react",
-              ...profile.projects.forecast.stack
+              ...profile.projects.leopolis.keywords
             ]}
-            onSelect={() => runCommand(() => router.push(routes.forecastStorm))}
+            onSelect={() => runCommand(() => router.push(routes.leopolis))}
             className="cursor-pointer">
             <RiBookLine />
-            <span>Forecast Storm</span>
+            <span>Leopolis Night</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
@@ -145,9 +123,9 @@ export function CommandPalette() {
             <RiFileUserLine />
             <span>CV Open</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => window.open(profile.github, "_blank"))} className="cursor-pointer">
-            <RiGithubLine />
-            <span>GitHub</span>
+          <CommandItem onSelect={() => runCommand(() => window.open(profile.instagram, "_blank"))} className="cursor-pointer">
+            <RiInstagramLine />
+            <span>Instagram</span>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => window.open(profile.linkedIn, "_blank"))} className="cursor-pointer">
             <RiLinkedinBoxLine />
@@ -164,7 +142,7 @@ export function CommandPalette() {
             onSelect={toggleSound}
             className="cursor-pointer">
             {soundEnabled ? <RiVolumeUpLine /> : <RiVolumeMuteLine />}
-            <span>{soundEnabled ? "Disable sound" : "Enable sound"}</span>
+            <span>{soundEnabled ? "Disable Sound" : "Enable Sound"}</span>
             <CommandShortcut>{soundEnabled ? "On" : "Off"}</CommandShortcut>
           </CommandItem>
         </CommandGroup>
