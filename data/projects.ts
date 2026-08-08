@@ -95,6 +95,26 @@ export type ProjectGrade = {
   simulated?: boolean
 }
 
+/**
+ * One colour off the film. `name` is what it is in the picture — a coat, a
+ * streetlamp, the sky — rather than a colour-theory term.
+ */
+export type ProjectSwatch = {
+  /** "#rrggbb". */
+  hex: string
+  name?: string
+}
+
+/**
+ * The film's palette: the colours the grade keeps coming back to, not a sample
+ * of any one frame. One per project, and the panel lays out whatever length it
+ * is given — nine reads as a 3×3, sixteen as a 4×4, and so on.
+ */
+export type ProjectPalette = {
+  swatches: ProjectSwatch[]
+  note?: string
+}
+
 /** A line from the edit log. With a `time` it doubles as a cue. */
 export type ProjectNote = {
   time?: number
@@ -127,6 +147,7 @@ export type ProjectMaterials = {
   stills?: ProjectStill[]
   storyboard?: ProjectBoard[]
   grades?: ProjectGrade[]
+  palette?: ProjectPalette
   versions?: ProjectVersion[]
   notes?: ProjectNote[]
 }
@@ -175,6 +196,20 @@ const frames = (prefix: string, title: string): ProjectFrame[] =>
 const stills = (prefix: string, title: string, times: (number | undefined)[] = []): ProjectStill[] =>
   frames(prefix, title).map((frame, index) => ({ ...frame, time: times[index] }))
 
+/**
+ * Swatches written as [hex, name] pairs, which keeps a nine-colour palette to
+ * nine lines. Order is the author's — the panel lays them out exactly as given,
+ * so a delivered palette can arrange itself however it wants to be read.
+ *
+ * These were sampled off each project's own strip frames (median cut, then the
+ * nine most separated) and named for what they are in the picture. Real palettes
+ * replace them wholesale.
+ */
+const palette = (note: string, entries: [string, string][]): ProjectPalette => ({
+  note,
+  swatches: entries.map(([hex, name]) => ({ hex, name }))
+})
+
 export const projects: Project[] = [
   {
     slug: "hum",
@@ -201,7 +236,18 @@ export const projects: Project[] = [
       { time: 41, label: "Reprise" }
     ],
     materials: {
-      stills: stills("hum", "Hum", [3, 14, undefined, 41])
+      stills: stills("hum", "Hum", [3, 14, undefined, 41]),
+      palette: palette("Wet green and skin, under an overcast sky that never quite opens. Nothing in the film is allowed to be warm except the people.", [
+        ["#07080c", "Black"],
+        ["#222d18", "Deep grass"],
+        ["#364c2e", "Grass"],
+        ["#705b50", "Skin"],
+        ["#506758", "Moss"],
+        ["#717973", "Overcast"],
+        ["#7f9394", "Haze"],
+        ["#a8bdb7", "Sage"],
+        ["#cee3e5", "Sky"]
+      ])
     },
     technical: [
       { label: "Camera", value: "ARRI Alexa Mini" },
@@ -252,6 +298,17 @@ export const projects: Project[] = [
     ],
     materials: {
       stills: stills("212", "212 Heroes", [3, 15, 27, 42]),
+      palette: palette("The film runs the light down: concrete daylight, an indigo hour, then sodium. The lilac is the only colour that belongs to none of the three, which is why the dusk shots carry it.", [
+        ["#0a1313", "Asphalt"],
+        ["#20145d", "Indigo"],
+        ["#453d81", "Dusk"],
+        ["#564515", "Sodium"],
+        ["#637099", "Steel"],
+        ["#a388c4", "Lilac"],
+        ["#999896", "Concrete"],
+        ["#b6b7a9", "Daylight"],
+        ["#e0ded8", "Highlight"]
+      ]),
       // Six shots, one per lighting state the film passes through. `before` and
       // `after` point at the same frame for now and carry `simulated`; when the
       // ungraded plates are pulled, replace `before` and delete the flag.
@@ -361,6 +418,17 @@ export const projects: Project[] = [
       { time: 47, label: "Fade" }
     ],
     materials: {
+      palette: palette("A cold coast in winter. One teal carries the sea and the sky both, and the bark is the only warm thing in the film.", [
+        ["#070c0e", "Black"],
+        ["#1e252a", "Shadow"],
+        ["#374147", "Slate"],
+        ["#1e5265", "Sea"],
+        ["#3d5e6e", "Teal"],
+        ["#5b5959", "Bark"],
+        ["#67747d", "Overcast"],
+        ["#969ba1", "Sand"],
+        ["#b3bfc3", "Sky"]
+      ]),
       storyboard: [
         {
           shot: "SH 01A",
@@ -435,6 +503,17 @@ export const projects: Project[] = [
       { time: 44, label: "Final sequence" }
     ],
     materials: {
+      palette: palette("Eight greys and one coat. The whole grade is arranged so that the yellow is the only thing in the film you can find at a distance.", [
+        ["#1c2225", "Water"],
+        ["#363c3d", "Ice shadow"],
+        ["#4d5451", "Treeline"],
+        ["#7f6e57", "Coat"],
+        ["#67767a", "Slush"],
+        ["#7f8d90", "Cold grey"],
+        ["#a8b7bf", "Ice"],
+        ["#c7ced1", "Snow"],
+        ["#e3e6e5", "Whiteout"]
+      ]),
       // The trailer points at a different loop so switching versions is visibly a
       // switch. Black & White is the same master under a display treatment until
       // a graded one exists.
@@ -524,6 +603,17 @@ export const projects: Project[] = [
     ],
     materials: {
       stills: stills("leopolis", "Leopolis Night", [4, 16, 29, 41]),
+      palette: palette("No hue survived the grade. What is left is a ladder of stone and lamplight, and the film asks you to read it as tone rather than colour.", [
+        ["#0b0b0b", "Black"],
+        ["#343333", "Shadow"],
+        ["#565552", "Stone"],
+        ["#6c6a67", "Pavement"],
+        ["#82817e", "Midtone"],
+        ["#b0afac", "Skin"],
+        ["#cecdcb", "Lamplight"],
+        ["#e4e3e2", "Highlight"],
+        ["#fdfcfb", "Practical"]
+      ]),
       storyboard: [
         {
           shot: "SH 02",
@@ -589,6 +679,17 @@ export const projects: Project[] = [
       { time: 78, label: "Final sequence" }
     ],
     materials: {
+      palette: palette("Blue hour held past the point where it was still there, and pushed further in the grade. The pine is the only green the film keeps.", [
+        ["#0d1318", "Black"],
+        ["#102138", "Night"],
+        ["#103160", "Deep blue"],
+        ["#123c45", "Petrol"],
+        ["#183e30", "Pine"],
+        ["#1a4b56", "Teal"],
+        ["#1a5482", "Blue hour"],
+        ["#256c8c", "Water"],
+        ["#30869f", "Sky"]
+      ]),
       versions: [
         {
           id: "final",

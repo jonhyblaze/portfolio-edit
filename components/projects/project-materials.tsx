@@ -8,12 +8,13 @@ import { ProjectCredits } from "./project-credits"
 import { ProjectFilm } from "./project-film"
 import { ProjectGrades } from "./project-grades"
 import { ProjectNotes } from "./project-notes"
+import { ProjectPaletteBlock } from "./project-palette"
 import { ProjectStills } from "./project-stills"
 import { ProjectStoryboard } from "./project-storyboard"
 import { ProjectTechnical } from "./project-technical"
 import { ProjectVersions } from "./project-versions"
 
-type MaterialKey = "film" | "stills" | "storyboard" | "grade" | "versions" | "technical" | "credits" | "notes"
+type MaterialKey = "film" | "stills" | "storyboard" | "grade" | "palette" | "versions" | "technical" | "credits" | "notes"
 
 type Material = {
   key: MaterialKey
@@ -38,13 +39,14 @@ type ProjectMaterialsProps = {
  * paused, because it is the thing all of this is about.
  */
 export function ProjectMaterials({ project, activeVersionId, onSelectVersion, onSeek }: ProjectMaterialsProps) {
-  const { stills, storyboard, grades, versions, notes } = project.materials ?? {}
+  const { stills, storyboard, grades, palette, versions, notes } = project.materials ?? {}
 
   const available: (Material | null)[] = [
     { key: "film", label: "Film" },
     stills?.length ? { key: "stills", label: "Stills", count: stills.length } : null,
     storyboard?.length ? { key: "storyboard", label: "Storyboard", count: storyboard.length } : null,
     grades?.length ? { key: "grade", label: "Grade", count: grades.length } : null,
+    palette?.swatches.length ? { key: "palette", label: "Palette", count: palette.swatches.length } : null,
     versions?.length ? { key: "versions", label: "Versions", count: versions.length } : null,
     project.technical?.length ? { key: "technical", label: "Technical" } : null,
     project.credits ? { key: "credits", label: "Credits" } : null,
@@ -81,7 +83,7 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
         role="tablist"
         aria-label="Project materials"
         className={cn(
-          "-mx-5 flex gap-7 overflow-x-auto overscroll-x-contain border-b border-border px-5 sm:mx-0 sm:gap-9 sm:px-0"
+          "-mx-5 flex gap-7 overflow-x-auto overscroll-x-contain border-b border-border px-5 sm:mx-0 sm:gap-9 sm:px-0 md:overflow-y-clip"
         )}>
         {materials.map((material, index) => {
           const isActive = material.key === active
@@ -132,11 +134,12 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
         id={`material-panel-${active}`}
         aria-labelledby={`material-tab-${active}`}
         tabIndex={0}
-        className="min-h-[20rem] pt-10 duration-500 animate-in fade-in-0 focus-visible:outline-none md:pt-12">
+        className="min-h-80 pt-10 duration-500 animate-in fade-in-0 focus-visible:outline-none md:pt-12">
         {active === "film" && <ProjectFilm project={project} />}
         {active === "stills" && stills && <ProjectStills stills={stills} onSeek={onSeek} />}
         {active === "storyboard" && storyboard && <ProjectStoryboard boards={storyboard} onSeek={onSeek} />}
         {active === "grade" && grades && <ProjectGrades grades={grades} onSeek={onSeek} />}
+        {active === "palette" && palette && <ProjectPaletteBlock palette={palette} />}
         {active === "versions" && versions && (
           <ProjectVersions versions={versions} activeId={activeVersionId} onSelect={onSelectVersion} />
         )}
