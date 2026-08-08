@@ -22,7 +22,7 @@ export function ProjectMetadata({ project, isActive, isDimmed }: { project: Proj
           "mx-auto flex flex-col gap-1 px-5 laptop:px-10",
           "md:flex-row md:items-baseline md:justify-between md:gap-10"
         )}>
-        <h2 className="h3 tracking-wide font-black">{title}</h2>
+        <h2 className="h4 tracking-wide font-black">{title}</h2>
 
         <div className="flex gap-1 text-muted-foreground sm:items-end sm:text-right">
           <p className="label-m">Dir. {director} ·</p>

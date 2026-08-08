@@ -34,10 +34,7 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
       <Link
         href={`/projects/${slug}`}
         aria-label={`${title}, ${year}, ${type}, ${runtime}, directed by ${director}`}
-        className={cn(
-          "block",
-          "focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-foreground/10"
-        )}>
+        className={cn("block", "focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-foreground/10")}>
         <div className="relative">
           {/* The light under the table, switched on beneath the strip being pointed at. */}
           <div

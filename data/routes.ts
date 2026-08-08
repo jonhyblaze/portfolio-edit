@@ -5,5 +5,5 @@ export const routes = {
   contact: "/contact",
   papr: "/projects/papr",
   icehole: "/projects/icehole",
-  leopolis: "/projects/leopolis"
+  leopolis: "/projects/leopolis-night"
 }

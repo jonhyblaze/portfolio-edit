@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation"
 const HomePageGradient = () => {
   const pathname = usePathname()
 
-  const deactivatedRoutes = new Set (["/projects", "/", "/about"])
+  const deactivatedRoutes =  (["/projects", "/about"])
 
-  if (deactivatedRoutes.has(pathname)) {
-    return null
+  if (deactivatedRoutes.some(route => pathname.startsWith(route))) {
+      return null
   }
+
+  if (pathname === "/") return null
 
 
   if (pathname === "/contact") {
@@ -32,7 +34,7 @@ export default HomePageGradient
 const HeroTopGradient = () => (
   <>
     {/* Top Glow - needs GPU hint for stacking */}
-    <div className="absolute left-[10%] lg:left-1/3 -translate-y-2/3 w-[640px] h-[640px] opacity-100 hidden dark:block transform-gpu">
+    <div className="absolute left-[10%] lg:left-1/3 -translate-y-2/3 w-160 h-160 opacity-100 hidden dark:block transform-gpu">
       <div className="absolute inset-0 bg-rose-50/50 blur-[96px] rounded-full will-change-transform" />
     </div>
 
@@ -65,12 +67,12 @@ const HeroTopGradient = () => (
 const TopGradient = () => (
   <>
     {/* Top Glow */}
-    <div className="absolute left-[37%] -translate-y-[40%] w-[640px] h-[640px] opacity-50 hidden dark:block transform-gpu">
+    <div className="absolute left-[37%] translate-y-[-40%] w-160 h-160 opacity-50 hidden dark:block transform-gpu">
       <div className="absolute inset-0 bg-rose-50/50 blur-[92px] rounded-full will-change-transform" />
     </div>
 
     {/* Top Gradient */}
-    <div className="absolute top-[3%] left-[5%] w-full h-[1500px] opacity-50 hidden dark:block transform-gpu">
+    <div className="absolute top-[3%] left-[5%] w-full h-375 opacity-50 hidden dark:block transform-gpu">
       <div
         className="absolute inset-0 bg-sky-500 w-[95dvw] h-1/2 -translate-y-1/2 blur-[120px] rounded-xl mx-auto will-change-transform"
         style={{ WebkitBackfaceVisibility: "hidden" }}
@@ -81,7 +83,7 @@ const TopGradient = () => (
 
     {/* Background */}
     <div className="absolute w-full h-[75dvh] opacity-30 transform-gpu">
-      <div className="absolute inset-0 saturate-[90%] blur-[150px] bg-sky-950/10 dark:bg-sky-700" />
+      <div className="absolute inset-0 saturate-90 blur-[150px] bg-sky-950/10 dark:bg-sky-700" />
     </div>
   </>
 )
@@ -98,11 +100,11 @@ const BottomGradient = () => (
   </>
 )
 
-const HeroBottomGradient = () => (
+export const HeroBottomGradient = () => (
   <>
     {/* Bottom Gradients */}
 
-    <div className="absolute -bottom-[15%] w-full h-screen opacity-100 hidden dark:block transform-gpu">
+    <div className="absolute bottom-[-15%] w-full h-screen opacity-100 hidden dark:block transform-gpu">
       <div
         className="absolute inset-0 bg-slate-900 blur-[180px] lg:blur-[120px] rounded-full will-change-transform"
         style={{ WebkitBackfaceVisibility: "hidden" }}
@@ -110,18 +112,18 @@ const HeroBottomGradient = () => (
     </div>
 
     {/* Bottom Glows */}
-    <div className="absolute bottom-0 w-[100%] h-52 hidden dark:block transform-gpu">
+    <div className="absolute bottom-0 w-full h-52 hidden dark:block transform-gpu">
       <div className="absolute inset-0 bg-sky-950 blur-[144px] rounded will-change-transform" />
     </div>
 
-    <div className="absolute inset-full left-0 -translate-y-40 w-full lg:translate-x-28 lg:w-[85dvw] h-[600px] rounded-full opacity-100 hidden dark:block transform-gpu">
+    <div className="absolute inset-full left-0 -translate-y-40 w-full lg:translate-x-28 lg:w-[85dvw] h-150 rounded-full opacity-100 hidden dark:block transform-gpu">
       <div
         className="absolute inset-0 bg-orange-400 rounded-full blur-[96px] will-change-transform"
         style={{ WebkitBackfaceVisibility: "hidden" }}
       />
     </div>
 
-    <div className="absolute inset-full -translate-y-16 w-[60%] left-[20%] h-[200px] rounded-full opacity-100 hidden dark:block transform-gpu">
+    <div className="absolute inset-full -translate-y-16 w-[60%] left-[20%] h-50 rounded-full opacity-100 hidden dark:block transform-gpu">
       <div className="absolute inset-0 bg-orange-600/60 rounded-full blur-[144px] will-change-transform" />
     </div>
   </>
