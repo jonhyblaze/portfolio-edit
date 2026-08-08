@@ -1,4 +1,5 @@
 import { VideoShowcase } from "@/components/showcase/video-showcase"
+import { ScrollLock } from "@/components/scroll-lock"
 import { showcaseSlides } from "@/data/showcase"
 
 
@@ -41,6 +42,8 @@ export default function HomePage() {
           distortion={0.0}
         />
       </div>*/}
+      {/* One screen, navigated by gesture — nothing here scrolls. */}
+      <ScrollLock />
       <VideoShowcase slides={showcaseSlides} />
     </div>
   )

@@ -33,10 +33,9 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  *   { kind: "caption", text, sub? }          → one small line, screenplay-slug style
  *   { kind: "quote", text, attribution? }    → a statement card, word by word
  *
- * The three intermediary beats (pause, caption, quote) hold for 7s and then push
- * on to the next slide by themselves; add `hold: 4000` to shorten one. Reels are
- * never timed — they loop until the visitor moves. The opening title card is not
- * timed either: it waits rather than scrolling someone who just arrived.
+ * Nothing is timed. Every slide — reel, pause, caption, quote, title card — holds
+ * until the visitor moves, and one scroll gesture is worth exactly one slide in
+ * either direction. The last slide leads back round to the first.
  *
  * Poster JPGs live in /public/showcase; videos are served from R2 (see above).
  */

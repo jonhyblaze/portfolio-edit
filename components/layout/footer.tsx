@@ -1,5 +1,14 @@
+"use client"
 import profile from "@/data/profile"
+import { usePathname } from "next/navigation"
+
+const SKIP_RENDER = new Set(["/"])
+
 export function Footer() {
+  const pathname = usePathname()
+
+  if (SKIP_RENDER.has(pathname)) return null
+
   return (
     <footer className="border-t border-muted-foreground dark:border-white/10">
       <div className="flex flex-col justify-between max-w-7xl mx-auto px-5 sm:px-16 laptop:px-0  py-10 pb-10 gap-10 lg:gap-0 lg:flex-row">

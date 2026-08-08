@@ -31,34 +31,30 @@ export type VideoReel = SlideBase & {
 }
 
 /**
- * The beats between reels are timed: they hold, then the showcase moves itself
- * on. Reels are never timed — they loop for as long as you stay with them.
+ * The beats between reels. Nothing here moves on by itself — every slide, reel or
+ * anomaly, waits for the visitor.
  */
-type BeatBase = SlideBase & {
-  /** How long this beat holds before pushing on, in ms. Default 7000. */
-  hold?: number
-}
 
 /** A held beat of black between two reels. Nothing to look at — that is the point. */
-export type PauseSlide = BeatBase & {
+export type PauseSlide = SlideBase & {
   kind: "pause"
 }
 
 /** One small line of type, set like a screenplay slug. */
-export type CaptionSlide = BeatBase & {
+export type CaptionSlide = SlideBase & {
   kind: "caption"
   text: string
   sub?: string
 }
 
 /** A full-bleed typographic statement, sized like a title card. */
-export type QuoteSlide = BeatBase & {
+export type QuoteSlide = SlideBase & {
   kind: "quote"
   text: string
   attribution?: string
 }
 
-/** The opening card. Untimed — it waits for the visitor rather than pushing them. */
+/** The opening card. It waits for the visitor rather than pushing them. */
 export type TitleSlide = SlideBase & {
   kind: "title"
   text: string
@@ -70,16 +66,40 @@ export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide |
 
 const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "video") === "video"
 
-/** Beats that hold for a moment and then push on. The title card and reels do not. */
-const isTimed = (slide: ShowcaseSlide): slide is PauseSlide | CaptionSlide | QuoteSlide =>
-  slide.kind === "pause" || slide.kind === "caption" || slide.kind === "quote"
+/**
+ * Gesture timing.
+ *
+ * Some idea of "still the same gesture" is unavoidable: a trackpad reports one
+ * flick as dozens of events over as much as a second, and without this a single
+ * flick would run through half the reel. The trick is releasing on the right
+ * signal. Waiting for the wheel to fall silent is the wrong one — macOS keeps
+ * sending coasting events long after the fingers have left the pad, so the reel
+ * stays locked for the whole tail. These three read the shape of the gesture
+ * instead, and nothing here is on a timer.
+ */
 
-/** How long an intermediary beat holds before the showcase cuts to the next slide. */
-const HOLD_MS = 7000
+/** A gap this long, with nothing live arriving, means they let go. */
+const GESTURE_IDLE_MS = 120
+
+/**
+ * Where a gesture stops being input and becomes debris.
+ *
+ * Measured against the gesture's own peak rather than a fixed number, because the
+ * two ends of the range are so far apart: one notch of a mouse wheel reports
+ * around 120, a slow two-finger drag reports single digits. Eight per cent of
+ * whatever this particular gesture peaked at separates a flick's dying tail from
+ * a hand still on the pad, at either scale.
+ *
+ * This is what keeps the reel from staying locked for the whole of a long
+ * momentum tail: the dregs are ignored, so the gesture is over well before they
+ * stop arriving.
+ */
+const TAIL_RATIO = 0.08
+
+/** How far a finger has to travel before it is a swipe rather than a touch. */
+const SWIPE_PX = 40
 
 const splitWords = (text: string) => text.trim().split(/\s+/)
-
-const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 
 export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; className?: string }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -88,32 +108,126 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
   const { play } = useSound()
   const count = slides.length
 
-  // Map scroll position within the section to the active slide index.
+  /** The biggest delta seen since the wheel last went quiet, for sizing its tail. */
+  const peak = useRef(0)
+  /** When the last event big enough to count as a hand on the wheel arrived. */
+  const lastLiveAt = useRef(0)
+  const lastDirection = useRef(0)
+  const silence = useRef<number | undefined>(undefined)
+  const touchStart = useRef<number | null>(null)
+
+  /**
+   * One slide, in one direction, and it wraps at both ends — the last reel leads
+   * back to the opening card rather than stopping.
+   */
+  const step = useCallback(
+    (direction: 1 | -1) => {
+      setActive((current) => (current + direction + count) % count)
+    },
+    [count]
+  )
+
+  /**
+   * The showcase owns the wheel while it is on screen: the slides advance, the
+   * page underneath does not move.
+   *
+   * One unbroken stream of wheel events is one gesture and is worth exactly one
+   * slide, whether it was a nudge or a shove.
+   *
+   * The boundary is a gap in *live* events. A flick's decaying tail is debris: it
+   * is skipped entirely, so it neither moves the reel nor holds it, and the reel
+   * comes free while the tail is still dribbling out.
+   *
+   * Two things had to be got right here, and both were wrong before:
+   *
+   * There is no rising-magnitude test. A climbing delta reads the same whether it
+   * is a second push or a slow drag still getting going, so calling it a push
+   * landed one gesture two slides away.
+   *
+   * And `peak` outlives the gesture — it is cleared only once the wheel has been
+   * completely silent. Clearing it when the tail went quiet made the very next
+   * dreg look enormous next to a peak of nothing, and the tail stepped the reel
+   * on by itself.
+   */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
 
-    let frame = 0
-    const onScroll = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect()
-        const scrollable = section.offsetHeight - window.innerHeight
-        const progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 0
-        const idx = count > 1 ? Math.round(progress * (count - 1)) : 0
-        setActive((prev) => (prev === idx ? prev : idx))
-      })
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault()
+
+      const direction = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0
+      if (!direction) return
+
+      const now = performance.now()
+      const magnitude = Math.abs(event.deltaY)
+
+      // Any event at all, debris included, means the wheel has not gone quiet yet.
+      // Only real silence forgets how big this gesture was.
+      window.clearTimeout(silence.current)
+      silence.current = window.setTimeout(() => {
+        peak.current = 0
+      }, GESTURE_IDLE_MS)
+
+      // Reversing is always a new gesture: momentum never turns around.
+      if (direction !== lastDirection.current) {
+        lastDirection.current = direction
+        peak.current = 0
+        lastLiveAt.current = 0
+      }
+
+      peak.current = Math.max(peak.current, magnitude)
+
+      // Too small to be a hand on the wheel — skip it without it counting as the
+      // gesture carrying on.
+      if (magnitude < peak.current * TAIL_RATIO) return
+
+      const continuing = now - lastLiveAt.current <= GESTURE_IDLE_MS
+      lastLiveAt.current = now
+      if (continuing) return
+
+      step(direction)
     }
 
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("resize", onScroll)
-    return () => {
-      cancelAnimationFrame(frame)
-      window.removeEventListener("scroll", onScroll)
-      window.removeEventListener("resize", onScroll)
+    const onTouchStart = (event: TouchEvent) => {
+      touchStart.current = event.touches[0]?.clientY ?? null
     }
-  }, [count])
+
+    const onTouchMove = (event: TouchEvent) => {
+      event.preventDefault()
+
+      const start = touchStart.current
+      const y = event.touches[0]?.clientY
+      if (start === null || y === undefined) return
+
+      const travelled = start - y
+      if (Math.abs(travelled) < SWIPE_PX) return
+
+      // Dropping the origin ends the swipe here, so the rest of the drag — however
+      // far it runs — cannot move a second slide.
+      touchStart.current = null
+      step(travelled > 0 ? 1 : -1)
+    }
+
+    const onTouchEnd = () => {
+      touchStart.current = null
+    }
+
+    section.addEventListener("wheel", onWheel, { passive: false })
+    section.addEventListener("touchstart", onTouchStart, { passive: true })
+    section.addEventListener("touchmove", onTouchMove, { passive: false })
+    section.addEventListener("touchend", onTouchEnd, { passive: true })
+    section.addEventListener("touchcancel", onTouchEnd, { passive: true })
+
+    return () => {
+      section.removeEventListener("wheel", onWheel)
+      section.removeEventListener("touchstart", onTouchStart)
+      section.removeEventListener("touchmove", onTouchMove)
+      section.removeEventListener("touchend", onTouchEnd)
+      section.removeEventListener("touchcancel", onTouchEnd)
+      window.clearTimeout(silence.current)
+    }
+  }, [step])
 
   // Each cut gets its own transition sound. Silent until the visitor turns sound on.
   const previous = useRef(active)
@@ -133,30 +247,9 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     })
   }, [active])
 
-  const goTo = useCallback(
-    (idx: number) => {
-      const section = sectionRef.current
-      if (!section) return
-      const scrollable = section.offsetHeight - window.innerHeight
-      const top = section.offsetTop + (count > 1 ? (idx / (count - 1)) * scrollable : 0)
-      window.scrollTo({ top, behavior: "smooth" })
-    },
-    [count]
-  )
-
-  // An intermediary beat holds, then pushes on to the next slide by itself. Reels
-  // are left alone — they loop until the visitor decides to move. The timer resets
-  // whenever the active slide changes, so scrolling past a beat cancels its push.
-  useEffect(() => {
-    const slide = slides[active]
-    if (!slide || !isTimed(slide)) return
-    if (active + 1 >= count) return
-    // Moving someone's viewport for them is exactly what reduced motion asks us not to do.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-
-    const timer = window.setTimeout(() => goTo(active + 1), slide.hold ?? HOLD_MS)
-    return () => window.clearTimeout(timer)
-  }, [active, slides, count, goTo])
+  // Nothing advances on a timer. A pause, a caption and a quote each hold until
+  // the visitor moves, exactly as a reel does — the sequence is theirs to read at
+  // whatever pace they read it.
 
   if (count === 0) return null
 
@@ -164,13 +257,18 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
   const currentReel = current && isVideo(current) ? current : null
 
   return (
+    // One viewport, and it stays there. The showcase used to be a tall scroll
+    // track with a sticky stage, which tied the slide to the scroll offset — that
+    // is what made a hard flick jump several reels, and what made looping past the
+    // last one impossible. The gesture drives it now, so the section is just a stage.
     <section
       ref={sectionRef}
       aria-label="Selected work"
-      className={cn("relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen", className)}
-      style={{ height: `${count * 100}vh` }}>
-      {/* Sticky full-screen stage */}
-      <div className={cn("sticky top-0 h-screen w-full overflow-hidden bg-black", count === 0 && "bg-teal-950")}>
+      className={cn(
+        "relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] h-[100svh] w-screen touch-none overflow-hidden bg-black",
+        className
+      )}>
+      <div className="h-full w-full">
         {/* Stacked slides — crossfade between them */}
         {slides.map((slide, i) => {
           const isActive = i === active
@@ -235,7 +333,7 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
             <button
               key={slide.id}
               type="button"
-              onClick={() => goTo(i)}
+              onClick={() => setActive(i)}
               aria-label={slideLabel(slide, i)}
               aria-current={i === active}
               className="group grid place-items-center p-1.5">
@@ -281,7 +379,23 @@ function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide | Ti
       ) : (
         <QuoteCard slide={slide} />
       )}
+      {/* Every anomaly gets the nudge, and only anomalies — a reel is already moving,
+          so it says "there is more" on its own. This sits outside the kind switch
+          because it belongs to the beat, not to any one card. */}
+      <ScrollHint />
     </>
+  )
+}
+
+/** The nudge under an anomaly: the word, and a line drawn downward over and over. */
+function ScrollHint() {
+  return (
+    <span
+      aria-hidden
+      className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
+      <span className="label-s uppercase tracking-[0.5em] text-white/80">Scroll</span>
+      <span className="block h-16 w-px origin-top animate-scroll-hint bg-white/50" />
+    </span>
   )
 }
 
@@ -331,29 +445,21 @@ function StaggeredLine({ text, className }: { text: string; className?: string }
   )
 }
 
-/** The opening card: grain, the headline, and a nudge that there is more below. */
+/** The opening card: grain and the headline. The nudge below it comes from Anomaly. */
 function TitleCard({ slide }: { slide: TitleSlide }) {
   const words = splitWords(slide.text)
 
   return (
-    <>
-      <div className="relative max-w-5xl px-8 text-center md:px-16">
-        <StaggeredLine text={slide.text} className="h1 z-50 text-balance  text-white" />
-        {slide.sub && (
-          <p
-            className="label-s mt-10 uppercase tracking-[0.35em] text-white/50 duration-1000 animate-in fade-in-0 fill-mode-both"
-            style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
-            {slide.sub}
-          </p>
-        )}
-      </div>
-      <span
-        aria-hidden
-        className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
-        <span className="label-s uppercase tracking-[0.5em] text-white/80">Scroll</span>
-        <span className="block h-16 w-px origin-top animate-scroll-hint bg-white/50" />
-      </span>
-    </>
+    <div className="relative max-w-5xl px-8 text-center md:px-16">
+      <StaggeredLine text={slide.text} className="h1 z-50 text-balance  text-white" />
+      {slide.sub && (
+        <p
+          className="label-s mt-10 uppercase tracking-[0.35em] text-white/50 duration-1000 animate-in fade-in-0 fill-mode-both"
+          style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
+          {slide.sub}
+        </p>
+      )}
+    </div>
   )
 }
 
