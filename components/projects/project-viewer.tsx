@@ -63,7 +63,9 @@ export function ProjectViewer({
 }: ProjectViewerProps) {
   return (
     <>
-      <div className="relative min-h-[220px] flex-1 border-y border-border bg-black md:min-h-[280px]">
+      {/* `group` so the picture can answer to the cursor being anywhere on the stage —
+          the click target sits over the video, so the video never sees the hover itself. */}
+      <div className="group relative min-h-[220px] flex-1 border-y border-border bg-black md:min-h-[280px]">
         <video
           ref={videoRef}
           // React swaps this when a version is chosen; the element reloads and the
@@ -78,28 +80,35 @@ export function ProjectViewer({
           // Out of flow on purpose: in flow, the element's intrinsic height is what
           // the stage would size to, and the stage would stop being the thing that
           // fits the viewport.
+          // A film standing still sits back a little; playing or pointed at, it comes
+          // up to full. Same brightness language the strips on /projects speak.
           className={cn(
             "absolute inset-0 h-full w-full object-contain transition-[filter] duration-500 ease-out motion-reduce:transition-none",
+            isPlaying ? "brightness-100" : "brightness-[0.8]",
+            "group-hover:brightness-100",
             source.treatment === "monochrome" && "grayscale"
           )}
         />
 
-        {/* One affordance, and only while the film is standing still. Clicking the
-            stage plays it too — the button is what a keyboard and a screen reader get. */}
+        {/* The whole stage is the play/pause target, so the picture stays clickable
+            while showing nothing. The button is also what a keyboard and a screen
+            reader get. */}
         <button
           type="button"
           onClick={onTogglePlay}
           aria-label={isPlaying ? `Pause ${title}` : `Play ${title}`}
           className={cn(
-            "group absolute inset-0 grid place-items-center",
+            "absolute inset-0 grid place-items-center",
             "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white/30"
           )}>
+          {/* Nothing is drawn over a film that is running — not on hover either. It
+              stays mounted rather than unmounting so it fades out on play instead of
+              vanishing, and the row below already says whether the film is moving. */}
           <span
             aria-hidden
             className={cn(
               "grid size-14 place-items-center rounded-full border border-white/40 bg-black/20 text-white/80 backdrop-blur-[2px]",
               "transition-opacity duration-500 ease-out motion-reduce:transition-none",
-              "group-hover:opacity-100",
               isPlaying ? "opacity-0" : "opacity-100"
             )}>
             <RiPlayFill className="size-5 translate-x-px" />
@@ -127,7 +136,7 @@ export function ProjectViewer({
           <ViewerButton onClick={onToggleMute} label={isMuted ? "Unmute" : "Mute"} pressed={isMuted}>
             {isMuted ? <RiVolumeMuteLine className="size-4" /> : <RiVolumeUpLine className="size-4" />}
           </ViewerButton>
-          <ViewerButton onClick={onToggleFullscreen} label={isFullscreen ? "Exit full screen" : "Full screen"}>
+          <ViewerButton onClick={onToggleFullscreen} label={isFullscreen ? "Exit full screen" : "Full screen"} shortcut="F">
             {isFullscreen ? <RiFullscreenExitLine className="size-4" /> : <RiFullscreenLine className="size-4" />}
           </ViewerButton>
           <span className="label-s ml-3 shrink-0 tabular-nums text-muted-foreground">
@@ -143,11 +152,14 @@ function ViewerButton({
   onClick,
   label,
   pressed,
+  shortcut,
   children
 }: {
   onClick: () => void
   label: string
   pressed?: boolean
+  /** The key that does the same thing. Announced properly rather than folded into the label. */
+  shortcut?: string
   children: React.ReactNode
 }) {
   return (
@@ -156,6 +168,8 @@ function ViewerButton({
       onClick={onClick}
       aria-label={label}
       aria-pressed={pressed}
+      aria-keyshortcuts={shortcut?.toLowerCase()}
+      title={shortcut ? `${label} (${shortcut})` : label}
       className={cn(
         "grid size-8 place-items-center text-muted-foreground transition-colors duration-200",
         "hover:text-foreground focus-visible:text-foreground",

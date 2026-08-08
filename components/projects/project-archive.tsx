@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Project } from "@/data/projects"
+import { useSpaceKey } from "@/components/space-key-provider"
 import { ProjectHeader } from "./project-header"
 import { ProjectMaterials } from "./project-materials"
 import { ProjectPager } from "./project-pager"
@@ -180,6 +181,32 @@ export function ProjectArchive({ project, previous, next, position, total }: Pro
 
     viewerRef.current?.requestFullscreen?.().catch(() => {})
   }, [])
+
+  // The space bar is held site-wide and does nothing by default. This is the one
+  // page that gives it a job, and it lasts exactly as long as the page is mounted.
+  useSpaceKey(togglePlay)
+
+  /**
+   * `f` does what the button does — the same call, so the two can never drift.
+   * Guarded so it stays out of the way of anything being typed into (the command
+   * palette's field included) and never competes with the browser's ⌘F / Ctrl+F.
+   */
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "f") return
+      if (event.metaKey || event.ctrlKey || event.altKey) return
+
+      const target = event.target as HTMLElement | null
+      if (target?.isContentEditable) return
+      if (target && /^(input|textarea|select)$/i.test(target.tagName)) return
+
+      event.preventDefault()
+      toggleFullscreen()
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [toggleFullscreen])
 
   return (
     <article className="w-full">

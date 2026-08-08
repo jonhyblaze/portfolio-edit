@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { CommandPalette } from "@/components/command-palette"
 import { SoundProvider } from "@/components/sound/sound-provider"
+import { SpaceKeyProvider } from "@/components/space-key-provider"
 import "./globals.css"
 import HomePageGradient from "@/components/gradients/full-page-grad"
 
@@ -52,15 +53,19 @@ export default function RootLayout({
       <body className={`${inter.variable} ${geistMono.variable} relative font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SoundProvider>
-            <HomePageGradient />
-            <Header />
-            <CommandPalette />
-            {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16.
-                The column is pinned to minmax(0,1fr) because a bare `auto` track sizes itself to
-                the widest thing inside it — one horizontally scrollable child and the whole page
-                grows past the viewport. Centring is unaffected. */}
-            <main className="grid grid-cols-[minmax(0,1fr)] place-items-center min-h-screen pt-16">{children}</main>
-            <Footer />
+            {/* Site-wide: the space bar stops scrolling the page and stops firing
+                whatever holds focus. Only a project page gives it a job. */}
+            <SpaceKeyProvider>
+              <HomePageGradient />
+              <Header />
+              <CommandPalette />
+              {/* pt-16 clears the fixed header; pages with a full-bleed hero cancel it with -mt-16.
+                  The column is pinned to minmax(0,1fr) because a bare `auto` track sizes itself to
+                  the widest thing inside it — one horizontally scrollable child and the whole page
+                  grows past the viewport. Centring is unaffected. */}
+              <main className="grid grid-cols-[minmax(0,1fr)] place-items-center min-h-screen pt-16">{children}</main>
+              <Footer />
+            </SpaceKeyProvider>
           </SoundProvider>
         </ThemeProvider>
       </body>
