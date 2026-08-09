@@ -78,8 +78,23 @@ const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "vi
  * instead, and nothing here is on a timer.
  */
 
-/** A gap this long, with nothing live arriving, means they let go. */
-const GESTURE_IDLE_MS = 120
+/**
+ * A gap this long, with nothing live arriving, means they let go.
+ *
+ * It has to clear the seam in the middle of a trackpad flick. One flick is not one
+ * stream: the fingers produce a burst, they leave, and macOS then starts the coasting
+ * events a moment later — a pause of anywhere up to about a fifth of a second sits
+ * between the two halves. At 120ms that seam read as the end of one gesture and the
+ * start of another, and a single flick stepped twice. Worse, both halves of this
+ * value failed together: the silence timer also fired inside the seam and wiped
+ * `peak`, so the first coasting event was measured against nothing and sailed past
+ * the tail floor as if it were a fresh shove.
+ *
+ * Raising it does not lock the reel through a long tail: `lastLiveAt` only moves on
+ * live events, so dregs never extend the wait — they are still ignored the moment
+ * they fall below the floor.
+ */
+const GESTURE_IDLE_MS = 350
 
 /**
  * Where a gesture stops being input and becomes debris.
@@ -304,7 +319,7 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
       ref={sectionRef}
       aria-label="Selected work"
       className={cn(
-        "relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] h-[100svh] w-screen touch-none overflow-hidden bg-black",
+        "relative left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] h-svh w-screen touch-none overflow-hidden bg-black",
         className
       )}>
       <div className="h-full w-full">
@@ -357,9 +372,9 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
           {currentReel && (currentReel.label || currentReel.meta) && (
             <div
               key={currentReel.id}
-              className="flex flex-col items-center gap-1.5 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
-              {currentReel.label && <p className="h4 text-white">{currentReel.label}</p>}
-              {currentReel.meta && <p className="label-s uppercase tracking-widest text-white/60">{currentReel.meta}</p>}
+              className="flex flex-col items-center gap-1 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
+              {currentReel.label && <p className="h3 text-white">{currentReel.label}</p>}
+              {currentReel.meta && <p className="label-m uppercase tracking-widest text-muted-foreground">{currentReel.meta}</p>}
             </div>
           )}
         </div>
@@ -432,8 +447,8 @@ function ScrollHint() {
     <span
       aria-hidden
       className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-3 delay-1000 duration-1000 animate-in fade-in-0 fill-mode-both">
-      <span className="label-s uppercase tracking-[0.5em] text-white/80">Scroll</span>
-      <span className="block h-16 w-px origin-top animate-scroll-hint bg-white/50" />
+      <span className="label-s uppercase tracking-[0.5em] text-white">Scroll</span>
+      <span className="block h-16 w-px origin-top animate-scroll-hint bg-muted-foreground" />
     </span>
   )
 }
@@ -451,15 +466,15 @@ function CueMark() {
 function CaptionCard({ slide }: { slide: CaptionSlide }) {
   return (
     <div className="relative px-8 text-center">
-      <p className="label-s uppercase tracking-[0.4em] text-white/80 duration-700 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both">
+      <p className="h2 tracking-wide text-white duration-700 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both">
         {slide.text}
       </p>
       {slide.sub && (
-        <p className="label-s mt-4 text-white/35 delay-200 duration-700 animate-in fade-in-0 fill-mode-both">{slide.sub}</p>
+        <p className="label-m tracking-[0.4em] mt-4 uppercase text-muted-foreground delay-200 duration-700 animate-in fade-in-0 fill-mode-both">{slide.sub}</p>
       )}
       <span
         aria-hidden
-        className="mx-auto mt-8 block h-px w-10 bg-white/20 delay-300 duration-1000 animate-in fade-in-0 fill-mode-both"
+        className="mx-auto mt-8 block h-px w-10  bg-muted-foreground delay-300 duration-1000 animate-in fade-in-0 fill-mode-both"
       />
     </div>
   )
@@ -471,15 +486,15 @@ function StaggeredLine({ text, className }: { text: string; className?: string }
 
   return (
     <p className={className}>
-        {words.map((word, i) => (
-          <span
-            key={`${word}-${i}`}
-            className="inline-block duration-700 animate-in fade-in-0 slide-in-from-bottom-4 fill-mode-both"
-            style={{ animationDelay: `${i * 70}ms` }}>
-            {word}
-            {i < words.length - 1 && " "}
-          </span>
-        ))}
+      {words.map((word, i) => (
+        <span
+          key={`${word}-${i}`}
+          className="inline-block duration-700 animate-in fade-in-0 slide-in-from-bottom-4 fill-mode-both"
+          style={{ animationDelay: `${i * 70}ms` }}>
+          {word}
+          {i < words.length - 1 && " "}
+        </span>
+      ))}
     </p>
   )
 }
@@ -493,7 +508,7 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
       <StaggeredLine text={slide.text} className="h1 z-50 text-balance  text-white" />
       {slide.sub && (
         <p
-          className="label-s mt-10 uppercase tracking-[0.35em] text-white/50 duration-1000 animate-in fade-in-0 fill-mode-both"
+          className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
           style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
           {slide.sub}
         </p>
@@ -508,10 +523,10 @@ function QuoteCard({ slide }: { slide: QuoteSlide }) {
 
   return (
     <div className="relative max-w-5xl px-8 text-center md:px-16">
-      <StaggeredLine text={slide.text} className="h1 text-balance leading-[1.05] text-white" />
+      <StaggeredLine text={slide.text} className="h1 text-balance leading-21 text-white" />
       {slide.attribution && (
         <p
-          className="label-s mt-10 uppercase tracking-[0.35em] text-white/40 duration-1000 animate-in fade-in-0 fill-mode-both"
+          className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
           style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
           {slide.attribution}
         </p>

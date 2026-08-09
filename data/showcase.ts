@@ -43,8 +43,8 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "intro",
     kind: "title",
-    text: "Crafting moving stories",
-    sub: ""
+    text: "Cutting footage to make strories",
+    sub: "or manipulating bytes for that matter"
   },
   {
     id: "hum",
@@ -55,8 +55,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     radius: 0 // gently rounded, cinematic
   },
   {
-    id: "pause-01",
-    kind: "pause"
+    id: "caption-01",
+    text: "Careful now",
+    sub: "wreckless danger ahead",
+    kind: "caption"
   },
   {
     id: "212-CH",
@@ -64,13 +66,12 @@ export const showcaseSlides: ShowcaseSlide[] = [
     poster: "/showcase/212-cover.jpg",
     label: "212 Heroes | Carolina Herrera",
     meta: "dir/dop. Oleksandr Korotun | Commercial",
-    radius: 0 // gently rounded, cinematic
   },
   {
-    id: "caption-01",
-    kind: "caption",
-    text: "Int. Edit Suite — 04:12",
-    sub: "the cut is still wrong"
+    id: "quote-01",
+    kind: "quote",
+    text: "Beware",
+    attribution: "of the thin ice"
   },
   {
     id: "icohole",
@@ -80,10 +81,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     meta: "dir. Anastasia Gruba, dop. Oleksandr Korotun | Short Film"
   },
   {
-    id: "quote-01",
+    id: "quote-02",
     kind: "quote",
-    text: "A cut is a decision about what you are allowed to feel next.",
-    attribution: "Oleksandr Korotun"
+    text: "Next one is too complex for you",
+    attribution: "Max Prodaniuk"
   },
   {
     id: "pavo-indus",
@@ -98,6 +99,11 @@ export const showcaseSlides: ShowcaseSlide[] = [
     kind: "pause"
   },
   {
+    id: "quote-03",
+    kind: "quote",
+    text: "I've told you",
+  },
+  {
     id: "blb",
     src: video("loops/blb.mp4"),
     poster: "/showcase/blb-cover.jpg",
@@ -108,8 +114,8 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "caption-02",
     kind: "caption",
-    text: "Match Cut —",
-    sub: "on movement, on shape, on breath"
+    text: "Mariupolis",
+    sub: "Is especially charming in winter"
   },
   {
     id: "papr",
@@ -119,9 +125,12 @@ export const showcaseSlides: ShowcaseSlide[] = [
     meta: "dir. Lilia Ostapovych, dop. Oleksandr Korotun | Short Film",
     height: 74
   },
+
   {
-    id: "pause-03",
-    kind: "pause"
+    id: "caption-03",
+    kind: "caption",
+    text: "But I Love Summer",
+    sub: "And youd should too"
   },
   {
     id: "leopolis",
@@ -132,8 +141,14 @@ export const showcaseSlides: ShowcaseSlide[] = [
     width: 88
   },
   {
-    id: "pause-04",
+    id: "pause-03",
     kind: "pause"
+  },
+  {
+    id: "caption-04",
+    kind: "quote",
+    text: "One more thing",
+    attribution: "Don't forget about your phone"
   },
   {
     id: "vertical",
@@ -142,5 +157,6 @@ export const showcaseSlides: ShowcaseSlide[] = [
     label: "Pushing Saves",
     meta: "Commercials & Social Media | Vertical Cut",
     width: 34 // pillarbox — bars left & right
-  }
+  },
+
 ]
