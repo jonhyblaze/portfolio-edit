@@ -1,15 +1,61 @@
 "use client"
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useSyncExternalStore, type ReactNode } from "react"
 
 /**
  * Cues are synthesised with the Web Audio API rather than shipped as files —
  * a handful of oscillators weighs nothing and never has to be downloaded.
  * Each name maps to the kind of showcase slide being scrolled into.
  */
-export type SoundCue = "title" | "video" | "pause" | "caption" | "quote"
+export type SoundCue = "title" | "video" | "pause" | "caption" | "quote" | "flash"
 
 const STORAGE_KEY = "sound-enabled"
+
+/**
+ * The preference is not React state, it is a browser store: it outlives the page, it
+ * is shared by everything that shows or flips it, and `play` reads it on a cue with no
+ * render in sight. Reading it through `useSyncExternalStore` is what keeps that honest.
+ *
+ * The alternative — seed `useState(false)`, then correct it from an effect on mount —
+ * is what the server needs (it cannot see localStorage, so the markup it sends has to
+ * say "off"), but it costs a second render on every mount and is a setState inside an
+ * effect, which is the thing React now lints for. `getServerSnapshot` expresses the
+ * same "off until proven otherwise" without the round trip.
+ *
+ * Every access is guarded because localStorage throws outright in some privacy modes.
+ * Losing the preference is not worth taking the page down with it.
+ */
+const listeners = new Set<() => void>()
+
+function readPreference() {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) === "on"
+  } catch {
+    return false
+  }
+}
+
+function writePreference(next: boolean) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off")
+  } catch {
+    // It just will not survive the reload. Sound still works for this visit.
+  }
+  for (const listener of listeners) listener()
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener)
+  // Another tab flipping the switch is this same store changing.
+  window.addEventListener("storage", listener)
+  return () => {
+    listeners.delete(listener)
+    window.removeEventListener("storage", listener)
+  }
+}
+
+/** Nothing is stored on the server, so the markup that hydrates has to agree: off. */
+const getServerSnapshot = () => false
 
 type Engine = {
   ctx: AudioContext
@@ -115,23 +161,19 @@ const CUES: Record<SoundCue, (engine: Engine, at: number) => void> = {
   caption: (engine, at) => {
     click(engine, { at, level: 0.28, snap: 3200, body: 320, decay: 0.03 })
   },
+  /** Shutter: mirror then curtain, a hair apart. The brightest, shortest thing here. */
+  flash: (engine, at) => {
+    click(engine, { at, level: 0.42, snap: 3600, body: 260, decay: 0.025 })
+    click(engine, { at: at + 0.03, level: 0.34, snap: 2800, body: 200, decay: 0.04 })
+  },
   /** The opening card and the statement cards share the same throw. */
   quote: switchThrow,
   title: switchThrow
 }
 
 export function SoundProvider({ children }: { children: ReactNode }) {
-  const [enabled, setEnabled] = useState(false)
-  // Mirrored in a ref so `play` stays referentially stable and never reads a stale value.
-  const enabledRef = useRef(false)
+  const enabled = useSyncExternalStore(subscribe, readPreference, getServerSnapshot)
   const engineRef = useRef<Engine | null>(null)
-
-  // Read the stored preference after mount so the server and client markup agree.
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY) === "on"
-    enabledRef.current = stored
-    setEnabled(stored)
-  }, [])
 
   useEffect(() => {
     return () => {
@@ -141,10 +183,8 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const toggle = useCallback(() => {
-    const next = !enabledRef.current
-    enabledRef.current = next
-    setEnabled(next)
-    window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off")
+    const next = !readPreference()
+    writePreference(next)
 
     if (next) {
       // Switching sound on is the user gesture browsers require before audio may start.
@@ -154,7 +194,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const play = useCallback((cue: SoundCue) => {
-    if (!enabledRef.current) return
+    if (!readPreference()) return
 
     const engine = (engineRef.current ??= createEngine())
     if (!engine || engine.ctx.state === "closed") return

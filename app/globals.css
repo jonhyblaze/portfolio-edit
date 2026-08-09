@@ -56,6 +56,8 @@
   --animate-grain: grain 0.7s steps(1) infinite;
   --animate-cue-flash: cue-flash 4s linear infinite;
   --animate-scroll-hint: scroll-hint 2.2s ease-in-out infinite;
+  --animate-camera-flash: camera-flash 0.7s ease-out forwards;
+  --animate-flash-afterglow: flash-afterglow 2s ease-out forwards;
 
   /* Film grain: shift the noise tile around so it never sits still. */
   @keyframes grain {
@@ -125,6 +127,46 @@
     100% {
       transform: scaleY(1);
       opacity: 0;
+    }
+  }
+
+  /* Camera flash: xenon rises within a frame or two and most of it is gone inside a
+     tenth of a second. Deliberately not `infinite` — this fires once per arrival,
+     because a repeating full-screen white flash is the exact thing photosensitivity
+     guidance warns about. */
+  @keyframes camera-flash {
+    0% {
+      opacity: 0;
+    }
+    1% {
+      opacity: 1;
+    }
+    8% {
+      opacity: 0.95;
+    }
+    30% {
+      opacity: 0.12;
+    }
+    60% {
+      opacity: 0.03;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* The afterimage: blooms up as the white dies away, then settles and stays, so the
+     slide has something to rest on once the burst is over. */
+  @keyframes flash-afterglow {
+    0%,
+    12% {
+      opacity: 0;
+    }
+    30% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0.12;
     }
   }
 }

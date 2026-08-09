@@ -61,8 +61,20 @@ export type TitleSlide = SlideBase & {
   sub?: string
 }
 
+/**
+ * One camera flash: a burst of blown-out white, then the bloom it leaves behind.
+ *
+ * The only slide with a duration. Everything else in the showcase waits for the
+ * visitor; a flash is a moment rather than a beat, so it takes itself off again.
+ */
+export type FlashSlide = SlideBase & {
+  kind: "flash"
+  /** How long the flash is on screen before it leaves, in ms. Default 2000. */
+  duration?: number
+}
+
 /** The showcase is a cut sequence: reels interrupted by pauses, captions and title cards. */
-export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide | TitleSlide
+export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide | TitleSlide | FlashSlide
 
 const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "video") === "video"
 
@@ -114,6 +126,9 @@ const TAIL_RATIO = 0.08
 /** How far a finger has to travel before it is a swipe rather than a touch. */
 const SWIPE_PX = 40
 
+/** How long a flash stays up before moving on, unless the slide says otherwise. */
+const FLASH_MS = 300
+
 const splitWords = (text: string) => text.trim().split(/\s+/)
 
 export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; className?: string }) {
@@ -130,6 +145,12 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
   const lastDirection = useRef(0)
   const silence = useRef<number | undefined>(undefined)
   const touchStart = useRef<number | null>(null)
+  /**
+   * Which way the visitor is going through the sequence. Only the flash reads it,
+   * to know which way to leave: a slide that always moved forward would bounce
+   * anyone travelling backwards straight back into the reel they just left.
+   */
+  const travel = useRef<1 | -1>(1)
 
   /**
    * One slide, in one direction, and it wraps at both ends — the last reel leads
@@ -137,9 +158,19 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
    */
   const step = useCallback(
     (direction: 1 | -1) => {
+      travel.current = direction
       setActive((current) => (current + direction + count) % count)
     },
     [count]
+  )
+
+  /** Jumping straight to a slide still counts as travelling, so the flash can follow it. */
+  const goTo = useCallback(
+    (index: number) => {
+      if (index !== active) travel.current = index > active ? 1 : -1
+      setActive(index)
+    },
+    [active]
   )
 
   /**
@@ -301,9 +332,24 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     })
   }, [active])
 
-  // Nothing advances on a timer. A pause, a caption and a quote each hold until
-  // the visitor moves, exactly as a reel does — the sequence is theirs to read at
-  // whatever pace they read it.
+  /**
+   * The flash is the one slide on a timer. A pause, a caption and a quote each hold
+   * until the visitor moves, exactly as a reel does — the sequence is theirs to read
+   * at whatever pace they read it. A flash is not something to read: it goes off and
+   * it is over, so it takes itself off again.
+   *
+   * It leaves the way the visitor was going, so coming up from Leopolis carries on
+   * upward instead of shoving them back down into it. The timer is cleared whenever
+   * the active slide changes, so gesturing off the flash early cancels the push
+   * rather than moving them a second time a moment later.
+   */
+  useEffect(() => {
+    const slide = slides[active]
+    if (!slide || slide.kind !== "flash") return
+
+    const timer = window.setTimeout(() => step(travel.current), slide.duration ?? FLASH_MS)
+    return () => window.clearTimeout(timer)
+  }, [active, slides, step])
 
   if (count === 0) return null
 
@@ -367,6 +413,13 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
         {/* Legibility scrim for the caption */}
         <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/10" />
 
+        {/* The burst fires at stage level rather than inside its slide, for two reasons:
+            a slide crossfades in over 700ms and a flash that peaks in the first frames
+            would be swallowed by that fade, and up here it blows out the scrim and the
+            chrome the way a real flash blows out a room. Keyed on the slide index so it
+            replays on every arrival and never on a loop. */}
+        {current?.kind === "flash" && <FlashBurst key={`flash-${active}`} />}
+
         {/* Caption — reels only; the anomalies carry their own type */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-1.5 px-6 pb-14 text-center md:pb-20">
           {currentReel && (currentReel.label || currentReel.meta) && (
@@ -387,7 +440,7 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
             <button
               key={slide.id}
               type="button"
-              onClick={() => setActive(i)}
+              onClick={() => goTo(i)}
               aria-label={slideLabel(slide, i)}
               aria-current={i === active}
               className="group grid place-items-center p-1.5">
@@ -416,16 +469,19 @@ function slideLabel(slide: ShowcaseSlide, i: number) {
   if (slide.kind === "pause") return "Go to the pause"
   if (slide.kind === "caption") return `Go to ${slide.text}`
   if (slide.kind === "title") return "Back to the opening"
+  if (slide.kind === "flash") return "Go to the flash"
   return "Go to the title card"
 }
 
-function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide | TitleSlide }) {
+function Anomaly({ slide }: { slide: PauseSlide | CaptionSlide | QuoteSlide | TitleSlide | FlashSlide }) {
   return (
     <>
       {/* Grain first, then the type — both are positioned, so tree order puts the words on top. */}
       <FilmGrain className={slide.kind === "pause" ? undefined : "opacity-[0.2]"} />
       {slide.kind === "pause" ? (
         <CueMark />
+      ) : slide.kind === "flash" ? (
+        <FlashAfterglow />
       ) : slide.kind === "caption" ? (
         <CaptionCard slide={slide} />
       ) : slide.kind === "title" ? (
@@ -459,6 +515,37 @@ function CueMark() {
     <span
       aria-hidden
       className="absolute right-[6vw] top-[10vh] block h-12 w-12 animate-cue-flash rounded-full border border-white md:h-16 md:w-16"
+    />
+  )
+}
+
+/**
+ * The flash itself: one frame of blown-out white over the whole stage.
+ *
+ * `opacity-0` is the resting state, so if the animation is refused — reduced motion,
+ * or a browser that will not run it — the screen simply never goes white.
+ */
+function FlashBurst() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-30 animate-camera-flash bg-white opacity-0 motion-reduce:animate-none"
+    />
+  )
+}
+
+/**
+ * What the burst leaves behind. The slide has to rest on something once the white is
+ * gone, or a flash would be indistinguishable from a pause; this is the bloom that
+ * stays on the eye. It is also the whole of the slide under reduced motion, where it
+ * sits there statically instead of blooming.
+ */
+function FlashAfterglow() {
+  return (
+    <span
+      aria-hidden
+      className="absolute inset-0 animate-flash-afterglow opacity-0 motion-reduce:animate-none motion-reduce:opacity-40"
+      style={{ background: "radial-gradient(circle at 50% 45%, rgba(255,255,255,0.4), transparent 55%)" }}
     />
   )
 }

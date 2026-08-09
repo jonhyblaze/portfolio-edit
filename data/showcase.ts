@@ -30,12 +30,14 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  * Anomaly slides:
  *   { kind: "title", text, sub? }            → the opening card, grain under display type
  *   { kind: "pause" }                        → black, grain, a cue mark
+ *   { kind: "flash" }                        → one camera flash, then its afterglow
  *   { kind: "caption", text, sub? }          → one small line, screenplay-slug style
  *   { kind: "quote", text, attribution? }    → a statement card, word by word
  *
- * Nothing is timed. Every slide — reel, pause, caption, quote, title card — holds
- * until the visitor moves, and one scroll gesture is worth exactly one slide in
- * either direction. The last slide leads back round to the first.
+ * The flash is the one slide with a duration: it holds for 2s (or its own `duration`)
+ * and then carries on the way the visitor was going. Everything else — reel, pause,
+ * caption, quote, title card — waits until they move, and one scroll gesture is worth
+ * exactly one slide in either direction. The last slide leads back round to the first.
  *
  * Poster JPGs live in /public/showcase; videos are served from R2 (see above).
  */
@@ -57,7 +59,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "caption-01",
     text: "Careful now",
-    sub: "wreckless danger ahead",
+    sub: "wreckless behaviour ahead",
     kind: "caption"
   },
   {
@@ -131,6 +133,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     kind: "caption",
     text: "But I Love Summer",
     sub: "And youd should too"
+  },
+  {
+    id: "flash-01",
+    kind: "flash"
   },
   {
     id: "leopolis",

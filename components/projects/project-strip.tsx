@@ -70,7 +70,7 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
                   "aspect-video w-[72%] shrink-0 snap-start object-cover sm:w-full",
                   "transition duration-700 ease-out motion-reduce:transition-none",
                   isActive && "brightness-100",
-                  isDimmed && "brightness-30",
+                  isDimmed && "brightness-20",
                   !isActive && !isDimmed && "brightness-[0.8]"
                 )}
               />
