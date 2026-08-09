@@ -229,6 +229,45 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     }
   }, [step])
 
+  /**
+   * The arrows read as scroll: down is forward, up is back, one slide per press.
+   *
+   * This listens on the window rather than the section, because a <section> takes no
+   * focus and a listener bound to it would need a click before the keys did anything.
+   * The cost of listening that widely is that it has to know when to keep quiet, hence
+   * the three ways out below: someone typing, the command palette open over the top,
+   * and — the one that matters most — the showcase no longer being what is on screen.
+   * Past the stage the arrows go back to scrolling the page, the way they should.
+   *
+   * A held arrow is one gesture and so is worth one slide, which is the same bargain
+   * the wheel makes with a flick.
+   */
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.repeat) return
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
+
+      const direction = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0
+      if (!direction) return
+
+      const target = event.target instanceof HTMLElement ? event.target : null
+      if (target?.closest("input, textarea, select, [contenteditable]")) return
+      if (document.querySelector('[role="dialog"]')) return
+
+      const section = sectionRef.current
+      if (!section) return
+      const { top, bottom } = section.getBoundingClientRect()
+      const middle = window.innerHeight / 2
+      if (top > middle || bottom < middle) return
+
+      event.preventDefault()
+      step(direction)
+    }
+
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [step])
+
   // Each cut gets its own transition sound. Silent until the visitor turns sound on.
   const previous = useRef(active)
   useEffect(() => {
