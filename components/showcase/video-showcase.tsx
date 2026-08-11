@@ -469,11 +469,7 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
               <span
                 className={cn(
                   "block rounded-full transition-all duration-300 ease-out",
-                  i === active
-                    ? "h-6 w-1.5 bg-white"
-                    : isVideo(slide)
-                      ? "h-1.5 w-1.5 bg-white/40 group-hover:bg-white/70"
-                      : "h-0.5 w-1.5 bg-white/25 group-hover:bg-white/60"
+                  i === active ? "h-6 w-1.5 bg-white" : "size-1.5 bg-white/40 group-hover:bg-white/70"
                 )}
               />
             </button>

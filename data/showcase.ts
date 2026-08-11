@@ -155,14 +155,11 @@ export const showcaseSlides: ShowcaseSlide[] = [
     width: 88
   },
   {
-    id: "pause-03",
-    kind: "pause"
-  },
-  {
     id: "caption-04",
     kind: "quote",
     text: "One more thing",
-    attribution: "Don't forget about your phone"
+    attribution: "Don't forget about your phone",
+    delay: 1200
   },
   {
     id: "vertical",
