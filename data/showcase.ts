@@ -34,6 +34,17 @@ const video = (key: string) => `${MEDIA_BASE}/${key}`
  *   { kind: "caption", text, sub? }          → one small line, screenplay-slug style
  *   { kind: "quote", text, attribution? }    → a statement card, word by word
  *
+ * Title and quote cards ripple: the headline arrives a word at a time, left to right,
+ * and the small line beneath it follows the last word. Captions are smaller type and
+ * arrive whole.
+ *
+ * Every card that sets type also takes `delay`: how long it waits before any of that
+ * starts, in ms, defaulting to 0. It shifts the card as a whole, so the frame is held
+ * empty first and the line lands after a beat rather than the instant you cut to it.
+ *
+ *   delay: 0,    // arrives with the cut
+ *   delay: 1000, // a second of empty frame, then the ripple
+ *
  * The flash is the one slide with a duration: it holds for 2s (or its own `duration`)
  * and then carries on the way the visitor was going. Everything else — reel, pause,
  * caption, quote, title card — waits until they move, and one scroll gesture is worth
@@ -45,8 +56,8 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "intro",
     kind: "title",
-    text: "Cutting footage to make strories",
-    sub: "or manipulating bytes for that matter"
+    text: "Cutting footage to make stories",
+    sub: "Or manipulating bytes for that matter"
   },
   {
     id: "hum",
@@ -97,13 +108,10 @@ export const showcaseSlides: ShowcaseSlide[] = [
     height: 62
   },
   {
-    id: "pause-02",
-    kind: "pause"
-  },
-  {
     id: "quote-03",
     kind: "quote",
     text: "I've told you",
+    delay: 1000 // a second of empty frame first, so the line lands after the beat
   },
   {
     id: "blb",

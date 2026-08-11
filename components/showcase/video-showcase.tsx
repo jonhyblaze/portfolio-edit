@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { Fragment, useCallback, useEffect, useRef, useState } from "react"
 import { SoundToggle } from "@/components/sound/sound-toggle"
 import { useSound } from "@/components/sound/sound-provider"
 import { FilmGrain } from "@/components/film-grain"
@@ -40,26 +40,45 @@ export type PauseSlide = SlideBase & {
   kind: "pause"
 }
 
-/** One small line of type, set like a screenplay slug. */
-export type CaptionSlide = SlideBase & {
-  kind: "caption"
-  text: string
-  sub?: string
+/**
+ * How long the card waits before it appears, in milliseconds.
+ *
+ * 0, the default, means it arrives with the cut. Anything higher holds the frame empty
+ * first, so the line lands after a beat of nothing rather than the instant you get
+ * there.
+ *
+ * It shifts the card whole. On a title or quote that means the whole ripple moves, its
+ * first word included, and the credit line under it keeps its place at the end; on a
+ * caption, which arrives in one piece, it moves the block. Nothing inside a card is
+ * re-timed relative to anything else.
+ */
+type Delayed = {
+  delay?: number
 }
+
+/** One small line of type, set like a screenplay slug. */
+export type CaptionSlide = SlideBase &
+  Delayed & {
+    kind: "caption"
+    text: string
+    sub?: string
+  }
 
 /** A full-bleed typographic statement, sized like a title card. */
-export type QuoteSlide = SlideBase & {
-  kind: "quote"
-  text: string
-  attribution?: string
-}
+export type QuoteSlide = SlideBase &
+  Delayed & {
+    kind: "quote"
+    text: string
+    attribution?: string
+  }
 
 /** The opening card. It waits for the visitor rather than pushing them. */
-export type TitleSlide = SlideBase & {
-  kind: "title"
-  text: string
-  sub?: string
-}
+export type TitleSlide = SlideBase &
+  Delayed & {
+    kind: "title"
+    text: string
+    sub?: string
+  }
 
 /**
  * One camera flash: a burst of blown-out white, then the bloom it leaves behind.
@@ -125,6 +144,9 @@ const TAIL_RATIO = 0.08
 
 /** How far a finger has to travel before it is a swipe rather than a touch. */
 const SWIPE_PX = 40
+
+/** The gap between one word of a ripple and the next. */
+const RIPPLE_MS = 70
 
 /** How long a flash stays up before moving on, unless the slide says otherwise. */
 const FLASH_MS = 300
@@ -550,53 +572,66 @@ function FlashAfterglow() {
   )
 }
 
-function CaptionCard({ slide }: { slide: CaptionSlide }) {
-  return (
-    <div className="relative px-8 text-center">
-      <p className="h2 tracking-wide text-white duration-700 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both">
-        {slide.text}
-      </p>
-      {slide.sub && (
-        <p className="label-m tracking-[0.4em] mt-4 uppercase text-muted-foreground delay-200 duration-700 animate-in fade-in-0 fill-mode-both">{slide.sub}</p>
-      )}
-      <span
-        aria-hidden
-        className="mx-auto mt-8 block h-px w-10  bg-muted-foreground delay-300 duration-1000 animate-in fade-in-0 fill-mode-both"
-      />
-    </div>
-  )
-}
-
-/** Display type that arrives a word at a time, the way a cut lands. */
-function StaggeredLine({ text, className }: { text: string; className?: string }) {
+/**
+ * A line that ripples in a word at a time, left to right, instead of arriving whole.
+ *
+ * Each word fades up from just below over 700ms, and each starts RIPPLE_MS after the
+ * one before it, so the line assembles itself across the frame rather than appearing
+ * on it. `delay` shifts the whole ripple later, first word and all, for a card meant
+ * to land after a beat of empty frame.
+ */
+function RippleText({ text, delay = 0, className }: { text: string; delay?: number; className?: string }) {
   const words = splitWords(text)
 
   return (
     <p className={className}>
       {words.map((word, i) => (
-        <span
-          key={`${word}-${i}`}
-          className="inline-block duration-700 animate-in fade-in-0 slide-in-from-bottom-4 fill-mode-both"
-          style={{ animationDelay: `${i * 70}ms` }}>
-          {word}
-          {i < words.length - 1 && " "}
-        </span>
+        // The separator is a text node between the spans, not a trailing space inside
+        // one. A space at the end of an inline-block is collapsed away, which ran every
+        // word into the next; out here it renders, and the line still wraps on it.
+        <Fragment key={`${word}-${i}`}>
+          {i > 0 && " "}
+          <span
+            className="inline-block duration-700 animate-in fade-in-0 slide-in-from-bottom-4 fill-mode-both"
+            style={{ animationDelay: `${delay + i * RIPPLE_MS}ms` }}>
+            {word}
+          </span>
+        </Fragment>
       ))}
     </p>
   )
 }
 
+/** Where the ripple runs out: the slot after its last word, for a line set beneath it. */
+const rippleEndsAt = (text: string, delay: number) => delay + splitWords(text).length * RIPPLE_MS
+
+/**
+ * Small type, so it arrives whole rather than rippling — a ripple across two words at
+ * this size reads as a stutter. The card is one block, shifted by its own delay.
+ */
+function CaptionCard({ slide }: { slide: CaptionSlide }) {
+  return (
+    <div
+      className="relative px-8 text-center duration-700 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both"
+      style={{ animationDelay: `${slide.delay ?? 0}ms` }}>
+      <p className="h2 tracking-wide text-white">{slide.text}</p>
+      {slide.sub && <p className="label-m tracking-[0.4em] mt-4 uppercase text-muted-foreground">{slide.sub}</p>}
+      <span aria-hidden className="mx-auto mt-8 block h-px w-10  bg-muted-foreground" />
+    </div>
+  )
+}
+
 /** The opening card: grain and the headline. The nudge below it comes from Anomaly. */
 function TitleCard({ slide }: { slide: TitleSlide }) {
-  const words = splitWords(slide.text)
+  const delay = slide.delay ?? 0
 
   return (
     <div className="relative max-w-5xl px-8 text-center md:px-16">
-      <StaggeredLine text={slide.text} className="h1 z-50 text-balance  text-white" />
+      <RippleText text={slide.text} delay={delay} className="h1 z-50 text-balance  text-white" />
       {slide.sub && (
         <p
           className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
-          style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
+          style={{ animationDelay: `${rippleEndsAt(slide.text, delay)}ms` }}>
           {slide.sub}
         </p>
       )}
@@ -606,15 +641,15 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
 
 /** A statement card, set at title scale with a small line of credit beneath. */
 function QuoteCard({ slide }: { slide: QuoteSlide }) {
-  const words = splitWords(slide.text)
+  const delay = slide.delay ?? 0
 
   return (
     <div className="relative max-w-5xl px-8 text-center md:px-16">
-      <StaggeredLine text={slide.text} className="h1 text-balance leading-21 text-white" />
+      <RippleText text={slide.text} delay={delay} className="h1 text-balance leading-21 text-white" />
       {slide.attribution && (
         <p
           className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
-          style={{ animationDelay: `${words.length * 70 + 200}ms` }}>
+          style={{ animationDelay: `${rippleEndsAt(slide.text, delay)}ms` }}>
           {slide.attribution}
         </p>
       )}
