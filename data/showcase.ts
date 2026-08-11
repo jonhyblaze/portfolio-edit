@@ -1,4 +1,5 @@
 import type { ShowcaseSlide } from "@/components/showcase/video-showcase"
+import { routes } from "@/data/routes"
 
 /**
  * Video files live on Cloudflare R2 (see scripts/README.md); only the small
@@ -57,7 +58,16 @@ export const showcaseSlides: ShowcaseSlide[] = [
     id: "intro",
     kind: "title",
     text: "Cutting footage to make stories",
-    sub: "Or manipulating bytes for that matter"
+    sub: "Or manipulating bytes for that matter",
+    standfirst: {
+      role: "Film & video editor",
+      blurb: "Crafting sharp, engaging edits for films, commercials, brands, and digital content."
+    },
+    cta: {
+      lines: ["Have a project?", "Let’s bring it to life"],
+      action: "Get in touch",
+      href: routes.contact
+    }
   },
   {
     id: "hum",

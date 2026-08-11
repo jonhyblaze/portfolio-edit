@@ -1,6 +1,7 @@
 "use client"
 
 import { Fragment, useCallback, useEffect, useRef, useState } from "react"
+import Link from "next/link"
 import { SoundToggle } from "@/components/sound/sound-toggle"
 import { useSound } from "@/components/sound/sound-provider"
 import { FilmGrain } from "@/components/film-grain"
@@ -78,6 +79,18 @@ export type TitleSlide = SlideBase &
     kind: "title"
     text: string
     sub?: string
+    /** Bottom left of the frame: the discipline, and a line on what the work is. */
+    standfirst?: {
+      role: string
+      blurb: string
+    }
+    /** Bottom right of the frame: the invitation, framed like a viewfinder. */
+    cta?: {
+      /** One string per line — the break is set here rather than left to the box. */
+      lines: string[]
+      action: string
+      href: string
+    }
   }
 
 /**
@@ -617,20 +630,79 @@ function CaptionCard({ slide }: { slide: CaptionSlide }) {
   )
 }
 
+/** How long after the headline has finished the corners of the frame fill in. */
+const CORNERS_MS = 400
+
 /** The opening card: grain and the headline. The nudge below it comes from Anomaly. */
 function TitleCard({ slide }: { slide: TitleSlide }) {
   const delay = slide.delay ?? 0
+  const settled = rippleEndsAt(slide.text, delay)
 
   return (
-    <div className="relative max-w-5xl px-8 text-center md:px-16">
-      <RippleText text={slide.text} delay={delay} className="h1 z-50 text-balance  text-white" />
-      {slide.sub && (
-        <p
-          className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
-          style={{ animationDelay: `${rippleEndsAt(slide.text, delay)}ms` }}>
-          {slide.sub}
-        </p>
+    <>
+      <div className="relative max-w-5xl px-8 text-center md:px-16">
+        <RippleText text={slide.text} delay={delay} className="h1 z-50 text-balance  text-white" />
+        {slide.sub && (
+          <p
+            className="label-m mt-10 uppercase tracking-[0.35em] text-muted-foreground duration-1000 animate-in fade-in-0 fill-mode-both"
+            style={{ animationDelay: `${settled}ms` }}>
+            {slide.sub}
+          </p>
+        )}
+      </div>
+
+      {/* The two bottom corners of the frame. Absolute against the slide rather than the
+          card, so they sit in the corners of the screen and not around the headline. On
+          a phone there are no corners to speak of — they stack, clear of the nudge. */}
+      {(slide.standfirst || slide.cta) && (
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-8 px-6 pb-32 duration-1000 animate-in fade-in-0 fill-mode-both md:flex-row md:items-end md:justify-between md:gap-12 md:px-32 md:pb-12"
+          style={{ animationDelay: `${settled + CORNERS_MS}ms` }}>
+          {slide.standfirst && (
+            <div className="max-w-xs">
+              <p className="label-s flex items-center gap-2.5 uppercase tracking-[0.3em] text-muted-foreground">
+                <span aria-hidden className="block size-1.5 bg-muted-foreground" />
+                {slide.standfirst.role}
+              </p>
+              <p className="label-s mt-5 uppercase leading-loose tracking-[0.15em] text-white">{slide.standfirst.blurb}</p>
+            </div>
+          )}
+          {slide.cta && <CtaFrame cta={slide.cta} />}
+        </div>
       )}
+    </>
+  )
+}
+
+/** The corner marks of a viewfinder, drawn as four short right angles. */
+const CTA_CORNERS = [
+  "left-0 top-0 border-l border-t",
+  "right-0 top-0 border-r border-t",
+  "bottom-0 left-0 border-b border-l",
+  "bottom-0 right-0 border-b border-r"
+]
+
+/** The invitation, bracketed like a frame waiting to be filled. */
+function CtaFrame({ cta }: { cta: NonNullable<TitleSlide["cta"]> }) {
+  return (
+    <div className="relative max-w-xs px-5 py-6 md:px-6">
+      {CTA_CORNERS.map((corner) => (
+        <span key={corner} aria-hidden className={cn("absolute size-3 border-white/40", corner)} />
+      ))}
+      <p className="label-s uppercase leading-loose tracking-[0.15em] text-white">
+        {cta.lines.map((line, i) => (
+          <Fragment key={line}>
+            {i > 0 && <br />}
+            {line}
+          </Fragment>
+        ))}
+      </p>
+      <Link
+        href={cta.href}
+        className="label-s pointer-events-auto mt-5 inline-flex items-center gap-2 uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-white">
+        {cta.action}
+        <span aria-hidden>&rarr;</span>
+      </Link>
     </div>
   )
 }

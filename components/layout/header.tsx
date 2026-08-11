@@ -29,7 +29,7 @@ export function Header() {
         !scrolled && "backdrop-blur-none",
         SKIP_BLUR_ROUTES.has(pathname) && "backdrop-blur-none"
       )}>
-      <div className="max-w-8xl mx-auto flex px-5 sm:px-16 laptop:px-0 h-16 items-center justify-between">
+      <div className="max-w-8xl mx-auto flex px-5 sm:px-16 md:px-32 h-16 items-center justify-between">
         <Link href="/" className="label-l transition-opacity hover:opacity-80">
           Oleksandr Korotun
         </Link>

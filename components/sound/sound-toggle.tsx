@@ -20,7 +20,7 @@ export function SoundToggle({ className }: { className?: string }) {
         className
       )}>
       {enabled ? <RiVolumeUpLine className="h-4 w-4" /> : <RiVolumeMuteLine className="h-4 w-4" />}
-      <span className={cn("label-s hidden uppercase tracking-widest group-hover:inline transition-all duration-500")}>{enabled ? "Sound on" : "Sound off"}</span>
+      <span className={cn("label-s hidden uppercase tracking-widest group-hover:inline transition-all duration-500")}>{enabled ? "On" : "Off"}</span>
     </button>
   )
 }
