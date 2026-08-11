@@ -216,13 +216,12 @@ export const projects: Project[] = [
     title: "HUM ",
     year: 2021,
     type: "Short Music Film",
-    runtime: "4 min",
+    runtime: "03:45 min",
     director: "Oleksandr Korotun",
     frames: frames("hum", "Hum"),
-    logline: "A room, a held note, and the hour before anyone else wakes up.",
-    synopsis:
-      "Cut to the track rather than to the performance. The edit holds each setup a beat past comfort, then lets the next one arrive early — the film is built out of that mismatch. No dialogue; the room tone carries the joins.",
-    festivals: ["Odesa IFF — National Competition", "Kyiv Critics' Week"],
+    logline: "The ultimate act of escapism is vanishing into your own silence.",
+    synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
+    festivals: [`"CYCLOP" – International Videopoetry Competion (2021)`],
     video: {
       src: master("loops/hum.mp4"),
       poster: "/showcase/hum-cover.jpg",
@@ -236,40 +235,43 @@ export const projects: Project[] = [
       { time: 41, label: "Reprise" }
     ],
     materials: {
-      stills: stills("hum", "Hum", [3, 14, undefined, 41]),
-      palette: palette("Wet green and skin, under an overcast sky that never quite opens. Nothing in the film is allowed to be warm except the people.", [
-        ["#07080c", "Black"],
-        ["#222d18", "Deep grass"],
-        ["#364c2e", "Grass"],
-        ["#705b50", "Skin"],
-        ["#506758", "Moss"],
-        ["#717973", "Overcast"],
-        ["#7f9394", "Haze"],
-        ["#a8bdb7", "Sage"],
-        ["#cee3e5", "Sky"]
-      ])
+      stills: stills("hum", "Hum", [3, 12, 22.5, 43]),
+      palette: palette(
+        "Wet green and skin, under an overcast sky that fully opens just once. Nothing in the film is allowed to be warm except the people.",
+        [
+          ["#07080c", "Black"],
+          ["#222d18", "Deep grass"],
+          ["#364c2e", "Grass"],
+          ["#705b50", "Skin"],
+          ["#506758", "Moss"],
+          ["#717973", "Overcast"],
+          ["#7f9394", "Haze"],
+          ["#a8bdb7", "Sage"],
+          ["#cee3e5", "Sky"]
+        ]
+      )
     },
     technical: [
-      { label: "Camera", value: "ARRI Alexa Mini" },
-      { label: "Lenses", value: "Cooke S4/i" },
+      { label: "Camera", value: "Sony A7SIII" },
+      { label: "Lenses", value: "Zeiss Zf" },
       { label: "Format", value: "ARRIRAW 3.4K" },
-      { label: "Aspect Ratio", value: "1.85:1" },
+      { label: "Aspect Ratio", value: "1.77:1" },
       { label: "Colour", value: "ACES" },
       { label: "Editing System", value: "DaVinci Resolve Studio" },
-      { label: "Delivery", value: "DCP 24fps" }
+      { label: "Delivery", value: "ProRes 444 24fps" }
     ],
     credits: {
       cast: [
-        { name: "Mariia Datsenko", character: "The Singer" },
-        { name: "Petro Vashchenko", character: "The Neighbour" }
+        { name: "Iryna Tychyna", character: "Woman" },
+        { name: "Solomia Kyrylova", character: "Alter Ego" }
       ],
       crew: [
-        { role: "Director", name: "Oleksandr Korotun" },
-        { role: "Director of Photography", name: "Oleksandr Korotun" },
+        { role: "Director / DoP", name: "Oleksandr Korotun" },
         { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Sound", name: "Yuliia Mazur" },
-        { role: "Colour", name: "Ihor Bondarenko" },
-        { role: "Producer", name: "Blue Velvet Underground" }
+        { role: "Compositor", name: "Maryana Klochko" },
+        { role: "Designer", name: "Anna Vashulenko" },
+        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun" },
+
       ]
     }
   },
@@ -297,18 +299,21 @@ export const projects: Project[] = [
       { time: 38, label: "Night" }
     ],
     materials: {
-      stills: stills("212", "212 Heroes", [3, 15, 27, 42]),
-      palette: palette("The film runs the light down: concrete daylight, an indigo hour, then sodium. The lilac is the only colour that belongs to none of the three, which is why the dusk shots carry it.", [
-        ["#0a1313", "Asphalt"],
-        ["#20145d", "Indigo"],
-        ["#453d81", "Dusk"],
-        ["#564515", "Sodium"],
-        ["#637099", "Steel"],
-        ["#a388c4", "Lilac"],
-        ["#999896", "Concrete"],
-        ["#b6b7a9", "Daylight"],
-        ["#e0ded8", "Highlight"]
-      ]),
+      stills: stills("212", "212 Heroes", [3, 15, 27, 42, 46, 49]),
+      palette: palette(
+        "The film runs the light down: concrete daylight, an indigo hour, then sodium. The lilac is the only colour that belongs to none of the three, which is why the dusk shots carry it.",
+        [
+          ["#0a1313", "Asphalt"],
+          ["#20145d", "Indigo"],
+          ["#453d81", "Dusk"],
+          ["#564515", "Sodium"],
+          ["#637099", "Steel"],
+          ["#a388c4", "Lilac"],
+          ["#999896", "Concrete"],
+          ["#b6b7a9", "Daylight"],
+          ["#e0ded8", "Highlight"]
+        ]
+      ),
       // Six shots, one per lighting state the film passes through. `before` and
       // `after` point at the same frame for now and carry `simulated`; when the
       // ungraded plates are pulled, replace `before` and delete the flag.
@@ -378,10 +383,10 @@ export const projects: Project[] = [
       { label: "Lenses", value: "Cooke Anamorphic/i" },
       { label: "Format", value: "ARRIRAW 4.5K" },
       { label: "Aspect Ratio", value: "1.33:1" },
-      { label: "Colour", value: "ACEScct" },
+      { label: "Colour", value: "Rec 2020" },
       { label: "Grade", value: "DaVinci Resolve Studio" },
-      { label: "Editing System", value: "Adobe Premiere Pro" },
-      { label: "Delivery", value: "ProRes 4444 · H.264 social cuts" }
+      { label: "Editing System", value: "DaVinci Resolve Studio" },
+      { label: "Delivery", value: "ProRes 4444 · H.264 social media cuts" }
     ],
     credits: {
       crew: [
@@ -418,17 +423,20 @@ export const projects: Project[] = [
       { time: 47, label: "Fade" }
     ],
     materials: {
-      palette: palette("A cold coast in winter. One teal carries the sea and the sky both, and the bark is the only warm thing in the film.", [
-        ["#070c0e", "Black"],
-        ["#1e252a", "Shadow"],
-        ["#374147", "Slate"],
-        ["#1e5265", "Sea"],
-        ["#3d5e6e", "Teal"],
-        ["#5b5959", "Bark"],
-        ["#67747d", "Overcast"],
-        ["#969ba1", "Sand"],
-        ["#b3bfc3", "Sky"]
-      ]),
+      palette: palette(
+        "A cold coast in winter. One teal carries the sea and the sky both, and the bark is the only warm thing in the film.",
+        [
+          ["#070c0e", "Black"],
+          ["#1e252a", "Shadow"],
+          ["#374147", "Slate"],
+          ["#1e5265", "Sea"],
+          ["#3d5e6e", "Teal"],
+          ["#5b5959", "Bark"],
+          ["#67747d", "Overcast"],
+          ["#969ba1", "Sand"],
+          ["#b3bfc3", "Sky"]
+        ]
+      ),
       storyboard: [
         {
           shot: "SH 01A",
@@ -503,17 +511,20 @@ export const projects: Project[] = [
       { time: 44, label: "Final sequence" }
     ],
     materials: {
-      palette: palette("Eight greys and one coat. The whole grade is arranged so that the yellow is the only thing in the film you can find at a distance.", [
-        ["#1c2225", "Water"],
-        ["#363c3d", "Ice shadow"],
-        ["#4d5451", "Treeline"],
-        ["#7f6e57", "Coat"],
-        ["#67767a", "Slush"],
-        ["#7f8d90", "Cold grey"],
-        ["#a8b7bf", "Ice"],
-        ["#c7ced1", "Snow"],
-        ["#e3e6e5", "Whiteout"]
-      ]),
+      palette: palette(
+        "Eight greys and one coat. The whole grade is arranged so that the yellow is the only thing in the film you can find at a distance.",
+        [
+          ["#1c2225", "Water"],
+          ["#363c3d", "Ice shadow"],
+          ["#4d5451", "Treeline"],
+          ["#7f6e57", "Coat"],
+          ["#67767a", "Slush"],
+          ["#7f8d90", "Cold grey"],
+          ["#a8b7bf", "Ice"],
+          ["#c7ced1", "Snow"],
+          ["#e3e6e5", "Whiteout"]
+        ]
+      ),
       // The trailer points at a different loop so switching versions is visibly a
       // switch. Black & White is the same master under a display treatment until
       // a graded one exists.
@@ -603,17 +614,20 @@ export const projects: Project[] = [
     ],
     materials: {
       stills: stills("leopolis", "Leopolis Night", [4, 16, 29, 41]),
-      palette: palette("No hue survived the grade. What is left is a ladder of stone and lamplight, and the film asks you to read it as tone rather than colour.", [
-        ["#0b0b0b", "Black"],
-        ["#343333", "Shadow"],
-        ["#565552", "Stone"],
-        ["#6c6a67", "Pavement"],
-        ["#82817e", "Midtone"],
-        ["#b0afac", "Skin"],
-        ["#cecdcb", "Lamplight"],
-        ["#e4e3e2", "Highlight"],
-        ["#fdfcfb", "Practical"]
-      ]),
+      palette: palette(
+        "No hue survived the grade. What is left is a ladder of stone and lamplight, and the film asks you to read it as tone rather than colour.",
+        [
+          ["#0b0b0b", "Black"],
+          ["#343333", "Shadow"],
+          ["#565552", "Stone"],
+          ["#6c6a67", "Pavement"],
+          ["#82817e", "Midtone"],
+          ["#b0afac", "Skin"],
+          ["#cecdcb", "Lamplight"],
+          ["#e4e3e2", "Highlight"],
+          ["#fdfcfb", "Practical"]
+        ]
+      ),
       storyboard: [
         {
           shot: "SH 02",
@@ -679,17 +693,20 @@ export const projects: Project[] = [
       { time: 78, label: "Final sequence" }
     ],
     materials: {
-      palette: palette("Blue hour held past the point where it was still there, and pushed further in the grade. The pine is the only green the film keeps.", [
-        ["#0d1318", "Black"],
-        ["#102138", "Night"],
-        ["#103160", "Deep blue"],
-        ["#123c45", "Petrol"],
-        ["#183e30", "Pine"],
-        ["#1a4b56", "Teal"],
-        ["#1a5482", "Blue hour"],
-        ["#256c8c", "Water"],
-        ["#30869f", "Sky"]
-      ]),
+      palette: palette(
+        "Blue hour held past the point where it was still there, and pushed further in the grade. The pine is the only green the film keeps.",
+        [
+          ["#0d1318", "Black"],
+          ["#102138", "Night"],
+          ["#103160", "Deep blue"],
+          ["#123c45", "Petrol"],
+          ["#183e30", "Pine"],
+          ["#1a4b56", "Teal"],
+          ["#1a5482", "Blue hour"],
+          ["#256c8c", "Water"],
+          ["#30869f", "Sky"]
+        ]
+      ),
       versions: [
         {
           id: "final",

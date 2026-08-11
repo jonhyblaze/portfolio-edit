@@ -5,6 +5,7 @@ import Link from "next/link"
 import { SoundToggle } from "@/components/sound/sound-toggle"
 import { useSound } from "@/components/sound/sound-provider"
 import { FilmGrain } from "@/components/film-grain"
+import { readWheel, wheelPixels, type WheelPush } from "@/lib/wheel-gesture"
 import { cn } from "@/lib/utils"
 
 type SlideBase = {
@@ -110,51 +111,6 @@ export type ShowcaseSlide = VideoReel | PauseSlide | CaptionSlide | QuoteSlide |
 
 const isVideo = (slide: ShowcaseSlide): slide is VideoReel => (slide.kind ?? "video") === "video"
 
-/**
- * Gesture timing.
- *
- * Some idea of "still the same gesture" is unavoidable: a trackpad reports one
- * flick as dozens of events over as much as a second, and without this a single
- * flick would run through half the reel. The trick is releasing on the right
- * signal. Waiting for the wheel to fall silent is the wrong one — macOS keeps
- * sending coasting events long after the fingers have left the pad, so the reel
- * stays locked for the whole tail. These three read the shape of the gesture
- * instead, and nothing here is on a timer.
- */
-
-/**
- * A gap this long, with nothing live arriving, means they let go.
- *
- * It has to clear the seam in the middle of a trackpad flick. One flick is not one
- * stream: the fingers produce a burst, they leave, and macOS then starts the coasting
- * events a moment later — a pause of anywhere up to about a fifth of a second sits
- * between the two halves. At 120ms that seam read as the end of one gesture and the
- * start of another, and a single flick stepped twice. Worse, both halves of this
- * value failed together: the silence timer also fired inside the seam and wiped
- * `peak`, so the first coasting event was measured against nothing and sailed past
- * the tail floor as if it were a fresh shove.
- *
- * Raising it does not lock the reel through a long tail: `lastLiveAt` only moves on
- * live events, so dregs never extend the wait — they are still ignored the moment
- * they fall below the floor.
- */
-const GESTURE_IDLE_MS = 350
-
-/**
- * Where a gesture stops being input and becomes debris.
- *
- * Measured against the gesture's own peak rather than a fixed number, because the
- * two ends of the range are so far apart: one notch of a mouse wheel reports
- * around 120, a slow two-finger drag reports single digits. Eight per cent of
- * whatever this particular gesture peaked at separates a flick's dying tail from
- * a hand still on the pad, at either scale.
- *
- * This is what keeps the reel from staying locked for the whole of a long
- * momentum tail: the dregs are ignored, so the gesture is over well before they
- * stop arriving.
- */
-const TAIL_RATIO = 0.08
-
 /** How far a finger has to travel before it is a swipe rather than a touch. */
 const SWIPE_PX = 40
 
@@ -173,12 +129,10 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
   const { play } = useSound()
   const count = slides.length
 
-  /** The biggest delta seen since the wheel last went quiet, for sizing its tail. */
-  const peak = useRef(0)
-  /** When the last event big enough to count as a hand on the wheel arrived. */
-  const lastLiveAt = useRef(0)
-  const lastDirection = useRef(0)
-  const silence = useRef<number | undefined>(undefined)
+  /** The push being read right now — see lib/wheel-gesture. Null until the wheel is used. */
+  const gesture = useRef<WheelPush | null>(null)
+  /** When the reel last moved, so one push cannot read as two inside a few frames. */
+  const lastStepAt = useRef(-Infinity)
   const touchStart = useRef<number | null>(null)
   /**
    * Which way the visitor is going through the sequence. Only the flash reads it,
@@ -212,23 +166,12 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
    * The showcase owns the wheel while it is on screen: the slides advance, the
    * page underneath does not move.
    *
-   * One unbroken stream of wheel events is one gesture and is worth exactly one
-   * slide, whether it was a nudge or a shove.
+   * One push is worth exactly one slide, whether it was a nudge or a shove — and every push
+   * counts, however soon it follows the last, so two quick flicks give two slides. The cut
+   * lands on the push's first event rather than at the end of it, so it is on the flick.
    *
-   * The boundary is a gap in *live* events. A flick's decaying tail is debris: it
-   * is skipped entirely, so it neither moves the reel nor holds it, and the reel
-   * comes free while the tail is still dribbling out.
-   *
-   * Two things had to be got right here, and both were wrong before:
-   *
-   * There is no rising-magnitude test. A climbing delta reads the same whether it
-   * is a second push or a slow drag still getting going, so calling it a push
-   * landed one gesture two slides away.
-   *
-   * And `peak` outlives the gesture — it is cleared only once the wheel has been
-   * completely silent. Clearing it when the tail went quiet made the very next
-   * dreg look enormous next to a peak of nothing, and the tail stepped the reel
-   * on by itself.
+   * lib/wheel-gesture does the reading: how a push is told apart from the coasting tail of
+   * the one before it, and why nothing in it waits for the stream to fall quiet.
    */
   useEffect(() => {
     const section = sectionRef.current
@@ -237,37 +180,16 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
     const onWheel = (event: WheelEvent) => {
       event.preventDefault()
 
-      const direction = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0
-      if (!direction) return
+      const moved = wheelPixels(event.deltaY, event.deltaMode, window.innerHeight)
+      if (!moved) return
 
       const now = performance.now()
-      const magnitude = Math.abs(event.deltaY)
+      const reading = readWheel(gesture.current, moved, now, lastStepAt.current)
+      gesture.current = reading.push
+      if (!reading.step) return
 
-      // Any event at all, debris included, means the wheel has not gone quiet yet.
-      // Only real silence forgets how big this gesture was.
-      window.clearTimeout(silence.current)
-      silence.current = window.setTimeout(() => {
-        peak.current = 0
-      }, GESTURE_IDLE_MS)
-
-      // Reversing is always a new gesture: momentum never turns around.
-      if (direction !== lastDirection.current) {
-        lastDirection.current = direction
-        peak.current = 0
-        lastLiveAt.current = 0
-      }
-
-      peak.current = Math.max(peak.current, magnitude)
-
-      // Too small to be a hand on the wheel — skip it without it counting as the
-      // gesture carrying on.
-      if (magnitude < peak.current * TAIL_RATIO) return
-
-      const continuing = now - lastLiveAt.current <= GESTURE_IDLE_MS
-      lastLiveAt.current = now
-      if (continuing) return
-
-      step(direction)
+      lastStepAt.current = now
+      step(reading.step)
     }
 
     const onTouchStart = (event: TouchEvent) => {
@@ -306,7 +228,6 @@ export function VideoShowcase({ slides, className }: { slides: ShowcaseSlide[]; 
       section.removeEventListener("touchmove", onTouchMove)
       section.removeEventListener("touchend", onTouchEnd)
       section.removeEventListener("touchcancel", onTouchEnd)
-      window.clearTimeout(silence.current)
     }
   }, [step])
 
