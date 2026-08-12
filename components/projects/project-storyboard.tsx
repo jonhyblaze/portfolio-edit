@@ -1,6 +1,6 @@
 "use client"
 
-import type { ProjectBoard } from "@/data/projects"
+import { WIDESCREEN, type ProjectBoard } from "@/data/projects"
 import { formatTimecode } from "@/lib/timecode"
 import { cn } from "@/lib/utils"
 import { LABEL } from "./shared"
@@ -14,7 +14,15 @@ import { LABEL } from "./shared"
  * for its own board under that treatment, and the panel says so out loud rather
  * than passing a frame off as a drawing.
  */
-export function ProjectStoryboard({ boards, onSeek }: { boards: ProjectBoard[]; onSeek: (time: number) => void }) {
+export function ProjectStoryboard({
+  boards,
+  aspect = WIDESCREEN,
+  onSeek
+}: {
+  boards: ProjectBoard[]
+  aspect?: string
+  onSeek: (time: number) => void
+}) {
   const drawn = boards.some((board) => board.sketch)
 
   return (
@@ -53,7 +61,8 @@ export function ProjectStoryboard({ boards, onSeek }: { boards: ProjectBoard[]; 
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className="aspect-video w-full object-cover opacity-45 grayscale contrast-150 brightness-110"
+                    style={{ aspectRatio: aspect }}
+                    className="w-full object-cover opacity-45 grayscale contrast-150 brightness-110"
                   />
                 </div>
               </figure>
@@ -71,7 +80,8 @@ export function ProjectStoryboard({ boards, onSeek }: { boards: ProjectBoard[]; 
                     loading="lazy"
                     decoding="async"
                     draggable={false}
-                    className="aspect-video w-full object-cover"
+                    style={{ aspectRatio: aspect }}
+                    className="w-full object-cover"
                   />
                 </div>
               </figure>

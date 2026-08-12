@@ -1,5 +1,5 @@
 import Link from "next/link"
-import type { Project } from "@/data/projects"
+import { WIDESCREEN, type Project } from "@/data/projects"
 import { ProjectMetadata } from "./project-metadata"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +21,7 @@ type ProjectStripProps = {
  * 100% lit, 80% at rest, 50% stepped back.
  */
 export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeactivate }: ProjectStripProps) {
-  const { slug, title, year, type, runtime, director, frames } = project
+  const { slug, title, year, type, runtime, director, frames, aspect = WIDESCREEN } = project
 
   return (
     <li
@@ -66,8 +66,11 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
                 loading="lazy"
                 decoding="async"
                 draggable={false}
+                // The frame's own ratio, so a 4:3 project reads as 4:3 here rather
+                // than being cropped to the shape of the other strips.
+                style={{ aspectRatio: aspect }}
                 className={cn(
-                  "aspect-video w-[72%] shrink-0 snap-start object-cover sm:w-full",
+                  "w-[72%] shrink-0 snap-start object-cover sm:w-full",
                   "transition duration-700 ease-out motion-reduce:transition-none",
                   isActive && "brightness-100",
                   isDimmed && "brightness-20",

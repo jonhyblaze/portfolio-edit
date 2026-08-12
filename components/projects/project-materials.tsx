@@ -136,9 +136,13 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
         tabIndex={0}
         className="min-h-80 pt-10 duration-500 animate-in fade-in-0 focus-visible:outline-none md:pt-12">
         {active === "film" && <ProjectFilm project={project} />}
-        {active === "stills" && stills && <ProjectStills stills={stills} onSeek={onSeek} />}
-        {active === "storyboard" && storyboard && <ProjectStoryboard boards={storyboard} onSeek={onSeek} />}
-        {active === "grade" && grades && <ProjectGrades grades={grades} onSeek={onSeek} />}
+        {/* Every panel that holds a frame is handed the film's ratio; undefined
+            means the panel's own default, which is widescreen. */}
+        {active === "stills" && stills && <ProjectStills stills={stills} aspect={project.aspect} onSeek={onSeek} />}
+        {active === "storyboard" && storyboard && (
+          <ProjectStoryboard boards={storyboard} aspect={project.aspect} onSeek={onSeek} />
+        )}
+        {active === "grade" && grades && <ProjectGrades grades={grades} aspect={project.aspect} onSeek={onSeek} />}
         {active === "palette" && palette && <ProjectPaletteBlock palette={palette} />}
         {active === "versions" && versions && (
           <ProjectVersions versions={versions} activeId={activeVersionId} onSelect={onSelectVersion} />

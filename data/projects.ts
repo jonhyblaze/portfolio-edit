@@ -161,6 +161,17 @@ export type Project = {
   /** Pre-formatted, e.g. "18 min" — runtimes are written, not computed. */
   runtime: string
   director: string
+  /**
+   * The shape of the picture, as a CSS aspect-ratio: "16 / 9", "4 / 3", "2.39 / 1".
+   * Everything that holds a frame sizes itself to this — the strip on /projects,
+   * the contact sheet, the grade wipe, the boards — so a film that isn't
+   * widescreen is not cropped into a widescreen hole. Omitted reads as 16:9, so
+   * only a film that departs from it has to say anything.
+   *
+   * This is the film's own ratio, not the placeholder loop's: the viewer contains
+   * whatever master it is handed and needs no telling.
+   */
+  aspect?: string
   /** Exactly four landscape stills, in cut order. */
   frames: ProjectFrame[]
   /** One line, the way a festival catalogue would carry it. */
@@ -175,6 +186,9 @@ export type Project = {
 }
 
 const FRAMES_PER_STRIP = 4
+
+/** What a project is assumed to be shaped like when it doesn't say. */
+export const WIDESCREEN = "16 / 9"
 
 /**
  * Video files live on Cloudflare R2 (see scripts/README.md); only the small
@@ -192,9 +206,18 @@ const frames = (prefix: string, title: string): ProjectFrame[] =>
     alt: `${title} — frame ${index + 1} of ${FRAMES_PER_STRIP}`
   }))
 
-/** The same four frames, read as a contact sheet. `times` is sparse on purpose. */
+/**
+ * The contact sheet, which can run longer than the strip: one still per entry in
+ * `times`, so a project with six frames on disk gets six by asking for six times.
+ * `times` is sparse on purpose — a still with no timecode is written `undefined`
+ * rather than left out, since the array's length is the number of stills.
+ */
 const stills = (prefix: string, title: string, times: (number | undefined)[] = []): ProjectStill[] =>
-  frames(prefix, title).map((frame, index) => ({ ...frame, time: times[index] }))
+  times.map((time, index) => ({
+    src: `/projects/stills/${prefix}-${index + 1}.jpg`,
+    alt: `${title} — frame ${index + 1} of ${times.length}`,
+    time
+  }))
 
 /**
  * Swatches written as [hex, name] pairs, which keeps a nine-colour palette to
@@ -278,10 +301,12 @@ export const projects: Project[] = [
   {
     slug: "212-heroes",
     title: "212 HEROES",
-    year: 2023,
+    year: 2021,
     type: "Commercial",
-    runtime: "1 min",
+    runtime: "1:29 min",
     director: "Oleksandr Korotun",
+    // Shot 1440x1080 — the one project here that isn't widescreen.
+    aspect: "4 / 3",
     frames: frames("212", "212 Heroes"),
     logline: "Kyiv from the last light to the first streetlamp, at skateboard height.",
     synopsis:

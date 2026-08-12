@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react"
-import type { ProjectGrade } from "@/data/projects"
+import { WIDESCREEN, type ProjectGrade } from "@/data/projects"
 import { formatTimecode } from "@/lib/timecode"
 import { cn } from "@/lib/utils"
 import { LABEL } from "./shared"
@@ -29,7 +29,15 @@ const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min)
  *
  * The frame itself is the slider: drag it, or tab to it and use the arrows.
  */
-export function ProjectGrades({ grades, onSeek }: { grades: ProjectGrade[]; onSeek: (time: number) => void }) {
+export function ProjectGrades({
+  grades,
+  aspect = WIDESCREEN,
+  onSeek
+}: {
+  grades: ProjectGrade[]
+  aspect?: string
+  onSeek: (time: number) => void
+}) {
   const [index, setIndex] = useState(0)
   const [position, setPosition] = useState(INITIAL_POSITION)
   const frameRef = useRef<HTMLDivElement>(null)
@@ -60,8 +68,9 @@ export function ProjectGrades({ grades, onSeek }: { grades: ProjectGrade[]; onSe
   }
 
   return (
-    // Capped: a grade needs size to be judged, but a 16:9 frame at full page width
-    // is taller than the viewport and pushes the shot strip out of sight.
+    // Capped: a grade needs size to be judged, but a frame at full page width is
+    // taller than the viewport and pushes the shot strip out of sight — more so the
+    // narrower the film is.
     <div className="max-w-5xl">
       {standingIn && (
         <p className="label-s mb-8 max-w-prose text-muted-foreground/50">
@@ -116,8 +125,11 @@ export function ProjectGrades({ grades, onSeek }: { grades: ProjectGrade[]; onSe
         onPointerCancel={() => {
           dragging.current = false
         }}
+        // Both plates are absolute inside this box, so the film's ratio is set once
+        // here and the wipe geometry follows it.
+        style={{ aspectRatio: aspect }}
         className={cn(
-          "relative aspect-video w-full cursor-ew-resize touch-none select-none overflow-hidden bg-black",
+          "relative w-full cursor-ew-resize touch-none select-none overflow-hidden bg-black",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground/40"
         )}>
         {/* Graded — the whole frame, underneath. */}
@@ -177,8 +189,9 @@ export function ProjectGrades({ grades, onSeek }: { grades: ProjectGrade[]; onSe
                   loading="lazy"
                   decoding="async"
                   draggable={false}
+                  style={{ aspectRatio: aspect }}
                   className={cn(
-                    "aspect-video w-full object-cover transition duration-500 ease-out motion-reduce:transition-none",
+                    "w-full object-cover transition duration-500 ease-out motion-reduce:transition-none",
                     isActive ? "brightness-100" : "brightness-[0.45] group-hover:brightness-75"
                   )}
                 />
