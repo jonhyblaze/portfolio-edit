@@ -4,9 +4,17 @@
  * The shape is deliberately flat — a CMS will fill these fields verbatim later,
  * including `frames`, where each entry carries its own `src` and `alt`.
  *
- * Everything here is placeholder. The stills in /public/projects/stills were cut
- * from the showcase loops (letterboxing removed, 720x405) purely so the strips
- * have real frames to hold; the titles and credits are invented. The alt text
+ * Frames come from two folders, and the split is deliberate:
+ *
+ *   /public/projects/strips — the four frames of the strip on /projects. Cut and
+ *     compressed for a band that is four-across and never full width, so they are
+ *     small: roughly a third of the weight of the stills, for the page that loads
+ *     every project at once.
+ *   /public/projects/stills — the contact sheet on /projects/[slug], where the
+ *     point is a closer look. Higher resolution, and the only place a project's
+ *     own ratio is shown uncropped.
+ *
+ * The rest is placeholder: the titles and credits are invented, and the alt text
  * says which frame it is rather than describing a picture that doesn't belong to
  * the project yet — real copy comes with the real stills.
  *
@@ -172,7 +180,16 @@ export type Project = {
    * whatever master it is handed and needs no telling.
    */
   aspect?: string
-  /** Exactly four landscape stills, in cut order. */
+  /**
+   * The shape of the *strip* frames, when they were recut to something other than
+   * the film's own ratio. Defaults to `aspect`, which is the usual case: the files
+   * in /projects/strips are delivered inside a 16:9 box, and a scope film sitting
+   * letterboxed in that box has its bars cropped straight back off by being sized
+   * to 2.39:1. Only a film whose strip is a genuine recompose — 4:3 picture
+   * reframed to fill 16:9 — has to say so here.
+   */
+  stripAspect?: string
+  /** Exactly four landscape frames off /public/projects/strips, in cut order. */
   frames: ProjectFrame[]
   /** One line, the way a festival catalogue would carry it. */
   logline?: string
@@ -199,8 +216,25 @@ const MEDIA_BASE = process.env.NEXT_PUBLIC_MEDIA_BASE ?? ""
 
 const master = (key: string) => `${MEDIA_BASE}/${key}`
 
-/** /public/projects/stills/<prefix>-1.jpg … -4.jpg */
-const frames = (prefix: string, title: string): ProjectFrame[] =>
+/**
+ * /public/projects/strips/<prefix>-1.<ext> … -4.<ext> — the strip on /projects.
+ *
+ * The extension is per project rather than fixed: the folder is mostly webp, with
+ * a couple of projects still delivered as jpg.
+ */
+const frames = (prefix: string, title: string, ext: "webp" | "jpg" = "webp"): ProjectFrame[] =>
+  Array.from({ length: FRAMES_PER_STRIP }, (_, index) => ({
+    src: `/projects/strips/${prefix}-${index + 1}.${ext}`,
+    alt: `${title} — frame ${index + 1} of ${FRAMES_PER_STRIP}`
+  }))
+
+/**
+ * A strip built out of the contact-sheet stills, for a project whose strip cuts
+ * haven't been delivered yet. Heavier than the real thing over the wire — the
+ * point of the strips folder is that it isn't this — so it is a stopgap, and
+ * every project using it should stop using it.
+ */
+const framesFromStills = (prefix: string, title: string): ProjectFrame[] =>
   Array.from({ length: FRAMES_PER_STRIP }, (_, index) => ({
     src: `/projects/stills/${prefix}-${index + 1}.jpg`,
     alt: `${title} — frame ${index + 1} of ${FRAMES_PER_STRIP}`
@@ -305,8 +339,10 @@ export const projects: Project[] = [
     type: "Commercial",
     runtime: "1:29 min",
     director: "Oleksandr Korotun",
-    // Shot 1440x1080 — the one project here that isn't widescreen.
+    // Shot 1440x1080 — the one project here that isn't widescreen. Its strip was
+    // reframed to fill 16:9, so the 4:3 only shows up on the project page.
     aspect: "4 / 3",
+    stripAspect: WIDESCREEN,
     frames: frames("212", "212 Heroes"),
     logline: "Kyiv from the last light to the first streetlamp, at skateboard height.",
     synopsis:
@@ -431,6 +467,7 @@ export const projects: Project[] = [
     type: "Music Video",
     runtime: "5 min",
     director: "Oleksandr Korotun",
+    // TODO: no strip cuts delivered yet — falling back to the full-size stills.
     frames: frames("blind-as-a-bat", "Blind As A Bat"),
     logline: "One continuous walk, cut so that it never quite continues.",
     synopsis:
@@ -518,7 +555,7 @@ export const projects: Project[] = [
     type: "Short Film",
     runtime: "14 min",
     director: "Anastasia Grüba",
-    frames: frames("icehole", "Icehole"),
+    frames: frames("icehole", "Icehole", "jpg"),
     logline: "A woman cuts a hole in the ice every morning. One morning she doesn't come back up.",
     synopsis:
       "Assembled long and then cut down over four passes. The festival cut and the black-and-white version are both delivered from the same conform; the trailer was built separately from the same bins.",
@@ -615,12 +652,78 @@ export const projects: Project[] = [
     }
   },
   {
+    slug: "pavo-indus",
+    title: "PAVO INDUS",
+    year: 2019,
+    type: "Music Video",
+    runtime: "4:12 min",
+    director: "Max Prodaniuk",
+    // Scope, and the strip files carry the letterbox baked in — sizing the frames
+    // to 2.39:1 crops those bars off rather than drawing them twice.
+    aspect: "2.39 / 1",
+    frames: frames("pavo", "Pavo Indus"),
+    logline: "A hunter walks up into weather that has already closed behind him.",
+    synopsis:
+      "Shot black-and-white over two days on a ridge in the Carpathians, in snow that never let up long enough to be waited out. Cut to the track rather than to the walk: the film keeps arriving at the same treeline, and the only thing that changes is how much of it you can still see.",
+    video: {
+      src: master("loops/pavo-indus.mp4"),
+      poster: "/showcase/pavo-indus-cover.jpg",
+      duration: 34,
+      aspectRatio: "2.39:1"
+    },
+    markers: [
+      { time: 2, label: "Ridge" },
+      { time: 11, label: "Treeline" },
+      { time: 21, label: "The shot" },
+      { time: 29, label: "Whiteout" }
+    ],
+    materials: {
+      palette: palette(
+        "Nine greys and no colour at all. The film tops out around 70% — nothing in it is ever white, which is what makes the snow read as weather rather than as light.",
+        [
+          ["#050505", "Black"],
+          ["#191919", "Treeline"],
+          ["#262626", "Spruce"],
+          ["#2f2f2f", "Slope"],
+          ["#3c3c3c", "Shadow"],
+          ["#4f4f4f", "Fog"],
+          ["#666666", "Mist"],
+          ["#8f8f8f", "Haze"],
+          ["#b9b9b9", "Snow"]
+        ]
+      ),
+      notes: [
+        { time: 11, text: "The treeline comes back four times. It is the same treeline; only the visibility is cut." },
+        { text: "Graded mono on the day one, which meant the second day had to be lit for a picture nobody could see." }
+      ]
+    },
+    technical: [
+      { label: "Camera", value: "ARRI Alexa Mini" },
+      { label: "Lenses", value: "Cooke Anamorphic/i" },
+      { label: "Format", value: "ARRIRAW 3.4K" },
+      { label: "Aspect Ratio", value: "2.39:1" },
+      { label: "Colour", value: "Monochrome, Rec.709" },
+      { label: "Editing System", value: "Adobe Premiere Pro" },
+      { label: "Delivery", value: "ProRes 4444 25fps" }
+    ],
+    credits: {
+      crew: [
+        { role: "Director", name: "Max Prodaniuk" },
+        { role: "Director of Photography", name: "Oleksandr Korotun" },
+        { role: "Editor", name: "Oleksandr Korotun" },
+        { role: "Colour", name: "Ihor Bondarenko" },
+        { role: "Producer", name: "Max Prodaniuk" }
+      ]
+    }
+  },
+  {
     slug: "leopolis-night",
     title: "LEOPOLIS NIGHT",
     year: 2021,
     type: "Short Film",
     runtime: "20 min",
     director: "Nikon Rōmanchenko",
+    // TODO: no strip cuts delivered yet — falling back to the full-size stills.
     frames: frames("leopolis", "Leopolis Night"),
     logline: "Lviv between the last tram and the first one.",
     synopsis:

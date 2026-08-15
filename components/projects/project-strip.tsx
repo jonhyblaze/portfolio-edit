@@ -21,7 +21,10 @@ type ProjectStripProps = {
  * 100% lit, 80% at rest, 50% stepped back.
  */
 export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeactivate }: ProjectStripProps) {
-  const { slug, title, year, type, runtime, director, frames, aspect = WIDESCREEN } = project
+  const { slug, title, year, type, runtime, director, frames, aspect, stripAspect } = project
+  // The strip frames are their own cut, so they carry their own shape: the film's
+  // ratio unless the strip was reframed to something else.
+  const shape = stripAspect ?? aspect ?? WIDESCREEN
 
   return (
     <li
@@ -66,9 +69,9 @@ export function ProjectStrip({ project, isActive, isDimmed, onActivate, onDeacti
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                // The frame's own ratio, so a 4:3 project reads as 4:3 here rather
-                // than being cropped to the shape of the other strips.
-                style={{ aspectRatio: aspect }}
+                // The frame's own ratio, so a scope project reads as scope here
+                // rather than being cropped to the shape of the other strips.
+                style={{ aspectRatio: shape }}
                 className={cn(
                   "w-[72%] shrink-0 snap-start object-cover sm:w-full",
                   "transition duration-700 ease-out motion-reduce:transition-none",
