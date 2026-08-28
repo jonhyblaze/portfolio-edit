@@ -4,18 +4,6 @@ import { WIDESCREEN, type ProjectStill } from "@/data/projects"
 import { formatTimecode } from "@/lib/timecode"
 import { cn } from "@/lib/utils"
 
-/**
- * A contact sheet. The frames sit on a hairline grid with nothing between them
- * but the rule, and each one carries the number it has in the cut.
- *
- * Where a still knows the timecode it was pulled from it becomes a way back into
- * the film: clicking it moves the playhead there. Stills without one are just
- * pictures, and are not made to look clickable.
- *
- * Every cell carries the film's ratio, `aspect`, rather than a fixed widescreen —
- * a contact sheet that crops the frames is not a record of them.
- */
-/** How many blank cells it takes to finish the last row at a given column count. */
 const trailingBlanks = (count: number, columns: number) => (columns - (count % columns)) % columns
 
 export function ProjectStills({
@@ -42,8 +30,8 @@ export function ProjectStills({
     // depend on.
     <ul
       className={cn(
-        "grid grid-cols-2 gap-px bg-border sm:grid-cols-3",
-        aspect === WIDESCREEN ? "lg:grid-cols-4" : "lg:grid-cols-5"
+        "grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4",
+        aspect === WIDESCREEN ? "lg:grid-cols-4" : "lg:grid-cols-3"
       )}>
       {stills.map((still, index) => {
         const number = String(index + 1).padStart(2, "0")
@@ -65,7 +53,7 @@ export function ProjectStills({
                 <button
                   type="button"
                   onClick={() => onSeek(still.time as number)}
-                  aria-label={`${still.alt} — play from ${formatTimecode(still.time)}`}
+                  aria-label={`${still.alt} — play from ${formatTimecode(still.time)}-${number}`}
                   className={cn(
                     "block w-full",
                     "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-foreground/40"
@@ -85,14 +73,11 @@ export function ProjectStills({
                 </button>
               )}
 
-              {/* Both marks stay left: pushed to opposite edges, a frame's timecode
-                  ends up sitting against the next frame's number across the rule. */}
               <figcaption className="flex items-baseline gap-3 px-1 pb-3 pt-2">
-                <span className="label-s tabular-nums text-muted-foreground/40">{number}</span>
                 {still.time !== undefined && (
                   <span
                     className={cn(
-                      "label-s tabular-nums text-muted-foreground/40",
+                      "label-s tabular-nums text-muted-foreground/80",
                       "transition-colors duration-500 group-hover:text-foreground motion-reduce:transition-none"
                     )}>
                     {formatTimecode(still.time)}

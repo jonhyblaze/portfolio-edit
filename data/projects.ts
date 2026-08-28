@@ -123,6 +123,25 @@ export type ProjectPalette = {
   note?: string
 }
 
+/**
+ * A festival the film played. One list holds both selections and wins, because a
+ * win is a selection — writing them as two fields would mean naming the same
+ * festival twice. `award` is what was won there, and its presence is what makes
+ * the entry a win: the page bins on it.
+ *
+ * `note` is the section or programme the film sat in ("International Short Film
+ * Competition", "30 Years of Ukrainian Cinema"), which is what a selection has
+ * to say for itself where a win has the award.
+ */
+export type ProjectFestival = {
+  /** The festival as its own catalogue names it, without the year. */
+  name: string
+  year?: number
+  /** What was won. Present means a win, absent means a selection. */
+  award?: string
+  note?: string
+}
+
 /** A line from the edit log. With a `time` it doubles as a cue. */
 export type ProjectNote = {
   time?: number
@@ -137,7 +156,7 @@ export type ProjectSpec = {
 
 export type ProjectCastMember = {
   name: string
-  character: string
+  character?: string
 }
 
 export type ProjectCrewMember = {
@@ -194,7 +213,8 @@ export type Project = {
   /** One line, the way a festival catalogue would carry it. */
   logline?: string
   synopsis?: string
-  festivals?: string[]
+  /** Selections and wins together, in the order they should be read. */
+  festivals?: ProjectFestival[]
   video?: ProjectVideo
   markers?: ProjectMarker[]
   materials?: ProjectMaterials
@@ -278,7 +298,7 @@ export const projects: Project[] = [
     frames: frames("hum", "Hum"),
     logline: "The ultimate act of escapism is vanishing into your own silence.",
     synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
-    festivals: [`"CYCLOP" – International Videopoetry Competion (2021)`],
+    festivals: [{ name: `"CYCLOP" – Video Poetry Festival`, year: 2021, note: "International Competition" }],
     video: {
       src: master("loops/hum.mp4"),
       poster: "/showcase/hum-cover.jpg",
@@ -309,11 +329,10 @@ export const projects: Project[] = [
       )
     },
     technical: [
-      { label: "Camera", value: "Sony A7SIII" },
+      { label: "Camera", value: "Sony A7S3" },
       { label: "Lenses", value: "Zeiss Zf" },
-      { label: "Format", value: "ARRIRAW 3.4K" },
       { label: "Aspect Ratio", value: "1.77:1" },
-      { label: "Colour", value: "ACES" },
+      { label: "Colour", value: "HLG 2020" },
       { label: "Editing System", value: "DaVinci Resolve Studio" },
       { label: "Delivery", value: "ProRes 444 24fps" }
     ],
@@ -327,8 +346,7 @@ export const projects: Project[] = [
         { role: "Editor", name: "Oleksandr Korotun" },
         { role: "Compositor", name: "Maryana Klochko" },
         { role: "Designer", name: "Anna Vashulenko" },
-        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun" },
-
+        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun" }
       ]
     }
   },
@@ -531,21 +549,22 @@ export const projects: Project[] = [
       ]
     },
     technical: [
-      { label: "Camera", value: "RED Epic Dragon" },
-      { label: "Lenses", value: "Zeiss Super Speed MkIII" },
-      { label: "Format", value: "REDCODE R3D 5K" },
-      { label: "Aspect Ratio", value: "2.39:1" },
+      { label: "Camera", value: "Arri Alexa Mini" },
+      { label: "Lenses", value: "Zeiss Ultra Primes" },
+      { label: "Format", value: "ProRes 4444" },
+      { label: "Aspect Ratio", value: "2 : 1" },
       { label: "Colour", value: "Rec.709" },
-      { label: "Editing System", value: "Adobe Premiere Pro" }
+      { label: "Editing System", value: "Final Cut Pro" }
     ],
     credits: {
       crew: [
-        { role: "Director", name: "Oleksandr Korotun" },
-        { role: "Director of Photography", name: "Oleksandr Korotun" },
+        { role: "Director / DoP", name: "Oleksandr Korotun" },
         { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Storyboards", name: "Kateryna Lysak" },
-        { role: "Colour", name: "Ihor Bondarenko" }
-      ]
+        { role: "Colour", name: "Oleksandr Korotun" },
+        { role: "Producer", name: "Valentyn Vasyanovych" },
+        { role: "1st AD", name: "Tetyana Symon" },
+      ],
+      cast: [{ character: "Wandering Man ", name: "Serhiy Stepansky" }]
     }
   },
   {
@@ -559,7 +578,7 @@ export const projects: Project[] = [
     logline: "A woman cuts a hole in the ice every morning. One morning she doesn't come back up.",
     synopsis:
       "Assembled long and then cut down over four passes. The festival cut and the black-and-white version are both delivered from the same conform; the trailer was built separately from the same bins.",
-    festivals: ["Berlinale Shorts — in competition"],
+    festivals: [{ name: "Berlinale Shorts", note: "In Competition" }],
     video: {
       src: master("loops/icehole.mp4"),
       poster: "/showcase/icehole-cover.jpg",
@@ -728,6 +747,20 @@ export const projects: Project[] = [
     logline: "Lviv between the last tram and the first one.",
     synopsis:
       "Shot over five nights in a 4:3 frame and cut to the length of the walk itself. The boards were drawn as a route rather than as shots, which is why so few of them survive the edit in order.",
+    festivals: [
+      { name: "Odesa International Film Festival", year: 2021, award: "Golden Duke — Best Director" },
+      {
+        name: "Molodist Kyiv International Film Festival",
+        year: 2022,
+        award: "Scythian Deer — Best Short Film",
+        note: "National Competition"
+      },
+      { name: "Ivano-Frankivsk International Short Film Festival 4:3", year: 2021, award: "Jury Prize — Best Film" },
+      { name: "Ukrainian Film Academy Awards", year: 2023, note: "Nominee — Golden Dzyga, Best Short Fiction Film" },
+      { name: `Ukrainian Film Critics Awards "Kinokolo"`, year: 2021, note: "Nominee — Best Short Fiction Film" },
+      { name: "Filmfest Hamburg", year: 2022, note: "Molodist National Competition" },
+      { name: "Festival REGARD", year: 2022, note: "Québec — Best of Ukraine" }
+    ],
     video: {
       src: master("loops/leopolis.mp4"),
       poster: "/showcase/leopolis-cover.jpg",
@@ -775,23 +808,25 @@ export const projects: Project[] = [
       notes: [{ text: "Cut to the length of the walk. Anything that moved faster than walking pace came out." }]
     },
     technical: [
-      { label: "Camera", value: "ARRI Alexa Mini" },
-      { label: "Lenses", value: "Lomo Round Front Anamorphic" },
+      { label: "Camera", value: "Sony A7S3" },
+      { label: "Lenses", value: "Nikkor Ai" },
       { label: "Format", value: "ProRes 4444 XQ" },
       { label: "Aspect Ratio", value: "1.33:1" },
-      { label: "Colour", value: "Rec.709" },
+      { label: "Colour", value: "HLG" },
       { label: "Editing System", value: "Final Cut Pro" }
     ],
     credits: {
       cast: [
-        { name: "Andrii Sokil", character: "The Walker" },
-        { name: "Iryna Chumak", character: "Woman at the Stop" }
+        { name: "Olha-Anna Kapustiak" },
+        { name: "Solomiia Kyrylova" },
+        { name: "Mariia Kmit" },
+        { name: "Nikon Romanchenko" }
       ],
       crew: [
-        { role: "Director", name: "Nikon Rōmanchenko" },
+        { role: "Director", name: "Nikon Romanchenko" },
         { role: "Director of Photography", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Sound", name: "Taras Hnatiuk" },
+        { role: "Editor", name: "Nikon Romanchenko" },
+        { role: "Sound", name: "Mykhailo Zakutskiy" },
         { role: "Producer", name: "Kateryna Gornostai" }
       ]
     }
@@ -807,7 +842,14 @@ export const projects: Project[] = [
     logline: "A girl carries a paper doll up a mountain that has already been left.",
     synopsis:
       "Three cuts exist. The festival cut is eleven minutes shorter and loses the second descent entirely; the black-and-white version was made for a single screening and then kept.",
-    festivals: ["Molodist IFF — Grand Prix", "Clermont-Ferrand — Lab Competition"],
+    festivals: [
+      { name: "KINOKO – Short Film Competition", year: 2021, award: "Best Cinematography" },
+      { name: "Molodist Kyiv International Film Festival", year: 2021, award: "Special Mention", note: "National Competition" },
+      { name: "Batumi International Art-House Film Festival", year: 2021, note: "International Short Film Competition" },
+      { name: "BRUKIVKA International Film Festival", year: 2021, note: "National Short Film Competition" },
+      { name: "Bouquet Kyiv Stage", year: 2021, note: "30 Years of Ukrainian Cinema" },
+      { name: "Bardak VII Short Film Festival", year: 2023, note: "Contemporary Ukrainian Cinema" }
+    ],
     video: {
       src: master("loops/papr.mp4"),
       poster: "/showcase/papr-cover.jpg",
@@ -884,7 +926,7 @@ export const projects: Project[] = [
       ],
       crew: [
         { role: "Director", name: "Lilia Ostapovyčh" },
-        { role: "Director of Photography", name: "Oleksandr Korotun" },
+        { role: "Cinematographer", name: "Oleksandr Korotun" },
         { role: "Editor", name: "Oleksandr Korotun" },
         { role: "Sound", name: "Taras Hnatiuk" },
         { role: "Colour", name: "Ihor Bondarenko" },

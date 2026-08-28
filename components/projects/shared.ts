@@ -6,4 +6,4 @@
 export const GUTTER = "px-5 sm:px-16 laptop:px-10"
 
 /** The small uppercase mono label used for every section and field name. */
-export const LABEL = "label-s uppercase tracking-[0.2em] text-muted-foreground/60"
+export const LABEL = "label-m uppercase tracking-wider text-muted-foreground"

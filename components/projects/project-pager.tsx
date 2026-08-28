@@ -6,7 +6,7 @@ import { RiArrowLeftLongFill } from "@remixicon/react"
 
 export function ProjectPager({ previous, next }: { previous: Project; next: Project }) {
   return (
-    <footer className={cn("border-t border-border py-10 md:py-14", GUTTER)}>
+    <footer className={cn("border-t border-border py-10", GUTTER)}>
       <nav aria-label="Other projects" className="flex items-start justify-between gap-8">
         <PagerLink project={previous} direction="previous" />
         <PagerLink project={next} direction="next" />

@@ -1,14 +1,10 @@
 import type { ProjectCredits as Credits } from "@/data/projects"
 import { cn } from "@/lib/utils"
-import { LABEL } from "./shared"
 
-/**
- * Cast and crew, kept apart and set the way an end roll is: a quiet left column
- * naming the part, the person against it. Either block can be missing — a music
- * video has no cast, and the panel simply doesn't mention one.
- */
 export function ProjectCredits({ credits }: { credits: Credits }) {
   const { cast, crew } = credits
+
+  const LABEL = "label-m uppercase tracking-wider text-muted-foreground"
 
   return (
     <div className="grid max-w-4xl gap-12 md:grid-cols-2 md:gap-16">

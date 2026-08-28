@@ -5,15 +5,6 @@ import { formatTimecode } from "@/lib/timecode"
 import { cn } from "@/lib/utils"
 import { LABEL } from "./shared"
 
-/**
- * Board on the left, the frame it became on the right. The pair is the point —
- * the distance between the two is most of what an edit decides.
- *
- * The drawn panel is set apart rather than styled up: a dashed edge, no colour,
- * held back. Where a project has no digitised boards the final frame stands in
- * for its own board under that treatment, and the panel says so out loud rather
- * than passing a frame off as a drawing.
- */
 export function ProjectStoryboard({
   boards,
   aspect = WIDESCREEN,
