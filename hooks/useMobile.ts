@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useSyncExternalStore } from 'react'
 
 const MOBILE_BREAKPOINT = 768
 
+// 1. Setup a function to handle the listener subscription
+const subscribe = (callback: () => void) => {
+  const queryList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+  queryList.addEventListener('change', callback)
+  return () => queryList.removeEventListener('change', callback)
+}
+
+// 2. Setup functions to snapshot the values for Client vs Server
+const getClientSnapshot = () => window.innerWidth < MOBILE_BREAKPOINT
+const getServerSnapshot = () => false // Default fallback for SSR/Server Components
+
 export function useMobile() {
-  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined)
-
-  useEffect(() => {
-    const qerryList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    qerryList.addEventListener('change', onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => qerryList.removeEventListener('change', onChange)
-  }, [])
-
-  return !!isMobile
+  return useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  )
 }

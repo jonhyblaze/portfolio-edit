@@ -34,17 +34,7 @@ type ProjectViewerProps = {
   onPause: () => void
 }
 
-/**
- * The screening end of the page: a black stage with the film letterboxed inside
- * it, and one quiet row of chrome underneath.
- *
- * The stage is black in both themes on purpose — the rest of the page follows
- * the site's tokens, but a screen is a screen. Everything drawn on top of it is
- * therefore white-tinted rather than `foreground`.
- *
- * Native controls are off; the row below does the work, so the film is never
- * covered by a browser's idea of a player.
- */
+
 export function ProjectViewer({
   videoRef,
   source,
@@ -65,11 +55,9 @@ export function ProjectViewer({
     <>
       {/* `group` so the picture can answer to the cursor being anywhere on the stage —
           the click target sits over the video, so the video never sees the hover itself. */}
-      <div className="group relative min-h-[220px] flex-1 border-y border-border bg-black md:min-h-[280px]">
+      <div className="group relative min-h-55 flex-1 border-t border-border bg-black md:min-h-70">
         <video
           ref={videoRef}
-          // React swaps this when a version is chosen; the element reloads and the
-          // archive puts the playhead back where it was.
           src={source.src}
           poster={source.poster}
           preload="metadata"
@@ -111,35 +99,34 @@ export function ProjectViewer({
               "transition-opacity duration-500 ease-out motion-reduce:transition-none",
               isPlaying ? "opacity-0" : "opacity-100"
             )}>
-            <RiPlayFill className="size-5 translate-x-px" />
+            <RiPlayFill size={32} />
           </span>
         </button>
       </div>
 
-      {/* Chrome. Timecode at the ends, the film's own controls in the middle —
-          the arrangement a viewer window has, without the buttons a player has. */}
-      <div className={cn("flex h-11 shrink-0 items-center gap-4", GUTTER)}>
+
+      <div className={cn("flex h-11 shrink-0 items-center gap-4 mt-px border-t", GUTTER)}>
         {/* Both halves are flex-1 so the transport sits on the centre line of the
             stage rather than wherever the labels leave room for it. */}
         <div className="flex min-w-0 flex-1 items-baseline gap-4">
-          <span className="label-s shrink-0 tabular-nums text-muted-foreground">{formatTimecode(currentTime)}</span>
+          <span className="label-m shrink-0 tabular-nums text-muted-foreground">{formatTimecode(currentTime)}</span>
           {source.versionName && (
-            <span className="label-s truncate uppercase tracking-[0.2em] text-muted-foreground/50">{source.versionName}</span>
+            <span className="label-m truncate uppercase tracking-[0.2em] text-muted-foreground/50">{source.versionName}</span>
           )}
         </div>
 
         <ViewerButton onClick={onTogglePlay} label={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? <RiPauseFill className="size-4" /> : <RiPlayFill className="size-4" />}
+          {isPlaying ? <RiPauseFill size={20} /> : <RiPlayFill size={20} />}
         </ViewerButton>
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
           <ViewerButton onClick={onToggleMute} label={isMuted ? "Unmute" : "Mute"} pressed={isMuted}>
-            {isMuted ? <RiVolumeMuteLine className="size-4" /> : <RiVolumeUpLine className="size-4" />}
+            {isMuted ? <RiVolumeMuteLine size={20} /> : <RiVolumeUpLine size={20} />}
           </ViewerButton>
           <ViewerButton onClick={onToggleFullscreen} label={isFullscreen ? "Exit full screen" : "Full screen"} shortcut="F">
-            {isFullscreen ? <RiFullscreenExitLine className="size-4" /> : <RiFullscreenLine className="size-4" />}
+            {isFullscreen ? <RiFullscreenExitLine size={20} /> : <RiFullscreenLine size={20} />}
           </ViewerButton>
-          <span className="label-s ml-3 shrink-0 tabular-nums text-muted-foreground">
+          <span className="label-m ml-1.5 shrink-0 tabular-nums text-muted-foreground">
             {formatTimecode(duration || source.duration)}
           </span>
         </div>
@@ -158,7 +145,6 @@ function ViewerButton({
   onClick: () => void
   label: string
   pressed?: boolean
-  /** The key that does the same thing. Announced properly rather than folded into the label. */
   shortcut?: string
   children: React.ReactNode
 }) {
