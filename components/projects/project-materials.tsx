@@ -75,7 +75,7 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
 
   return (
     <section aria-label="Project materials" className={cn("pb-16 pt-10 md:pb-24 md:pt-14", GUTTER)}>
-      <h2 className={cn(LABEL, "mb-5 block")}>Project materials</h2>
+      <h2 className={cn("label-l uppercase tracking-widest font-bold mb-5")}>Project materials</h2>
 
       {/* The row scrolls sideways on small screens rather than wrapping — a bin list
           that has folded onto two lines stops reading as a list of bins. */}
@@ -103,14 +103,14 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
               onClick={() => setActive(material.key)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cn(
-                "label-s relative flex shrink-0 items-baseline gap-1.5 whitespace-nowrap pb-3 uppercase tracking-[0.2em]",
+                "label-m relative flex shrink-0 items-baseline gap-1.5 whitespace-nowrap pb-3 uppercase tracking-[0.2em]",
                 "transition-colors duration-300 motion-reduce:transition-none",
                 "focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground/30",
                 isActive ? "text-foreground" : "text-muted-foreground/50 hover:text-muted-foreground"
               )}>
               {material.label}
               {material.count !== undefined && (
-                <span aria-hidden className="text-[0.625rem] tabular-nums text-muted-foreground/30">
+                <span aria-hidden className="text-[0.625rem] tabular-nums text-muted-foreground/50">
                   {String(material.count).padStart(2, "0")}
                 </span>
               )}

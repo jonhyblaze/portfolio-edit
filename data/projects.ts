@@ -298,7 +298,7 @@ export const projects: Project[] = [
     frames: frames("hum", "Hum"),
     logline: "The ultimate act of escapism is vanishing into your own silence.",
     synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
-    festivals: [{ name: `"CYCLOP" – Video Poetry Festival`, year: 2021, note: "International Competition" }],
+    festivals: [{ name: "CYCLOP Video Poetry Festival", year: 2021, note: "International Competition" }],
     video: {
       src: master("loops/hum.mp4"),
       poster: "/showcase/hum-cover.jpg",
@@ -326,7 +326,50 @@ export const projects: Project[] = [
           ["#a8bdb7", "Sage"],
           ["#cee3e5", "Sky"]
         ]
-      )
+      ),
+      // One shot per state the light passes through. As on 212, `before` and
+      // `after` point at the same frame and carry `simulated`; unlike 212 these
+      // aren't off /projects/grades at all — no plates or grade exports exist for
+      // this film yet, so they borrow the contact-sheet stills. Replace both paths
+      // and delete the flag when the conform is pulled.
+      grades: [
+        {
+          shot: "SH 01",
+          before: "/projects/stills/hum-1.jpg",
+          after: "/projects/stills/hum-1.jpg",
+          alt: "Hum — shot 01, figure in the grass under an overcast sky",
+          note: "Overcast, left overcast. The grass carries the whole frame's colour so the sky can stay empty.",
+          time: 3,
+          simulated: true
+        },
+        {
+          shot: "SH 05",
+          before: "/projects/stills/hum-2.jpg",
+          after: "/projects/stills/hum-2.jpg",
+          alt: "Hum — shot 05, closer on the figure",
+          note: "Skin held warm against a green that was pushed further from it. The only separation in the film that isn't light.",
+          time: 12,
+          simulated: true
+        },
+        {
+          shot: "SH 09",
+          before: "/projects/stills/hum-3.jpg",
+          after: "/projects/stills/hum-3.jpg",
+          alt: "Hum — shot 09, the break",
+          note: "The break is where the sky opens. Lifted a stop in the grade rather than in the shot.",
+          time: 22.5,
+          simulated: true
+        },
+        {
+          shot: "SH 14",
+          before: "/projects/stills/hum-4.jpg",
+          after: "/projects/stills/hum-4.jpg",
+          alt: "Hum — shot 14, the reprise",
+          note: "Back to the opening's balance, one notch cooler. The reprise should read as the same place and not the same moment.",
+          time: 43,
+          simulated: true
+        }
+      ]
     },
     technical: [
       { label: "Camera", value: "Sony A7S3" },
@@ -517,6 +560,50 @@ export const projects: Project[] = [
           ["#b3bfc3", "Sky"]
         ]
       ),
+      // Same four shots as the storyboard below, which is deliberate: the boards,
+      // the frames and the grade are all arguments about the same four moments.
+      // `before` and `after` point at one frame and carry `simulated` the way 212
+      // does — but off the contact-sheet stills rather than /projects/grades, since
+      // this film has no grade exports yet. Replace both paths and drop the flag
+      // when they land.
+      grades: [
+        {
+          shot: "SH 01A",
+          before: "/projects/stills/blind-as-a-bat-1.jpg",
+          after: "/projects/stills/blind-as-a-bat-1.jpg",
+          alt: "Blind As A Bat — shot 01A, the coast in overcast light",
+          note: "One teal for the sea and the sky both. Separating them made the coast look like two locations.",
+          time: 5,
+          simulated: true
+        },
+        {
+          shot: "SH 04C",
+          before: "/projects/stills/blind-as-a-bat-2.jpg",
+          after: "/projects/stills/blind-as-a-bat-2.jpg",
+          alt: "Blind As A Bat — shot 04C, the chorus",
+          note: "The chorus comes up half a stop and no warmer. All the lift is in the sky.",
+          time: 18,
+          simulated: true
+        },
+        {
+          shot: "SH 09",
+          before: "/projects/stills/blind-as-a-bat-3.jpg",
+          after: "/projects/stills/blind-as-a-bat-3.jpg",
+          alt: "Blind As A Bat — shot 09, the match cut",
+          note: "Graded to match the shot it cuts to, not the one it was shot next to. The two takes were four hours apart.",
+          time: 33,
+          simulated: true
+        },
+        {
+          shot: "SH 12B",
+          before: "/projects/stills/blind-as-a-bat-4.jpg",
+          after: "/projects/stills/blind-as-a-bat-4.jpg",
+          alt: "Blind As A Bat — shot 12B, the bark before the fade",
+          note: "The bark is the only warm thing in the film and it is left alone. Everything around it came down instead.",
+          time: 47,
+          simulated: true
+        }
+      ],
       storyboard: [
         {
           shot: "SH 01A",
@@ -902,6 +989,36 @@ export const projects: Project[] = [
           duration: 99,
           treatment: "monochrome",
           note: "Made for one screening. Kept."
+        }
+      ],
+      storyboard: [
+        {
+          shot: "SH 01A",
+          final: "/projects/stills/blind-as-a-bat-1.jpg",
+          alt: "Blind As A Bat — shot 01A",
+          note: "Boarded as a push-in. Shot handheld; the push became a drift.",
+          time: 5
+        },
+        {
+          shot: "SH 04C",
+          final: "/projects/stills/blind-as-a-bat-2.jpg",
+          alt: "Blind As A Bat — shot 04C",
+          note: "The only board that survived the edit intact.",
+          time: 18
+        },
+        {
+          shot: "SH 09",
+          final: "/projects/stills/blind-as-a-bat-3.jpg",
+          alt: "Blind As A Bat — shot 09",
+          note: "Boarded wide, cut in tight — the wide plays under the chorus instead.",
+          time: 33
+        },
+        {
+          shot: "SH 12B",
+          final: "/projects/stills/blind-as-a-bat-4.jpg",
+          alt: "Blind As A Bat — shot 12B",
+          note: "Added on the day. No board exists for it.",
+          time: 47
         }
       ],
       notes: [

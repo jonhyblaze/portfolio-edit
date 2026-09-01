@@ -30,7 +30,7 @@ export function ProjectStills({
     // depend on.
     <ul
       className={cn(
-        "grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4",
+        "grid grid-cols-2 gap-px  lg:grid-cols-4",
         aspect === WIDESCREEN ? "lg:grid-cols-4" : "lg:grid-cols-3"
       )}>
       {stills.map((still, index) => {

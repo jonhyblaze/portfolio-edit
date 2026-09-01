@@ -17,7 +17,7 @@ type ProjectTimelineProps = {
 }
 
 /** Bars in the audio track. Enough to read as a waveform, few enough to stay a drawing. */
-const WAVEFORM_BARS = 220
+const WAVEFORM_BARS = 420
 
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 
@@ -87,7 +87,7 @@ export function ProjectTimeline({ duration, currentTime, markers, onSeek, seed }
       {/* Below ~560px the timeline scrolls rather than compressing — marker labels
           stop being labels once they are 40px wide. */}
       <div className="overflow-x-auto overscroll-x-contain pb-1">
-        <div className="min-w-[560px]">
+        <div className="min-w-140">
           {/* Ruler */}
           <div className="mb-2 flex items-baseline justify-between pl-10">
             <span className="label-s tabular-nums text-muted-foreground/40">{formatTimecode(0)}</span>
@@ -133,13 +133,14 @@ export function ProjectTimeline({ duration, currentTime, markers, onSeek, seed }
                   "flex touch-none select-none flex-col gap-1",
                   "focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-foreground/30"
                 )}>
+
                 {/* V1 — one unbroken block. The film is a single sequence here. */}
-                <div className="relative h-6 overflow-hidden bg-foreground/10">
+                <div className="relative h-5 overflow-hidden bg-foreground/10">
                   <div className="absolute inset-y-0 left-0 bg-foreground/30" style={{ width: playhead }} />
                 </div>
 
                 {/* A1 — drawn, not analysed. Honest about being a picture of sound. */}
-                <div className="relative h-9 overflow-hidden bg-foreground/[0.04]">
+                <div className="relative h-9 overflow-hidden bg-foreground/2">
                   <div aria-hidden className="absolute inset-0 flex items-center gap-px px-px">
                     {Array.from({ length: WAVEFORM_BARS }, (_, index) => (
                       <span
@@ -154,7 +155,7 @@ export function ProjectTimeline({ duration, currentTime, markers, onSeek, seed }
               </div>
 
               {/* MK — the only row that navigates by name rather than by position. */}
-              <div className="relative mt-1 h-10">
+              <div className="relative mt-2 h-10">
                 {visible.map((marker, index) => {
                   const isActive = index === activeIndex
                   const left = duration > 0 ? `${clamp(marker.time / duration, 0, 1) * 100}%` : "0%"
@@ -192,10 +193,11 @@ export function ProjectTimeline({ duration, currentTime, markers, onSeek, seed }
 
               {/* Playhead, crossing every row. No transition — it is driven frame by frame. */}
               <div aria-hidden className="pointer-events-none absolute inset-0">
-                <div className="absolute inset-y-0 w-px -translate-x-1/2 bg-foreground/70" style={{ left: playhead }}>
+                <div className="absolute inset-y-0 w-px -translate-x-1/2 bg-foreground" style={{ left: playhead }}>
                   <span className="absolute -top-px left-1/2 size-1.5 -translate-x-1/2 bg-foreground" />
                 </div>
               </div>
+
             </div>
           </div>
         </div>
