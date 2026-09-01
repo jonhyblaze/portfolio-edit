@@ -68,36 +68,12 @@ export function ProjectGrades({
   }
 
   return (
-    // Capped: a grade needs size to be judged, but a frame at full page width is
-    // taller than the viewport and pushes the shot strip out of sight — more so the
-    // narrower the film is.
+
     <div className="max-w-5xl">
-      {standingIn && (
-        <p className="label-s mb-8 max-w-prose text-muted-foreground/50">
-          Ungraded plates not yet pulled from the conform. The left of the wipe is the delivered frame desaturated, standing in for one.
-        </p>
-      )}
 
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <span className="label-m text-foreground">{shot.shot}</span>
-        {shot.time !== undefined && (
-          <button
-            type="button"
-            onClick={() => onSeek(shot.time as number)}
-            className={cn(
-              "label-s tabular-nums text-muted-foreground/60 transition-colors duration-200 hover:text-foreground",
-              "focus-visible:text-foreground focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground/30"
-            )}>
-            {formatTimecode(shot.time)} ↗
-          </button>
-        )}
-      </div>
-
-      {/* Named outside the frame rather than over the picture — the same way the
-          storyboard panel names its two halves, and nothing sits on the image. */}
       <div className="mb-2 flex items-baseline justify-between gap-4">
-        <span className={LABEL}>Ungraded</span>
-        <span className={LABEL}>Graded</span>
+        <span className={cn(LABEL)}>Ungraded</span>
+        <span className={cn(LABEL)}>Graded</span>
       </div>
 
       <div
@@ -154,19 +130,19 @@ export function ProjectGrades({
           />
         </div>
 
-        <div aria-hidden className="pointer-events-none absolute inset-y-0 w-px -translate-x-1/2 bg-white/80" style={{ left: `${position}%` }}>
-          <span className="absolute top-1/2 left-1/2 flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center border border-white/70 bg-black/30 text-white">
-            <RiArrowLeftSLine className="size-3" />
-            <RiArrowRightSLine className="-ml-1 size-3" />
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 w-px -translate-x-1/2 bg-white/50" style={{ left: `${position}%` }}>
+          <span className="absolute top-1/2 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center border border-white/50 bg-black/30 text-white">
+            <RiArrowLeftSLine className="size-5" />
+            <RiArrowRightSLine className="-ml-0.5 size-5" />
           </span>
         </div>
       </div>
 
-      {shot.note && <p className="body-s mt-4 max-w-prose text-muted-foreground">{shot.note}</p>}
+      {shot.note && <p className="body-m mt-4 max-w-prose text-muted-foreground">{shot.note}</p>}
 
       {/* The other shots. Thumbnails show the graded state — the wipe is where the
           comparison happens, not here. */}
-      <ul className="mt-8 flex gap-px overflow-x-auto overscroll-x-contain bg-border">
+      <ul className="mt-8 flex gap-px overflow-x-auto overscroll-x-contain">
         {grades.map((grade, shotIndex) => {
           const isActive = shotIndex === index
 
@@ -192,15 +168,15 @@ export function ProjectGrades({
                   style={{ aspectRatio: aspect }}
                   className={cn(
                     "w-full object-cover transition duration-500 ease-out motion-reduce:transition-none",
-                    isActive ? "brightness-100" : "brightness-[0.45] group-hover:brightness-75"
+                    isActive ? "brightness-100" : "brightness-40 group-hover:brightness-75"
                   )}
                 />
                 <span
                   className={cn(
                     "label-s block px-1 pb-3 pt-2 transition-colors duration-300 motion-reduce:transition-none",
-                    isActive ? "text-foreground" : "text-muted-foreground/40"
+                    isActive ? "text-muted-foreground" : "text-muted-foreground/40"
                   )}>
-                  {grade.shot}
+                  0{shotIndex + 1}
                 </span>
               </button>
             </li>

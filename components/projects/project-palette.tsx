@@ -100,10 +100,6 @@ export function ProjectPaletteBlock({ palette }: { palette: ProjectPalette }) {
           {String(swatches.length).padStart(2, "0")} swatches · click to copy
         </p>
 
-        <p className="label-s text-muted-foreground/40">
-          Sampled from this project&rsquo;s strip frames and named for what they are in the picture. The delivered palette replaces
-          them.
-        </p>
       </div>
     </div>
   )

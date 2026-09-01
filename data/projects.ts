@@ -296,7 +296,7 @@ export const projects: Project[] = [
     runtime: "03:45 min",
     director: "Oleksandr Korotun",
     frames: frames("hum", "Hum"),
-    logline: "The ultimate act of escapism is vanishing into your own silence.",
+    logline: "The ultimate act of escapism — is to vanish into your own silence.",
     synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
     festivals: [{ name: "CYCLOP Video Poetry Festival", year: 2021, note: "International Competition" }],
     video: {
@@ -327,11 +327,6 @@ export const projects: Project[] = [
           ["#cee3e5", "Sky"]
         ]
       ),
-      // One shot per state the light passes through. As on 212, `before` and
-      // `after` point at the same frame and carry `simulated`; unlike 212 these
-      // aren't off /projects/grades at all — no plates or grade exports exist for
-      // this film yet, so they borrow the contact-sheet stills. Replace both paths
-      // and delete the flag when the conform is pulled.
       grades: [
         {
           shot: "SH 01",
@@ -373,11 +368,12 @@ export const projects: Project[] = [
     },
     technical: [
       { label: "Camera", value: "Sony A7S3" },
-      { label: "Lenses", value: "Zeiss Zf" },
+      { label: "Lenses", value: "Jupiter" },
+      { label: "Format", value: "XAVC-S 4K" },
       { label: "Aspect Ratio", value: "1.77:1" },
-      { label: "Colour", value: "HLG 2020" },
+      { label: "Color", value: "HLG 2020" },
       { label: "Editing System", value: "DaVinci Resolve Studio" },
-      { label: "Delivery", value: "ProRes 444 24fps" }
+      { label: "Delivery", value: "H.264 · 1080p 24fps" }
     ],
     credits: {
       cast: [
@@ -388,8 +384,7 @@ export const projects: Project[] = [
         { role: "Director / DoP", name: "Oleksandr Korotun" },
         { role: "Editor", name: "Oleksandr Korotun" },
         { role: "Compositor", name: "Maryana Klochko" },
-        { role: "Designer", name: "Anna Vashulenko" },
-        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun" }
+        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun, Iryna Tychyna" }
       ]
     }
   },
@@ -405,9 +400,9 @@ export const projects: Project[] = [
     aspect: "4 / 3",
     stripAspect: WIDESCREEN,
     frames: frames("212", "212 Heroes"),
-    logline: "Kyiv from the last light to the first streetlamp, at skateboard height.",
+    logline: "Ups and downs on Kyiv hills.",
     synopsis:
-      "Shot across one city over several evenings and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four locations, which is why the plates are kept here shot by shot.",
+      "Shot across one city over several days and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four urelated locations.",
     video: {
       src: master("loops/212.mp4"),
       poster: "/showcase/212-cover.jpg",
@@ -425,74 +420,71 @@ export const projects: Project[] = [
       palette: palette(
         "The film runs the light down: concrete daylight, an indigo hour, then sodium. The lilac is the only colour that belongs to none of the three, which is why the dusk shots carry it.",
         [
-          ["#0a1313", "Asphalt"],
-          ["#20145d", "Indigo"],
-          ["#453d81", "Dusk"],
-          ["#564515", "Sodium"],
-          ["#637099", "Steel"],
-          ["#a388c4", "Lilac"],
-          ["#999896", "Concrete"],
-          ["#b6b7a9", "Daylight"],
-          ["#e0ded8", "Highlight"]
+          ["#2B3843", "Asphalt"],
+          ["#2D1D53", "Indigo"],
+          ["#404E78", "Dusk"],
+          ["#C7A10A", "Sodium"],
+          ["#6D9EAF", "Steel"],
+          ["#917ECF", "Lilac"],
+          ["#9DAFAE", "Concrete"],
+          ["#B5D5D8", "Daylight"],
+          ["#E7E9E3", "Highlight"]
         ]
       ),
-      // Six shots, one per lighting state the film passes through. `before` and
-      // `after` point at the same frame for now and carry `simulated`; when the
-      // ungraded plates are pulled, replace `before` and delete the flag.
       grades: [
         {
           shot: "SH 02",
-          before: "/projects/grades/212-01.jpg",
-          after: "/projects/grades/212-01.jpg",
+          before: "/projects/grades/212-01-ungraded.jpg",
+          after: "/projects/grades/212-01-graded.jpg",
           alt: "212 Heroes — shot 02, street in daylight",
-          note: "Open-shade daylight. The grade warms the road and leaves the shirt where it is.",
+          note: "Low sun daylight. The grade introduces indigo tones to a shadows, the spice that we mix our daytime with.",
           time: 6,
-          simulated: true
+          simulated: false
         },
         {
           shot: "SH 07",
-          before: "/projects/grades/212-02.jpg",
-          after: "/projects/grades/212-02.jpg",
+          before: "/projects/grades/212-02-ungraded.jpg",
+          after: "/projects/grades/212-02-graded.jpg",
           alt: "212 Heroes — shot 07, low angle against a concrete facade",
-          note: "Concrete wants to go green. Held neutral so the jacket stays the only blue in frame.",
+          note: "Concrete turns blue here. We make sure white board is only pure thing in a frame.",
           time: 12,
-          simulated: true
+          simulated: false
         },
         {
           shot: "SH 11",
-          before: "/projects/grades/212-03.jpg",
-          after: "/projects/grades/212-03.jpg",
+          before: "/projects/grades/212-03-ungraded.jpg",
+          after: "/projects/grades/212-03-graded.jpg",
           alt: "212 Heroes — shot 11, aerial of the road",
-          note: "Pushed cyan. The one shot in the film allowed to be cold.",
+          note: "Pushed greens. We make sure shadows has some blue to establish contrast.",
           time: 15,
-          simulated: true
+          simulated: false
         },
         {
           shot: "SH 14",
-          before: "/projects/grades/212-04.jpg",
-          after: "/projects/grades/212-04.jpg",
+          before: "/projects/grades/212-04-ungraded.jpg",
+          after: "/projects/grades/212-04-graded.jpg",
           alt: "212 Heroes — shot 14, traffic light",
-          note: "The green is a practical, not a grade. Everything around it came down to let it read.",
+          note: "Full throttle. Purple haze moment, everything tilting towards indigo, but we start to let the yellow lights in.",
           time: 21,
-          simulated: true
+          simulated: false
         },
         {
           shot: "SH 19",
-          before: "/projects/grades/212-05.jpg",
-          after: "/projects/grades/212-05.jpg",
+          before: "/projects/grades/212-05-ungraded.jpg",
+          after: "/projects/grades/212-05-graded.jpg",
           alt: "212 Heroes — shot 19, motion blur at dusk",
           note: "Magenta dusk, carried into the blur rather than corrected out of it.",
           time: 27,
-          simulated: true
+          simulated: false
         },
         {
           shot: "SH 26",
-          before: "/projects/grades/212-06.jpg",
-          after: "/projects/grades/212-06.jpg",
+          before: "/projects/grades/212-06-ungraded.jpg",
+          after: "/projects/grades/212-06-graded.jpg",
           alt: "212 Heroes — shot 26, sodium-lit street at night",
-          note: "Sodium left as sodium. Every attempt at white balance made it look like an office.",
+          note: "Sodium left as sodium. We hue it more complementary, but every attempt at white balance made it look off.",
           time: 36,
-          simulated: true
+          simulated: false
         }
       ],
       notes: [
@@ -501,22 +493,17 @@ export const projects: Project[] = [
       ]
     },
     technical: [
-      { label: "Camera", value: "ARRI Alexa Mini LF" },
-      { label: "Lenses", value: "Cooke Anamorphic/i" },
-      { label: "Format", value: "ARRIRAW 4.5K" },
+      { label: "Camera", value: "Sony A7S3" },
+      { label: "Lenses", value: "Zeiss Zf" },
+      { label: "Format", value: "XAVC-S 4K" },
       { label: "Aspect Ratio", value: "1.33:1" },
-      { label: "Colour", value: "Rec 2020" },
-      { label: "Grade", value: "DaVinci Resolve Studio" },
-      { label: "Editing System", value: "DaVinci Resolve Studio" },
-      { label: "Delivery", value: "ProRes 4444 · H.264 social media cuts" }
+      { label: "Color", value: "HLG 2020" },
+      { label: "Delivery", value: "1080p · H.264" }
     ],
     credits: {
       crew: [
-        { role: "Director", name: "Oleksandr Korotun" },
-        { role: "Director of Photography", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Colourist", name: "Ihor Bondarenko" },
-        { role: "Sound", name: "Yuliia Mazur" },
+        { role: "Director / DoP", name: "Oleksandr Korotun" },
+        { role: "Editor / Colorist", name: "Oleksandr Korotun" },
         { role: "Client", name: "Carolina Herrera" }
       ]
     }
@@ -526,13 +513,13 @@ export const projects: Project[] = [
     title: "BLIND AS A BAT",
     year: 2018,
     type: "Music Video",
-    runtime: "5 min",
+    runtime: "04:40 min",
     director: "Oleksandr Korotun",
-    // TODO: no strip cuts delivered yet — falling back to the full-size stills.
+
     frames: frames("blind-as-a-bat", "Blind As A Bat"),
-    logline: "One continuous walk, cut so that it never quite continues.",
+    logline: "Wandering in nomans land, just before the storm.",
     synopsis:
-      "Boarded shot for shot before the shoot, then rebuilt in the edit around the only take that had the right light. The boards are kept here next to the frames they became, because the difference between the two is most of what the film is.",
+      "This music video came about during cold winter in Mariupol, while having days off on feature film shoot. We had a song, a character, a camera, and location most importantly.",
     video: {
       src: master("loops/blb.mp4"),
       poster: "/showcase/blb-cover.jpg",
@@ -569,8 +556,8 @@ export const projects: Project[] = [
       grades: [
         {
           shot: "SH 01A",
-          before: "/projects/stills/blind-as-a-bat-1.jpg",
-          after: "/projects/stills/blind-as-a-bat-1.jpg",
+          before: "/projects/grades/blb-01.jpg",
+          after: "/projects/grades/blb-01.jpg",
           alt: "Blind As A Bat — shot 01A, the coast in overcast light",
           note: "One teal for the sea and the sky both. Separating them made the coast look like two locations.",
           time: 5,
@@ -578,8 +565,8 @@ export const projects: Project[] = [
         },
         {
           shot: "SH 04C",
-          before: "/projects/stills/blind-as-a-bat-2.jpg",
-          after: "/projects/stills/blind-as-a-bat-2.jpg",
+          before: "/projects/grades/blb-02.jpg",
+          after: "/projects/grades/blb-02.jpg",
           alt: "Blind As A Bat — shot 04C, the chorus",
           note: "The chorus comes up half a stop and no warmer. All the lift is in the sky.",
           time: 18,
@@ -587,8 +574,8 @@ export const projects: Project[] = [
         },
         {
           shot: "SH 09",
-          before: "/projects/stills/blind-as-a-bat-3.jpg",
-          after: "/projects/stills/blind-as-a-bat-3.jpg",
+          before: "/projects/grades/blb-03.jpg",
+          after: "/projects/grades/blb-03.jpg",
           alt: "Blind As A Bat — shot 09, the match cut",
           note: "Graded to match the shot it cuts to, not the one it was shot next to. The two takes were four hours apart.",
           time: 33,
@@ -596,8 +583,8 @@ export const projects: Project[] = [
         },
         {
           shot: "SH 12B",
-          before: "/projects/stills/blind-as-a-bat-4.jpg",
-          after: "/projects/stills/blind-as-a-bat-4.jpg",
+          before: "/projects/grades/blb-04.jpg",
+          after: "/projects/grades/blb-04.jpg",
           alt: "Blind As A Bat — shot 12B, the bark before the fade",
           note: "The bark is the only warm thing in the film and it is left alone. Everything around it came down instead.",
           time: 47,
@@ -639,15 +626,14 @@ export const projects: Project[] = [
       { label: "Camera", value: "Arri Alexa Mini" },
       { label: "Lenses", value: "Zeiss Ultra Primes" },
       { label: "Format", value: "ProRes 4444" },
-      { label: "Aspect Ratio", value: "2 : 1" },
-      { label: "Colour", value: "Rec.709" },
+      { label: "Aspect Ratio", value: "2.40 : 1" },
+      { label: "Color", value: "Rec.709" },
       { label: "Editing System", value: "Final Cut Pro" }
     ],
     credits: {
       crew: [
         { role: "Director / DoP", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Colour", name: "Oleksandr Korotun" },
+        { role: "Editor / Color", name: "Oleksandr Korotun" },
         { role: "Producer", name: "Valentyn Vasyanovych" },
         { role: "1st AD", name: "Tetyana Symon" },
       ],
@@ -731,29 +717,26 @@ export const projects: Project[] = [
       ]
     },
     technical: [
-      { label: "Camera", value: "ARRI Alexa 35" },
-      { label: "Lenses", value: "Zeiss Supreme Prime" },
-      { label: "Format", value: "ARRIRAW 4.6K" },
-      { label: "Aspect Ratio", value: "1.66:1" },
-      { label: "Colour", value: "ACEScct" },
-      { label: "Resolution", value: "4.5K" },
-      { label: "Editing System", value: "Avid Media Composer" },
+      { label: "Camera", value: "ARRI Alexa Mini" },
+      { label: "Lenses", value: "Zeiss Super Speeds" },
+      { label: "Format", value: "ARRIRAW 3.4K" },
+      { label: "Aspect Ratio", value: "1.85:1" },
+      { label: "Color", value: "DCI-P3" },
+      { label: "Resolution", value: "4K" },
       { label: "Sound", value: "5.1" },
       { label: "Delivery", value: "DCP 24fps · ProRes 4444 XQ" }
     ],
     credits: {
       cast: [
-        { name: "Oksana Voitenko", character: "Halyna" },
-        { name: "Danylo Kovalenko", character: "The Son" },
-        { name: "Nina Prokopiv", character: "Neighbour" }
+        { name: "Olesia Usata", character: "Khrystia" },
+        { name: "Serhiy Smiyan", character: "Semen" },
       ],
       crew: [
-        { role: "Director", name: "Anastasia Grüba" },
+        { role: "Director", name: "Anastasiya Gruba" },
         { role: "Director of Photography", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Sound Design", name: "Yuliia Mazur" },
-        { role: "Colour", name: "Ihor Bondarenko" },
-        { role: "Producer", name: "Bosonfilm" }
+        { role: "Editor", name: "Nikodem Chabior" },
+        { role: "Sound Design", name: "Mykhailo Zakytskyi" },
+        { role: "Color", name: "Volodymyr Morozov" },
       ]
     }
   },
@@ -804,21 +787,18 @@ export const projects: Project[] = [
       ]
     },
     technical: [
-      { label: "Camera", value: "ARRI Alexa Mini" },
-      { label: "Lenses", value: "Cooke Anamorphic/i" },
-      { label: "Format", value: "ARRIRAW 3.4K" },
+      { label: "Camera", value: "Black Magic Cinema Camera" },
+      { label: "Lenses", value: "ISCORAMA-34" },
+      { label: "Format", value: "BRAW" },
       { label: "Aspect Ratio", value: "2.39:1" },
-      { label: "Colour", value: "Monochrome, Rec.709" },
-      { label: "Editing System", value: "Adobe Premiere Pro" },
-      { label: "Delivery", value: "ProRes 4444 25fps" }
+      { label: "Delivery", value: "ProRes 422 · 25fps" }
     ],
     credits: {
       crew: [
         { role: "Director", name: "Max Prodaniuk" },
         { role: "Director of Photography", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Colour", name: "Ihor Bondarenko" },
-        { role: "Producer", name: "Max Prodaniuk" }
+        { role: "Editor", name: "Max Prodaniuk" },
+        { role: "Color", name: "Max Prodaniuk, Oleksandr Korotun" },
       ]
     }
   },
@@ -897,10 +877,10 @@ export const projects: Project[] = [
     technical: [
       { label: "Camera", value: "Sony A7S3" },
       { label: "Lenses", value: "Nikkor Ai" },
-      { label: "Format", value: "ProRes 4444 XQ" },
+      { label: "Format", value: "XAVC HD" },
       { label: "Aspect Ratio", value: "1.33:1" },
-      { label: "Colour", value: "HLG" },
-      { label: "Editing System", value: "Final Cut Pro" }
+      { label: "Color", value: "HLG" },
+      { label: "Editing System", value: "Adobe Premiere Pro" }
     ],
     credits: {
       cast: [
@@ -1028,26 +1008,32 @@ export const projects: Project[] = [
       ]
     },
     technical: [
-      { label: "Camera", value: "ARRI Amira" },
-      { label: "Lenses", value: "Cooke S4" },
-      { label: "Format", value: "ProRes 4444" },
-      { label: "Aspect Ratio", value: "2.39:1" },
-      { label: "Colour", value: "Rec.709" },
+      { label: "Camera", value: "ARRI Alexa Mini" },
+      { label: "Lenses", value: "Zeiss Super Speeds" },
+      { label: "Format", value: "ARRIRAW 2.8K" },
+      { label: "Aspect Ratio", value: "2:1" },
+      { label: "Color", value: "Rec.709" },
       { label: "Editing System", value: "Adobe Premiere Pro" },
-      { label: "Delivery", value: "DCP 25fps" }
+      { label: "Delivery", value: "DCP 24fps" }
     ],
     credits: {
       cast: [
-        { name: "Sofiia Marchenko", character: "Paperushka" },
-        { name: "Halyna Rudenko", character: "Grandmother" }
+        { name: "Olena Bohdan", character: "Iva" },
+        { name: "Oleksandr Zhyla", character: "Borys" },
+        { name: "Vadym Tambovtsev", character: "Mytiay" },
+        { name: "Oleh Davydov", character: "Borys Friend" },
+        { name: "Kateryna Lyapina", character: "Mother" },
+        { name: "Oleh Loniankivskiy", character: "Father" },
+        { name: "Maria Makara", character: "Grandmother" },
+        { name: "Orest Chemerys", character: "Delivery Driver" },
       ],
       crew: [
         { role: "Director", name: "Lilia Ostapovyčh" },
         { role: "Cinematographer", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
-        { role: "Sound", name: "Taras Hnatiuk" },
-        { role: "Colour", name: "Ihor Bondarenko" },
-        { role: "Producer", name: "CUC" }
+        { role: "Editor", name: "Yuri Pidtserkovniy" },
+        { role: "Sound", name: "Oleg Goloveshkin" },
+        { role: "Color", name: "Maryna Tkachenko" },
+        { role: "Producer", name: "Valeria Sochyvets, Taras Dron" }
       ]
     }
   }
