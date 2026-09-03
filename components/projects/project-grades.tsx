@@ -12,12 +12,28 @@ import { LABEL } from "./shared"
  * place: when the plates arrive, drop `simulated` from the shot in the data and
  * nothing here needs touching.
  */
-const UNGRADED_STAND_IN = "saturate-50"
+const UNGRADED_STAND_IN = "saturate-55"
 
 /** Where the wipe sits when the panel opens — dead centre, both states readable. */
 const INITIAL_POSITION = 50
 
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
+
+/**
+ * The shape of a plate, read off the file rather than taken from the record.
+ *
+ * Grade plates are pulled at the film's own frame — no letterbox, no pillarbox —
+ * so the picture's ratio is a fact about the image, and the image is the only
+ * thing that has to know it. Scope, 2:1, 1.85, 16:9, 4:3: the panel takes
+ * whatever it is handed and none of them need declaring anywhere.
+ *
+ * Asked twice, from the ref and from onLoad, because either can be the one that
+ * has an answer: a plate served from cache can be decoded before React has the
+ * load handler on it, and one off the network has nothing to report until the
+ * handler fires. An image with nothing to report yet measures 0 and is ignored.
+ */
+const ratioOf = (image: HTMLImageElement | null) =>
+  image && image.naturalWidth > 0 && image.naturalHeight > 0 ? image.naturalWidth / image.naturalHeight : null
 
 /**
  * Colour, shown the only way colour can be argued about: the same frame twice,
@@ -40,11 +56,28 @@ export function ProjectGrades({
 }) {
   const [index, setIndex] = useState(0)
   const [position, setPosition] = useState(INITIAL_POSITION)
+  /**
+   * The plates' own ratio, once one has said what it is. `aspect` is what the
+   * panel stands on until then and if a plate never loads — it is the film's
+   * ratio, which is the right guess, but only a guess: a project whose plates
+   * were pulled at a different shape than the record claims is still shown
+   * whole. The last known ratio is kept while the next plate loads, so moving
+   * along a strip of one-shaped plates never moves the frame.
+   */
+  const [measured, setMeasured] = useState<number | null>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
 
   const shot = grades[index]
   const standingIn = grades.some((grade) => grade.simulated)
+
+  /** A CSS aspect-ratio: the measured one as a bare number, or the declared string. */
+  const shape = measured ?? aspect
+
+  const measure = (image: HTMLImageElement | null) => {
+    const ratio = ratioOf(image)
+    if (ratio !== null) setMeasured(ratio)
+  }
 
   const positionAt = (clientX: number) => {
     const frame = frameRef.current
@@ -101,20 +134,27 @@ export function ProjectGrades({
         onPointerCancel={() => {
           dragging.current = false
         }}
-        // Both plates are absolute inside this box, so the film's ratio is set once
+        // Both plates are absolute inside this box, so the frame's ratio is set once
         // here and the wipe geometry follows it.
-        style={{ aspectRatio: aspect }}
+        style={{ aspectRatio: shape }}
         className={cn(
           "relative w-full cursor-ew-resize touch-none select-none overflow-hidden bg-black",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground/40"
         )}>
-        {/* Graded — the whole frame, underneath. */}
+        {/* Graded — the whole frame, underneath, and the plate the box takes its
+            shape from. `contain` rather than `cover`: in the window before the
+            measurement lands, a plate that isn't the shape the box expected sits
+            inside it on black rather than having its edges cut off, and a grade
+            reference with the edges cut off is not a reference. Once measured the
+            two agree and there is nothing to letterbox. */}
         <img
           key={`${shot.shot}-after`}
+          ref={measure}
+          onLoad={(event) => measure(event.currentTarget)}
           src={shot.after}
           alt={shot.alt}
           draggable={false}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-contain"
         />
 
         {/* Ungraded — the same frame, clipped to the left of the wipe. Clipping the
@@ -126,7 +166,7 @@ export function ProjectGrades({
             src={shot.before}
             alt=""
             draggable={false}
-            className={cn("absolute inset-0 h-full w-full object-cover", shot.simulated && UNGRADED_STAND_IN)}
+            className={cn("absolute inset-0 h-full w-full object-contain", shot.simulated && UNGRADED_STAND_IN)}
           />
         </div>
 
@@ -141,7 +181,9 @@ export function ProjectGrades({
       {shot.note && <p className="body-m mt-4 max-w-prose text-muted-foreground">{shot.note}</p>}
 
       {/* The other shots. Thumbnails show the graded state — the wipe is where the
-          comparison happens, not here. */}
+          comparison happens, not here. They are cut to the same measured shape as
+          the frame, so a scope strip reads as a scope strip and no thumbnail is
+          cropped to a ratio the film never had. */}
       <ul className="mt-8 flex gap-px overflow-x-auto overscroll-x-contain">
         {grades.map((grade, shotIndex) => {
           const isActive = shotIndex === index
@@ -160,12 +202,14 @@ export function ProjectGrades({
                   "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-foreground/40"
                 )}>
                 <img
+                  ref={measure}
+                  onLoad={(event) => measure(event.currentTarget)}
                   src={grade.after}
                   alt=""
                   loading="lazy"
                   decoding="async"
                   draggable={false}
-                  style={{ aspectRatio: aspect }}
+                  style={{ aspectRatio: shape }}
                   className={cn(
                     "w-full object-cover transition duration-500 ease-out motion-reduce:transition-none",
                     isActive ? "brightness-100" : "brightness-40 group-hover:brightness-75"

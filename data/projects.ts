@@ -314,56 +314,71 @@ export const projects: Project[] = [
     materials: {
       stills: stills("hum", "Hum", [3, 12, 22.5, 43]),
       palette: palette(
-        "Wet green and skin, under an overcast sky that fully opens just once. Nothing in the film is allowed to be warm except the people.",
+        "Wet earth, cool foliage, and overcast light. Warmth is hesitant to appear anywhere except human skin.",
         [
-          ["#07080c", "Black"],
-          ["#222d18", "Deep grass"],
-          ["#364c2e", "Grass"],
-          ["#705b50", "Skin"],
+          ["#090F0D", "Black"],
+          ["#1F3505", "Deep grass"],
+          ["#274502", "Grass"],
+          ["#97866F", "Skin"],
           ["#506758", "Moss"],
-          ["#717973", "Overcast"],
+          ["#B0C6D2", "Overcast"],
           ["#7f9394", "Haze"],
           ["#a8bdb7", "Sage"],
-          ["#cee3e5", "Sky"]
+          ["#AEC9BE", "Mint"]
         ]
       ),
       grades: [
         {
-          shot: "SH 01",
-          before: "/projects/stills/hum-1.jpg",
-          after: "/projects/stills/hum-1.jpg",
-          alt: "Hum — shot 01, figure in the grass under an overcast sky",
-          note: "Overcast, left overcast. The grass carries the whole frame's colour so the sky can stay empty.",
+          shot: "SH 04",
+          before: "/projects/grades/hum-01-ungraded.jpg",
+          after: "/projects/grades/hum-01-graded.jpg",
+          alt: "Project Title — shot 04, woman standing outdoors by a lake in soft overcast daylight",
+          note: "Lifted the black point in dark coat to maintain detail and match the washed-out, dreamy feel of the backlit water.",
           time: 3,
-          simulated: true
         },
         {
           shot: "SH 05",
-          before: "/projects/stills/hum-2.jpg",
-          after: "/projects/stills/hum-2.jpg",
-          alt: "Hum — shot 05, closer on the figure",
-          note: "Skin held warm against a green that was pushed further from it. The only separation in the film that isn't light.",
+          before: "/projects/grades/hum-02-ungraded.jpg",
+          after: "/projects/grades/hum-02-graded.jpg",
+          alt: "Project Title — shot 05, profile shot of two women standing outdoors under cloudy skies",
+          note: "Pushed the sky toward a muted pastel green-cyan cast to give the overcast clouds depth while keeping the black clothing dense and rich.",
           time: 12,
-          simulated: true
         },
         {
           shot: "SH 09",
-          before: "/projects/stills/hum-3.jpg",
-          after: "/projects/stills/hum-3.jpg",
-          alt: "Hum — shot 09, the break",
-          note: "The break is where the sky opens. Lifted a stop in the grade rather than in the shot.",
+          before: "/projects/grades/hum-03-ungraded.jpg",
+          after: "/projects/grades/hum-03-graded.jpg",
+          alt: "Project Title — shot 09, dynamic low-angle shot of two dancers reaching for each other outdoors under trees",
+          note: "Pushed the sky and background foliage into a cool sage-cyan wash to match the kinetic tension while keeping skin tones natural on the key highlights.",
           time: 22.5,
-          simulated: true
         },
         {
           shot: "SH 14",
-          before: "/projects/stills/hum-4.jpg",
-          after: "/projects/stills/hum-4.jpg",
-          alt: "Hum — shot 14, the reprise",
-          note: "Back to the opening's balance, one notch cooler. The reprise should read as the same place and not the same moment.",
+          before: "/projects/grades/hum-04-ungraded.jpg",
+          after: "/projects/grades/hum-04-graded.jpg",
+          alt: "Project Title — shot 14, close-up profile of a woman adjusting wet hair outdoors in the rain",
+          note: "Maintained smooth highlight roll-off along the wet skin and arms under heavy backlighting, letting rain streaks pop against the dark canopy backdrop.",
           time: 43,
-          simulated: true
+        },
+
+        {
+          shot: "SH 21",
+          before: "/projects/grades/hum-05-ungraded.jpg",
+          after: "/projects/grades/hum-05-graded.jpg",
+          alt: "Project Title — shot 21, high-angle view of two figures sitting on rocky shoreline looking out at water",
+          note: "Pushed the water ripples into a warm olive-sage hue while keeping the dark silhouettes softly lifted to match the atmospheric haze.",
+          time: 64,
+        },
+
+        {
+          shot: "SH 33",
+          before: "/projects/grades/hum-06-ungraded.jpg",
+          after: "/projects/grades/hum-06-graded.jpg",
+          alt: "Project Title — shot 33, character looking back against a vast, dark field under evening skies",
+          note: "Maintained a smooth tonal transition between the overcast sky and dark horizon, letting the subtle highlight draw a full focus.",
+          time: 92,
         }
+
       ]
     },
     technical: [
@@ -378,13 +393,13 @@ export const projects: Project[] = [
     credits: {
       cast: [
         { name: "Iryna Tychyna", character: "Woman" },
-        { name: "Solomia Kyrylova", character: "Alter Ego" }
+        { name: "Solomiia Kyrylova", character: "Alter Ego" }
       ],
       crew: [
         { role: "Director / DoP", name: "Oleksandr Korotun" },
-        { role: "Editor", name: "Oleksandr Korotun" },
+        { role: "Editor / Color", name: "Oleksandr Korotun" },
         { role: "Compositor", name: "Maryana Klochko" },
-        { role: "Producers", name: "Max Prodaniuk, Oleksandr Korotun, Iryna Tychyna" }
+        { role: "Producers", name: "Max Prodaniuk, Iryna Tychyna" }
       ]
     }
   },
@@ -547,80 +562,61 @@ export const projects: Project[] = [
           ["#b3bfc3", "Sky"]
         ]
       ),
-      // Same four shots as the storyboard below, which is deliberate: the boards,
-      // the frames and the grade are all arguments about the same four moments.
-      // `before` and `after` point at one frame and carry `simulated` the way 212
-      // does — but off the contact-sheet stills rather than /projects/grades, since
-      // this film has no grade exports yet. Replace both paths and drop the flag
-      // when they land.
       grades: [
         {
-          shot: "SH 01A",
+          shot: "SH 01",
           before: "/projects/grades/blb-01.jpg",
           after: "/projects/grades/blb-01.jpg",
-          alt: "Blind As A Bat — shot 01A, the coast in overcast light",
-          note: "One teal for the sea and the sky both. Separating them made the coast look like two locations.",
+          alt: "Blind As A Bat — shot 01, over-the-shoulder view of character looking at the sea behind winter trees",
+          note: "Pushed the sky towards neutral cool to let the deep blue of the sea carry the weight, keeping the dry grass in warm amber for balance.",
           time: 5,
           simulated: true
         },
         {
-          shot: "SH 04C",
+          shot: "SH 07",
           before: "/projects/grades/blb-02.jpg",
           after: "/projects/grades/blb-02.jpg",
-          alt: "Blind As A Bat — shot 04C, the chorus",
-          note: "The chorus comes up half a stop and no warmer. All the lift is in the sky.",
+          alt: "Blind As A Bat — shot 07, wide shot of an industrial footbridge beside bare trees",
+          note: "Desaturated the cyan cast in the flat overcast sky to anchor the shot in a colder, industrial gray palette without losing the warm rust on the metal structures.",
           time: 18,
           simulated: true
         },
         {
-          shot: "SH 09",
+          shot: "SH 11",
           before: "/projects/grades/blb-03.jpg",
           after: "/projects/grades/blb-03.jpg",
-          alt: "Blind As A Bat — shot 09, the match cut",
-          note: "Graded to match the shot it cuts to, not the one it was shot next to. The two takes were four hours apart.",
+          alt: "Blind As A Bat — shot 011, low-angle view looking up into pale tree branches against a overcast sky",
+          note: "Leaned into a subtle cyan-blue tint across the highlights to keep the white cool, while preserving midtone definition along the smooth branches.",
           time: 33,
           simulated: true
         },
         {
-          shot: "SH 12B",
+          shot: "SH 12",
           before: "/projects/grades/blb-04.jpg",
           after: "/projects/grades/blb-04.jpg",
-          alt: "Blind As A Bat — shot 12B, the bark before the fade",
-          note: "The bark is the only warm thing in the film and it is left alone. Everything around it came down instead.",
+          alt: "Blind As A Bat — shot 12, over-the-shoulder view of a quiet industrial coastline",
+          note: "Muted saturation in the sky and sea to yield a cohesive zinc-grey backdrop, letting the blurred foreground silhouette set the depth.",
+          simulated: true,
           time: 47,
+        }
+        , {
+          shot: "SH 15",
+          before: "/projects/grades/blb-05.jpg",
+          after: "/projects/grades/blb-05.jpg",
+          alt: "Blind As A Bat — shot 15, close-up profile of a man against a soft overcast background",
+          note: "Kept skin tones natural under flat diffused sky light, balancing subtle warmth on the cheek while maintaining the overall cool atmosphere.",
+          time: 92,
+          simulated: true
+        }, {
+          shot: "SH 23",
+          before: "/projects/grades/blb-06.jpg",
+          after: "/projects/grades/blb-06.jpg",
+          alt: "Blind As A Bat — shot 07A, dark silhouette framed low against a vast overcast blue sky",
+          note: "Graded for a cold dusk feel, pulling down exposure in the sky just enough to reveal high-cloud texture while anchoring the head in absolute black.",
+          time: 127,
           simulated: true
         }
       ],
-      storyboard: [
-        {
-          shot: "SH 01A",
-          final: "/projects/stills/blind-as-a-bat-1.jpg",
-          alt: "Blind As A Bat — shot 01A",
-          note: "Boarded as a push-in. Shot handheld; the push became a drift.",
-          time: 5
-        },
-        {
-          shot: "SH 04C",
-          final: "/projects/stills/blind-as-a-bat-2.jpg",
-          alt: "Blind As A Bat — shot 04C",
-          note: "The only board that survived the edit intact.",
-          time: 18
-        },
-        {
-          shot: "SH 09",
-          final: "/projects/stills/blind-as-a-bat-3.jpg",
-          alt: "Blind As A Bat — shot 09",
-          note: "Boarded wide, cut in tight — the wide plays under the chorus instead.",
-          time: 33
-        },
-        {
-          shot: "SH 12B",
-          final: "/projects/stills/blind-as-a-bat-4.jpg",
-          alt: "Blind As A Bat — shot 12B",
-          note: "Added on the day. No board exists for it.",
-          time: 47
-        }
-      ]
     },
     technical: [
       { label: "Camera", value: "Arri Alexa Mini" },
