@@ -17,7 +17,7 @@ type ProjectTimelineProps = {
 }
 
 /** Bars in the audio track. Enough to read as a waveform, few enough to stay a drawing. */
-const WAVEFORM_BARS = 420
+const WAVEFORM_BARS = 720
 
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 

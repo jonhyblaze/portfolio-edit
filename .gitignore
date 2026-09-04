@@ -21,3 +21,4 @@ scripts/.env
 public/**/*.mp4
 public/**/*.mov
 public/**/*.webm
+masters/

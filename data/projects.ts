@@ -19,10 +19,11 @@
  * the project yet — real copy comes with the real stills.
  *
  * Everything past `frames` belongs to the project page and is mock in the same
- * way: the films are real, the records are not. `video` points at the showcase
- * loops on R2 because the finished films are not online — so a "cut" runs under
- * a minute and carries no audio track. Replacing those keys with the real
- * masters is the only change the page needs.
+ * way: the films are real, the records are not. `video` mostly points at the
+ * showcase loops on R2, because most of the finished films are not online — so
+ * those "cuts" run under a minute and carry no audio track. The projects that do
+ * have a master play it out of edits/, with sound and at full length. Pointing
+ * the remaining keys at their own masters is the only change the page needs.
  */
 
 export type ProjectFrame = {
@@ -293,26 +294,27 @@ export const projects: Project[] = [
     title: "HUM ",
     year: 2021,
     type: "Short Music Film",
-    runtime: "03:45 min",
+    runtime: "03:46 min",
     director: "Oleksandr Korotun",
     frames: frames("hum", "Hum"),
     logline: "The ultimate act of escapism — is to vanish into your own silence.",
     synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
     festivals: [{ name: "CYCLOP Video Poetry Festival", year: 2021, note: "International Competition" }],
     video: {
-      src: master("loops/hum.mp4"),
+      src: master("edits/hum.mp4"),
       poster: "/showcase/hum-cover.jpg",
-      duration: 52,
+      duration: 226,
       aspectRatio: "16:9"
     },
     markers: [
-      { time: 3, label: "Opening" },
-      { time: 14, label: "First verse" },
-      { time: 27, label: "Break" },
-      { time: 41, label: "Reprise" }
+      { time: 8, label: "Opening" },
+      { time: 30, label: "First verse" },
+      { time: 97, label: "Rupture" },
+      { time: 176, label: "Dissolve" },
+      { time: 207, label: "Resolution" }
     ],
     materials: {
-      stills: stills("hum", "Hum", [3, 12, 22.5, 43]),
+      stills: stills("hum", "Hum", [40, 63, 118, 195]),
       palette: palette(
         "Wet earth, cool foliage, and overcast light. Warmth is hesitant to appear anywhere except human skin.",
         [
@@ -419,19 +421,19 @@ export const projects: Project[] = [
     synopsis:
       "Shot across one city over several days and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four urelated locations.",
     video: {
-      src: master("loops/212.mp4"),
+      src: master("edits/212.mp4"),
       poster: "/showcase/212-cover.jpg",
-      duration: 45,
+      duration: 88,
       aspectRatio: "4:3"
     },
     markers: [
-      { time: 3, label: "Cold open" },
-      { time: 15, label: "Descent" },
-      { time: 27, label: "Speed" },
-      { time: 38, label: "Night" }
+      { time: 7, label: "Opening" },
+      { time: 23, label: "Street" },
+      { time: 54, label: "Speed" },
+      { time: 75, label: "Night" }
     ],
     materials: {
-      stills: stills("212", "212 Heroes", [3, 15, 27, 42, 46, 49]),
+      stills: stills("212", "212 Heroes", [10.5, 24, 31, 62.8, 67.7, 76]),
       palette: palette(
         "The film runs the light down: concrete daylight, an indigo hour, then sodium. The lilac is the only colour that belongs to none of the three, which is why the dusk shots carry it.",
         [
@@ -536,16 +538,16 @@ export const projects: Project[] = [
     synopsis:
       "This music video came about during cold winter in Mariupol, while having days off on feature film shoot. We had a song, a character, a camera, and location most importantly.",
     video: {
-      src: master("loops/blb.mp4"),
+      src: master("edits/blb.mp4"),
       poster: "/showcase/blb-cover.jpg",
-      duration: 55,
-      aspectRatio: "16:9"
+      duration: 280,
+      aspectRatio: "2.39:1"
     },
     markers: [
       { time: 5, label: "Cold open" },
-      { time: 18, label: "Chorus" },
-      { time: 33, label: "Match cut" },
-      { time: 47, label: "Fade" }
+      { time: 58, label: "Chorus" },
+      { time: 180, label: "Bridge" },
+      { time: 248, label: "Fade" }
     ],
     materials: {
       palette: palette(
@@ -873,7 +875,7 @@ export const projects: Project[] = [
     technical: [
       { label: "Camera", value: "Sony A7S3" },
       { label: "Lenses", value: "Nikkor Ai" },
-      { label: "Format", value: "XAVC HD" },
+      { label: "Format", value: "XAVC-S HD" },
       { label: "Aspect Ratio", value: "1.33:1" },
       { label: "Color", value: "HLG" },
       { label: "Editing System", value: "Adobe Premiere Pro" }
