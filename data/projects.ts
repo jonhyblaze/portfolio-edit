@@ -743,19 +743,21 @@ export const projects: Project[] = [
     title: "PAVO INDUS",
     year: 2019,
     type: "Music Video",
-    runtime: "4:12 min",
+    runtime: "9:16 min",
     director: "Max Prodaniuk",
     // Scope, and the strip files carry the letterbox baked in — sizing the frames
-    // to 2.39:1 crops those bars off rather than drawing them twice.
-    aspect: "2.39 / 1",
+    // to 2.84:1 crops those bars off rather than drawing them twice. That is the
+    // measured ratio of the picture inside both the master and the delivered
+    // frames; 2.39 left a black band standing on either edge.
+    aspect: "2.84 / 1",
     frames: frames("pavo", "Pavo Indus"),
     logline: "A hunter walks up into weather that has already closed behind him.",
     synopsis:
       "Shot black-and-white over two days on a ridge in the Carpathians, in snow that never let up long enough to be waited out. Cut to the track rather than to the walk: the film keeps arriving at the same treeline, and the only thing that changes is how much of it you can still see.",
     video: {
-      src: master("loops/pavo-indus.mp4"),
+      src: master("edits/pavo-indus.mp4"),
       poster: "/showcase/pavo-indus-cover.jpg",
-      duration: 34,
+      duration: 555,
       aspectRatio: "2.39:1"
     },
     markers: [
