@@ -577,7 +577,7 @@ function TitleCard({ slide }: { slide: TitleSlide }) {
           a phone there are no corners to speak of — they stack, clear of the nudge. */}
       {(slide.standfirst || slide.cta) && (
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-8 px-6 pb-32 duration-1000 animate-in fade-in-0 fill-mode-both md:flex-row md:items-end md:justify-between md:gap-12 md:px-32 md:pb-12"
+          className="hidden lg:flex pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-8 px-6 pb-32 duration-1000 animate-in fade-in-0 fill-mode-both md:flex-row md:items-end md:justify-between md:gap-12 md:px-32 md:pb-12"
           style={{ animationDelay: `${settled + CORNERS_MS}ms` }}>
           {slide.standfirst && (
             <div className="max-w-xs">
@@ -606,7 +606,7 @@ const CTA_CORNERS = [
 /** The invitation, bracketed like a frame waiting to be filled. */
 function CtaFrame({ cta }: { cta: NonNullable<TitleSlide["cta"]> }) {
   return (
-    <div className="relative max-w-xs px-5 py-6 md:px-6">
+    <div className="hidden lg:block relative max-w-xs px-5 py-6 md:px-6">
       {CTA_CORNERS.map((corner) => (
         <span key={corner} aria-hidden className={cn("absolute size-3 border-white/40", corner)} />
       ))}
