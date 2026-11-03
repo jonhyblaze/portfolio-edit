@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactElement, ReactNode } from "react"
-import { Input } from "@/components/form/input"
+import { Input, Textarea } from "@/components/form/input"
 import { FormField, formSchema } from "@/components/form/schema"
 import { FormStatus } from "@/components/form/types"
 import { Button } from "@/components/ui/button"
@@ -49,27 +49,42 @@ export default function ContactPage() {
       <FormBaseView handleSubmit={handleSubmit}>
         <h3 className="h4">Send Message</h3>
         <fieldset className="space-y-8">
-          {formFields.map((field) => (
-            <Input
-              key={field}
-              id={field}
-              name={field}
-              placeholder={formSchema[field].placeholder}
-              label={formSchema[field].label}
-              value={formData[field]}
-              error={errors[field]}
-              onChange={(e) => updateField(field, e.target.value)}
-              onBlur={(e) => validateField(field, e.target.value)}
-              required
-            />
-          ))}
+          {formFields.map((field) => {
+            const Control = field === "message" ? Textarea : Input
+
+            return (
+              <Control
+                key={field}
+                id={field}
+                name={field}
+                placeholder={formSchema[field].placeholder}
+                label={formSchema[field].label}
+                value={formData[field]}
+                error={errors[field]}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateField(field, e.target.value)}
+                onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => validateField(field, e.target.value)}
+                maxLength={formSchema[field].maxLength}
+                required
+              />
+            )
+          })}
         </fieldset>
-        <input
-          type="hidden"
-          name="website" // honeypot
-          value={formData.website}
-          onChange={(e) => updateField("website", e.target.value)}
-        />
+        {/* Honeypot: a real text field, moved off-screen rather than type="hidden",
+            because spam bots fill in what looks like a field and skip hidden ones.
+            Out of the tab order and the accessibility tree, and autofill is off so
+            a browser never fills it on a person's behalf. */}
+        <div aria-hidden="true" className="absolute -left-[10000px] top-auto size-px overflow-hidden">
+          <label htmlFor="website">Website</label>
+          <input
+            id="website"
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={formData.website}
+            onChange={(e) => updateField("website", e.target.value)}
+          />
+        </div>
         <Button
           type="submit"
           className="mt-10 w-full button rounded hover:bg-foreground/80 transition-colors duration-300">
@@ -109,7 +124,7 @@ export default function ContactPage() {
           <div>
             <RiMailCloseLine size={64} className="mb-4" />
             <h3 className="h4 text mb-2">Something went wrong</h3>
-            <p className="body-m text-foreground/70">I wasnt able to receive your inquiry just yet. Please try sending it again—I’d love to hear from you.</p>
+            <p className="body-m text-foreground/70">I wasn’t able to receive your inquiry just yet. Please try sending it again—I’d love to hear from you.</p>
           </div>
 
           <Button
@@ -163,6 +178,14 @@ const FormBaseView = ({
           <p className="body-m text-foreground/70">
             Have a project in mind or just want to chat? Feel free to reach out through the form or connect
             with me on social media.
+          </p>
+          <p className="body-m mt-6 text-foreground/70">
+            Prefer direct correspondence? Write directly to{" "}
+            <a
+              href={`mailto:${profile.email}`}
+              className="inline-block text-foreground underline decoration-muted-foreground underline-offset-4 transition-colors hover:decoration-foreground">
+              {profile.email}
+            </a>
           </p>
         </div>
         <footer className="space-y-2 lg:space-y-4">

@@ -211,12 +211,23 @@ export type Project = {
   stripAspect?: string
   /** Exactly four landscape frames off /public/projects/strips, in cut order. */
   frames: ProjectFrame[]
+  /**
+   * Extra search terms for the command palette: places, people, themes. Title,
+   * type and director are searched already, so they needn't be repeated here.
+   */
+  keywords?: string[]
   /** One line, the way a festival catalogue would carry it. */
   logline?: string
   synopsis?: string
   /** Selections and wins together, in the order they should be read. */
   festivals?: ProjectFestival[]
   video?: ProjectVideo
+  /**
+   * The frame a link preview is built on, off /public. Defaults to the video's
+   * poster; set it when the poster is a title card the preview's own caption
+   * would land on top of.
+   */
+  preview?: string
   markers?: ProjectMarker[]
   materials?: ProjectMaterials
   technical?: ProjectSpec[]
@@ -297,6 +308,7 @@ export const projects: Project[] = [
     runtime: "03:46 min",
     director: "Oleksandr Korotun",
     frames: frames("hum", "Hum"),
+    keywords: ["video poetry", "poetry", "Vasyl Symonenko", "Ballad of the Escape", "CYCLOP", "Iryna Tychyna", "Solomiia Kyrylova", "nature", "lake"],
     logline: "The ultimate act of escapism — is to vanish into your own silence.",
     synopsis: `A visual adaptation of "Ballad of the Escape" by Vasyl Symonenko. Layering poetic Ukrainian voiceover, atmospheric sound design, and subtle imagery, the video portrays a human attempt to flee joy, pain, and the self—a quiet meditation on identity, loss, and the cost of emotional detachment from inner self.`,
     festivals: [{ name: "CYCLOP Video Poetry Festival", year: 2021, note: "International Competition" }],
@@ -417,9 +429,10 @@ export const projects: Project[] = [
     aspect: "4 / 3",
     stripAspect: WIDESCREEN,
     frames: frames("212", "212 Heroes"),
+    keywords: ["Carolina Herrera", "fragrance", "brand", "advertising", "ad", "Kyiv", "city", "night", "4:3"],
     logline: "Ups and downs on Kyiv hills.",
     synopsis:
-      "Shot across one city over several days and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four urelated locations.",
+      "Shot across one city over several days and cut to run the light down with it — daylight, dusk, sodium. The grade is doing most of the work of holding that as one journey rather than four unrelated locations.",
     video: {
       src: master("edits/212.mp4"),
       poster: "/showcase/212-cover.jpg",
@@ -454,7 +467,7 @@ export const projects: Project[] = [
           before: "/projects/grades/212-01-ungraded.jpg",
           after: "/projects/grades/212-01-graded.jpg",
           alt: "212 Heroes — shot 02, street in daylight",
-          note: "Low sun daylight. The grade introduces indigo tones to a shadows, the spice that we mix our daytime with.",
+          note: "Low sun daylight. The grade introduces indigo tones to the shadows, the spice that we mix our daytime with.",
           time: 6,
           simulated: false
         },
@@ -534,7 +547,8 @@ export const projects: Project[] = [
     director: "Oleksandr Korotun",
 
     frames: frames("blind-as-a-bat", "Blind As A Bat"),
-    logline: "Wandering in nomans land, just before the storm.",
+    keywords: ["Mariupol", "winter", "sea", "coast", "Serhiy Stepansky", "Valentyn Vasyanovych", "scope"],
+    logline: "Wandering in no man’s land, just before the storm.",
     synopsis:
       "This music video came about during cold winter in Mariupol, while having days off on feature film shoot. We had a song, a character, a camera, and location most importantly.",
     video: {
@@ -644,12 +658,13 @@ export const projects: Project[] = [
     year: 2026,
     type: "Short Film",
     runtime: "14 min",
-    director: "Anastasia Grüba",
+    director: "Anastasiya Gruba",
     frames: frames("icehole", "Icehole", "jpg"),
-    logline: "A woman cuts a hole in the ice every morning. One morning she doesn't come back up.",
+    keywords: ["Anastasiya Gruba", "Bosonfilm", "ice", "winter", "Kyiv Sea", "Olesia Usata", "Serhiy Smiyan"],
+    logline: "On a calm winter day, a woman decides to cut a hole in the ice on frozen lake. One man wasn't happy about that at all.",
     synopsis:
-      "Assembled long and then cut down over four passes. The festival cut and the black-and-white version are both delivered from the same conform; the trailer was built separately from the same bins.",
-    festivals: [{ name: "Berlinale Shorts", note: "In Competition" }],
+      "We shot the piece three times — first twice during prep with a stripped-down crew, followed by the main production shoot. With two characters, a single location, and heavy dialogue, our primary challenge was leaning into visual storytelling. By testing various cuts during prep and rigorously storyboarding upfront, made the final cut a breeze.",
+    festivals: [{ name: "Mountain Shorts", note: "In Competition" }],
     video: {
       src: master("loops/icehole.mp4"),
       poster: "/showcase/icehole-cover.jpg",
@@ -751,6 +766,7 @@ export const projects: Project[] = [
     // frames; 2.39 left a black band standing on either edge.
     aspect: "2.84 / 1",
     frames: frames("pavo", "Pavo Indus"),
+    keywords: ["Max Prodaniuk", "black and white", "monochrome", "anamorphic", "scope", "snow", "mountains", "winter"],
     logline: "A hunter walks up into weather that has already closed behind him.",
     synopsis:
       "Shot black-and-white over two days on a ridge in the Carpathians, in snow that never let up long enough to be waited out. Cut to the track rather than to the walk: the film keeps arriving at the same treeline, and the only thing that changes is how much of it you can still see.",
@@ -760,6 +776,8 @@ export const projects: Project[] = [
       duration: 555,
       aspectRatio: "2.39:1"
     },
+    // The poster is the title card; this is the cup at 0:09, letterbox cropped off.
+    preview: "/showcase/pavo-indus-preview.jpg",
     markers: [
       { time: 2, label: "Ridge" },
       { time: 11, label: "Treeline" },
@@ -811,6 +829,7 @@ export const projects: Project[] = [
     director: "Nikon Rōmanchenko",
     // TODO: no strip cuts delivered yet — falling back to the full-size stills.
     frames: frames("leopolis", "Leopolis Night"),
+    keywords: ["Lviv", "night", "city", "black and white", "4:3", "Nikon Romanchenko", "Kateryna Gornostai", "Golden Duke", "Odesa", "Molodist", "award winning"],
     logline: "Lviv between the last tram and the first one.",
     synopsis:
       "Shot over five nights in a 4:3 frame and cut to the length of the walk itself. The boards were drawn as a route rather than as shots, which is why so few of them survive the edit in order.",
@@ -906,6 +925,7 @@ export const projects: Project[] = [
     runtime: "21 min",
     director: "Lilia Ostapovyčh",
     frames: frames("papr", "Paperushka"),
+    keywords: ["Lilia Ostapovych", "Taras Dron", "mountains", "blue hour", "storyboard", "Molodist", "KINOKO", "award winning"],
     logline: "A girl carries a paper doll up a mountain that has already been left.",
     synopsis:
       "Three cuts exist. The festival cut is eleven minutes shorter and loses the second descent entirely; the black-and-white version was made for a single screening and then kept.",

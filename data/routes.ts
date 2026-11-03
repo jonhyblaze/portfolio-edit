@@ -3,7 +3,5 @@ export const routes = {
   about: "/about",
   projects: "/projects",
   contact: "/contact",
-  papr: "/projects/papr",
-  icehole: "/projects/icehole",
-  leopolis: "/projects/leopolis-night"
+  project: (slug: string) => `/projects/${slug}`
 }

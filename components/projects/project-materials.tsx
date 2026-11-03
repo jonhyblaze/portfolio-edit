@@ -110,7 +110,7 @@ export function ProjectMaterials({ project, activeVersionId, onSelectVersion, on
               )}>
               {material.label}
               {material.count !== undefined && (
-                <span aria-hidden className="text-[0.625rem] tabular-nums text-muted-foreground/50">
+                <span aria-hidden className="label-s tabular-nums text-muted-foreground/50">
                   {String(material.count).padStart(2, "0")}
                 </span>
               )}

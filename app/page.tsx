@@ -1,7 +1,9 @@
 import { VideoShowcase } from "@/components/showcase/video-showcase"
 import { ScrollLock } from "@/components/scroll-lock"
 import { showcaseSlides } from "@/data/showcase"
+import { pageMetadata, SITE_DESCRIPTION } from "@/lib/metadata"
 
+export const metadata = pageMetadata({ description: SITE_DESCRIPTION, path: "/" })
 
 export default function HomePage() {
   return (

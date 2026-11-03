@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { routes } from "@/data/routes"
 import profile from "@/data/profile"
+import { projects } from "@/data/projects"
 import { useSound } from "@/components/sound/sound-provider"
 import {
   CommandDialog,
@@ -16,17 +17,19 @@ import {
   CommandShortcut
 } from "@/components/ui/command"
 import {
-  RiBookLine,
-  RiBookMarkedLine,
+  RiAtLine,
   RiFileUserLine,
+  RiFilmLine,
   RiHomeLine,
   RiInstagramLine,
-  RiLinkedinBoxLine,
   RiMailLine,
+  RiMovie2Line,
+  RiTelegram2Line,
   RiUserLine,
   RiVolumeMuteLine,
   RiVolumeUpLine
 } from "@remixicon/react"
+import { Imdb } from "@/components/svg/imdb"
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
@@ -57,15 +60,28 @@ export function CommandPalette() {
         <CommandEmpty>No results found.</CommandEmpty>
 
         <CommandGroup heading="Navigation">
-          <CommandItem onSelect={() => runCommand(() => router.push("/"))} className="cursor-pointer">
+          <CommandItem onSelect={() => runCommand(() => router.push(routes.homepage))} className="cursor-pointer">
             <RiHomeLine />
             <span>Home</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => router.push("/about"))} className="cursor-pointer">
+          <CommandItem
+            keywords={["work", "films", "portfolio", "reels"]}
+            onSelect={() => runCommand(() => router.push(routes.projects))}
+            className="cursor-pointer">
+            <RiMovie2Line />
+            <span>Projects</span>
+          </CommandItem>
+          <CommandItem
+            keywords={["bio", "filmography", "experience"]}
+            onSelect={() => runCommand(() => router.push(routes.about))}
+            className="cursor-pointer">
             <RiUserLine />
             <span>About</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => router.push("/contact"))} className="cursor-pointer">
+          <CommandItem
+            keywords={["message", "hire", "form", "get in touch"]}
+            onSelect={() => runCommand(() => router.push(routes.contact))}
+            className="cursor-pointer">
             <RiMailLine />
             <span>Contact</span>
           </CommandItem>
@@ -73,63 +89,56 @@ export function CommandPalette() {
 
         <CommandSeparator />
 
+        {/* Built from the project list itself, so a new project shows up here with
+            no second place to remember. */}
         <CommandGroup heading="Projects">
-          <CommandItem
-            keywords={[
-              "project",
-              "projects",
-              ...profile.projects.papr.keywords
-            ]}
-            onSelect={() => runCommand(() => router.push(routes.papr))}
-            className="cursor-pointer">
-            <RiBookMarkedLine />
-            <span>Paperushka</span>
-          </CommandItem>
-          <CommandItem
-            keywords={[
-              "project",
-              "projects",
-              ...profile.projects.icehole.keywords
-            ]}
-            onSelect={() => runCommand(() => router.push(routes.icehole))}
-            className="cursor-pointer">
-            <RiBookMarkedLine />
-            <span>My Icehole</span>
-          </CommandItem>
-          <CommandItem
-            keywords={[
-              "weather",
-              "app",
-              "dashboard",
-              "next",
-              "next.js",
-              "api",
-              "project",
-              "projects",
-              "tailwind css",
-              "react",
-              ...profile.projects.leopolis.keywords
-            ]}
-            onSelect={() => runCommand(() => router.push(routes.leopolis))}
-            className="cursor-pointer">
-            <RiBookLine />
-            <span>Leopolis Night</span>
-          </CommandItem>
+          {projects.map((project) => (
+            <CommandItem
+              key={project.slug}
+              keywords={["project", "projects", project.type, project.director, String(project.year), ...(project.keywords ?? [])]}
+              onSelect={() => runCommand(() => router.push(routes.project(project.slug)))}
+              className="cursor-pointer">
+              <RiFilmLine />
+              <span>{project.title.trim()}</span>
+              <CommandShortcut>{project.year}</CommandShortcut>
+            </CommandItem>
+          ))}
         </CommandGroup>
+
         <CommandSeparator />
-        <CommandSeparator />
+
         <CommandGroup heading="Links">
-          <CommandItem onSelect={() => runCommand(() => window.open(profile.cv, "_blank"))} className="cursor-pointer">
-            <RiFileUserLine />
-            <span>CV Open</span>
+          <CommandItem
+            keywords={["email", "mail", "write", "hire", profile.email]}
+            onSelect={() => runCommand(() => (window.location.href = `mailto:${profile.email}`))}
+            className="cursor-pointer">
+            <RiAtLine />
+            <span>Email</span>
+            <CommandShortcut className="truncate tracking-normal">{profile.email}</CommandShortcut>
+          </CommandItem>
+          {profile.cv && (
+            <CommandItem
+              keywords={["resume", "pdf", "download"]}
+              onSelect={() => runCommand(() => window.open(profile.cv!, "_blank"))}
+              className="cursor-pointer">
+              <RiFileUserLine />
+              <span>CV</span>
+            </CommandItem>
+          )}
+          <CommandItem
+            keywords={["credits", "filmography"]}
+            onSelect={() => runCommand(() => window.open(profile.imdb, "_blank"))}
+            className="cursor-pointer">
+            <Imdb />
+            <span>IMDb</span>
           </CommandItem>
           <CommandItem onSelect={() => runCommand(() => window.open(profile.instagram, "_blank"))} className="cursor-pointer">
             <RiInstagramLine />
             <span>Instagram</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => window.open(profile.linkedIn, "_blank"))} className="cursor-pointer">
-            <RiLinkedinBoxLine />
-            <span>LinkedIn</span>
+          <CommandItem onSelect={() => runCommand(() => window.open(profile.telegram, "_blank"))} className="cursor-pointer">
+            <RiTelegram2Line />
+            <span>Telegram</span>
           </CommandItem>
         </CommandGroup>
 

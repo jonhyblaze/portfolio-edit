@@ -1,11 +1,12 @@
-import type { Metadata } from "next"
 import { ProjectStrips } from "@/components/projects/project-strips"
 import { projects } from "@/data/projects"
+import { pageMetadata } from "@/lib/metadata"
 
-export const metadata: Metadata = {
-  title: "Projects — Oleksandr Korotun",
-  description: "Selected editing work: features, short films and documentary, shown as strips of stills."
-}
+export const metadata = pageMetadata({
+  title: "Projects",
+  description: "Selected work: short films, music videos and commercials, with stills, grades and notes from the edit.",
+  path: "/projects"
+})
 
 export default function ProjectsPage() {
   return (

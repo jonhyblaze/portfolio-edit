@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ProjectArchive } from "@/components/projects/project-archive"
 import { projects } from "@/data/projects"
+import { pageMetadata, toTitleCase } from "@/lib/metadata"
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>
@@ -17,12 +18,14 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
   if (!project) return {}
 
-  const title = project.title.trim()
+  const credit = `${project.type}, ${project.year}. Directed by ${project.director}.`
 
-  return {
-    title: `${title} — Oleksandr Korotun`,
-    description: project.logline ?? `${project.type}, ${project.year}. Directed by ${project.director}.`
-  }
+  return pageMetadata({
+    title: toTitleCase(project.title),
+    description: project.logline ? `${project.logline} ${credit}` : credit,
+    path: `/projects/${project.slug}`,
+    image: { url: `/projects/${project.slug}/opengraph-image`, alt: `A frame from ${toTitleCase(project.title)}` }
+  })
 }
 
 /**

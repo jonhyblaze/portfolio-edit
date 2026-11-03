@@ -1,16 +1,55 @@
 import nodemailer from "nodemailer"
 import { zodFormShema } from "@/components/form/schema"
+import profile from "@/data/profile"
 
-const EMAIL_ADDRESS = process.env.GOOGLE_EMAIL_ADDRESS!
-const PASSWORD = process.env.GOOGLE_APP_PASSWORDS!
+const EMAIL_ADDRESS = process.env.GOOGLE_EMAIL_ADDRESS
+const PASSWORD = process.env.GOOGLE_APP_PASSWORDS
 
-if (!EMAIL_ADDRESS || !PASSWORD) {
-  throw new Error("Email env variables missing in .env.local")
-}
+/**
+ * Everything a visitor types lands in the HTML body of the mail, so it goes in
+ * as text: without this a message could carry its own markup — links, images,
+ * a fake "reply here" block — into the inbox.
+ */
+/**
+ * Faster than this from form shown to form sent, and it wasn't typed. Three
+ * fields can't be filled in by hand in three seconds; a script posts at once.
+ */
+const MIN_FILL_TIME_MS = 3000
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 
 export async function POST(req: Request) {
+  // Checked per request rather than at import, so a missing variable answers
+  // with a clean 500 instead of taking the route down when it loads.
+  if (!EMAIL_ADDRESS || !PASSWORD) {
+    console.error("Contact form: GOOGLE_EMAIL_ADDRESS or GOOGLE_APP_PASSWORDS is not set")
+    return Response.json({ success: false }, { status: 500 })
+  }
+
   try {
-    const parsed = zodFormShema.safeParse(await req.json())
+    const body = await req.json()
+
+    // Bot checks first, before validation can say anything about the request:
+    // a tripped check gets the same answer a real message does, and no mail.
+    // A missing `elapsed` counts as too fast — only something posting straight
+    // at the route, never the form, leaves it out.
+    if (typeof body?.website === "string" && body.website.trim()) {
+      console.info("Contact form: honeypot filled, message dropped")
+      return Response.json({ success: true })
+    }
+
+    if (typeof body?.elapsed !== "number" || body.elapsed < MIN_FILL_TIME_MS) {
+      console.info("Contact form: sent too fast, message dropped")
+      return Response.json({ success: true })
+    }
+
+    const parsed = zodFormShema.safeParse(body)
 
     if (!parsed.success) {
       return Response.json(
@@ -22,11 +61,12 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, email, message, website } = parsed.data
+    const { name, email, message } = parsed.data
 
-    // Honeypot check
-    if (website?.trim()) return Response.json({ success: true })
-
+    const safeName = escapeHtml(name)
+    const safeEmail = escapeHtml(email)
+    // Line breaks are kept: the message is the one field written in paragraphs.
+    const safeMessage = escapeHtml(message).replace(/\r?\n/g, "<br />")
 
     const htmlTemplate = `
       <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f5f5f7;padding:48px 16px;color:#111;">
@@ -58,16 +98,16 @@ export async function POST(req: Request) {
               </div>
 
               <div style="display:flex;align-items:center;gap:12px;">
-                <div style="width:36px;height:36px;text-align:cener;border-radius:50%;background:#111;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;">
-                    ${name?.[0] || "PF"}
+                <div style="width:36px;height:36px;text-align:center;border-radius:50%;background:#111;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;">
+                    ${escapeHtml(name.charAt(0).toUpperCase()) || "PF"}
                 </div>
 
                 <div style="padding: 0 10px;">
                   <div style="font-size:15px;font-weight:600;color:#111;">
-                    ${name}
+                    ${safeName}
                   </div>
-                  <div style="font-size:13px;color:#6b280;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">
-                   ${email}
+                  <div style="font-size:13px;color:#6b7280;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">
+                   ${safeEmail}
                   </div>
                 </div>
               </div>
@@ -80,7 +120,7 @@ export async function POST(req: Request) {
               </div>
 
               <div style="font-size:14px;line-height:1.7;color:#111;background:#fafafa;border:1px solid #ececec;border-radius:2px;padding:20px;">
-                ${message}
+                ${safeMessage}
               </div>
             </div>
 
@@ -89,7 +129,7 @@ export async function POST(req: Request) {
           <!-- Footer -->
           <div style="border-top:1px solid #f0f0f0;padding:20px 32px;background:#fafafa;">
             <div style="font-size:12px;color:#9ca3af;">
-              Sent from contact form on your portfolio <a style="color:#9ca3af;" href="https://portfolio-prototype-gamma.vercel.app/">website</a>
+              Sent from contact form on your portfolio <a style="color:#9ca3af;" href="${profile.url}">website</a>
             </div>
           </div>
 

@@ -1,11 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { FormStatus } from "./types"
 import { FormData, zodFormShema } from "./schema"
 
 export function useForm() {
   const [status, setStatus] = useState<FormStatus>("idle")
+
+  /**
+   * When the form was put in front of the visitor. Sent as time elapsed rather
+   * than a timestamp, so the server never compares two clocks. Reset whenever
+   * a fresh form appears, so a second message is timed from its own start.
+   */
+  const shownAt = useRef(0)
+
+  useEffect(() => {
+    if (status === "idle") shownAt.current = Date.now()
+  }, [status])
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -84,7 +95,7 @@ export function useForm() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, elapsed: Date.now() - shownAt.current })
       })
       if (!res.ok) {
         console.log("Status: ", res.status, "Resonse object: ", res)

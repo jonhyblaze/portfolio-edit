@@ -80,7 +80,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "caption-01",
     text: "Careful now",
-    sub: "wreckless behaviour ahead",
+    sub: "reckless behaviour ahead",
     kind: "caption"
   },
   {
@@ -106,7 +106,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
   {
     id: "quote-02",
     kind: "quote",
-    text: "Next one is too complex for you",
+    text: "Complex message in simple form",
     attribution: "Max Prodaniuk"
   },
   {
@@ -150,7 +150,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
     id: "caption-03",
     kind: "caption",
     text: "But I Love Summer",
-    sub: "And youd should too"
+    sub: "And you should too"
   },
   {
     id: "flash-01",
@@ -168,7 +168,6 @@ export const showcaseSlides: ShowcaseSlide[] = [
     id: "caption-04",
     kind: "quote",
     text: "One more thing",
-    attribution: "Don't forget about your phone",
     delay: 1200
   },
   {

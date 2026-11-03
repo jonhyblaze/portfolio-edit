@@ -6,6 +6,14 @@ import { RiExternalLinkLine } from "@remixicon/react"
 import { cn } from "@/lib/utils"
 import { addGradientHover } from "@/lib/helpers"
 import profile from "@/data/profile"
+import { pageMetadata } from "@/lib/metadata"
+
+export const metadata = pageMetadata({
+  title: "About",
+  description:
+    "Film and video editor who came to the edit suite through the camera department, lighting and directing. Filmography includes Pamfir, Atlantis and Stop-Zemlia.",
+  path: "/about"
+})
 
 type FilmFormat = "Short" | "Feature" | "TVS"
 
@@ -63,7 +71,7 @@ const experience: Film[] = [
     country: "UA | DE",
     credits: "dir. Sviatoslav Kostiuk, dop. Sashcko Roshchyn, prod. SOTA",
     format: "Feature",
-    imdb: "tt38732117"
+    imdb: "tt32203874"
   },
   {
     period: "2024",
@@ -414,12 +422,14 @@ export default function AboutPage() {
             </p>
           </article>
 
-          <Button variant="default" className="rounded button w-full md:w-48 hover:bg-foreground/80" asChild>
-            <a href={profile.cv} download="/cv-oleksandr-korotun.pdf">
-              CV Download
-              <Arrow />
-            </a>
-          </Button>
+          {profile.cv && (
+            <Button variant="default" className="rounded button w-full md:w-48 hover:bg-foreground/80" asChild>
+              <a href={profile.cv} download>
+                CV Download
+                <Arrow />
+              </a>
+            </Button>
+          )}
         </div>
       </section>
 
